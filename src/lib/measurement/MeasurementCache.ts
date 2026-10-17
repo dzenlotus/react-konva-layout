@@ -1,0 +1,200 @@
+import type { CSSProperties } from 'react';
+import type { BoundaryContext, BoundaryStyle, Geometry, Registration, TextStyle } from '../model';
+import { layoutKeys, typographyKeys } from './comparison';
+
+export interface TemplateEntry {
+  geometry: Geometry[];
+  styles: Array<TextStyle | undefined>;
+}
+
+const inheritedProperties = [
+  'font-family',
+  'font-size',
+  'font-style',
+  'font-weight',
+  'font-stretch',
+  'font-variant',
+  'line-height',
+  'letter-spacing',
+  'word-spacing',
+  'color',
+  'text-align',
+  'text-indent',
+  'text-transform',
+  'white-space',
+  'word-break',
+  'overflow-wrap',
+  'direction',
+  'writing-mode',
+  'text-rendering',
+  'font-feature-settings',
+  'font-kerning',
+];
+const outerPositionKeys = new Set(['left', 'top', 'right', 'bottom', 'inset', 'translate']);
+
+export function token(value: unknown): string {
+  const string = String(value ?? '');
+  return `${typeof value}:${string.length}:${string};`;
+}
+
+export function styleSignature(
+  style: CSSProperties | undefined,
+  omitOuterPosition = false,
+): string {
+  if (!style) return '';
+  return (Object.keys(style) as Array<keyof CSSProperties>)
+    .sort()
+    .filter((key) => !omitOuterPosition || !outerPositionKeys.has(key))
+    .map((key) => `${key}=${token(style[key])}`)
+    .join('');
+}
+
+function hasFixedSize(value: unknown): boolean {
+  if (typeof value === 'number') return Number.isFinite(value) && value >= 0;
+  return (
+    typeof value === 'string' &&
+    CSS.supports('width', value) &&
+    !/\b(auto|min-content|max-content|fit-content|inherit|initial|unset|revert)\b|var\(/.test(value)
+  );
+}
+
+function lruSet<Key, Value>(cache: Map<Key, Value>, key: Key, value: Value, limit: number): void {
+  cache.delete(key);
+  cache.set(key, value);
+  if (cache.size > limit) cache.delete(cache.keys().next().value!);
+}
+
+function readTextStyle(element: HTMLElement, fontRevision: number): TextStyle {
+  const css = getComputedStyle(element);
+  const fontSize = parseFloat(css.fontSize) || 16;
+  return {
+    fontRevision,
+    fontSize,
+    fontFamily: css.fontFamily,
+    fontStyle: `${css.fontStyle} ${css.fontWeight}`,
+    lineHeight: parseFloat(css.lineHeight) / fontSize || 1.2,
+    color: css.color,
+    align: css.textAlign,
+    paddingLeft: parseFloat(css.paddingLeft) || 0,
+    paddingTop: parseFloat(css.paddingTop) || 0,
+    paddingRight: parseFloat(css.paddingRight) || 0,
+    paddingBottom: parseFloat(css.paddingBottom) || 0,
+    direction: css.direction,
+    fontVariant: css.fontVariant,
+    letterSpacing: css.letterSpacing,
+    wordSpacing: css.wordSpacing,
+    whiteSpace: css.whiteSpace,
+    wordBreak: css.wordBreak,
+    overflowWrap: css.overflowWrap,
+    textTransform: css.textTransform,
+  };
+}
+
+/** Bounded caches for values that survive a measurement pass. No scene objects live here. */
+export class MeasurementCache {
+  fontRevision = 0;
+  cssRevision = 0;
+  readonly boundaries = new Map<string, BoundaryContext>();
+  private readonly boundaryStyles = new Map<string, BoundaryStyle>();
+  private readonly textStyles = new Map<string, TextStyle>();
+  private readonly templates = new Map<string, TemplateEntry>();
+  private readonly signatures = new Map<string, number>();
+  private nextSignatureId = 1;
+
+  intern = (value: string): number => {
+    const previous = this.signatures.get(value);
+    if (previous !== undefined) return previous;
+    const id = this.nextSignatureId++;
+    lruSet(this.signatures, value, id, 8192);
+    return id;
+  };
+
+  invalidateCss(fontsChanged = false): void {
+    this.cssRevision += 1;
+    if (fontsChanged) this.fontRevision += 1;
+    this.templates.clear();
+    this.boundaryStyles.clear();
+    this.textStyles.clear();
+  }
+
+  clear(): void {
+    this.invalidateCss();
+    this.boundaries.clear();
+    this.signatures.clear();
+  }
+
+  propsSignature(record: Registration, omitOuterPosition = false): number {
+    const field = omitOuterPosition ? 'outer' : 'inner';
+    const previous = record.signature?.[field];
+    if (previous !== undefined) return previous;
+    let value = `${record.type};`;
+    if (record.props.direction !== undefined) value += `direction=${token(record.props.direction)}`;
+    for (const key of [...layoutKeys, ...typographyKeys]) {
+      if (record.props[key] !== undefined) value += `${key}=${token(record.props[key])}`;
+    }
+    value += styleSignature(record.props.style, omitOuterPosition);
+    const text = record.type === 'text' || record.type === 'cell-text';
+    const fixedText =
+      text &&
+      record.props.wrap === 'none' &&
+      hasFixedSize(record.props.width ?? record.props.style?.width) &&
+      hasFixedSize(record.props.height ?? record.props.style?.height);
+    if (text && !fixedText) value += token(record.props.text);
+    const id = this.intern(value);
+    record.signature = { ...record.signature, [field]: id };
+    return id;
+  }
+
+  textStyle(record: Registration, contextKey: number, enabled: boolean): TextStyle | undefined {
+    if (record.type !== 'text' && record.type !== 'cell-text') return undefined;
+    const key = `${this.fontRevision}:${this.cssRevision}:${record.key}:${contextKey}`;
+    const previous = enabled ? this.textStyles.get(key) : undefined;
+    if (previous) return previous;
+    const value = readTextStyle(record.element, this.fontRevision);
+    lruSet(this.textStyles, key, value, 512);
+    return value;
+  }
+
+  boundaryStyle(
+    record: Registration,
+    geometry: Geometry,
+    contextKey: number,
+    enabled: boolean,
+  ): BoundaryStyle {
+    const identity =
+      record.props.layoutTemplate && !record.templateUnsafe
+        ? token(record.props.layoutTemplate)
+        : record.key;
+    const key = `${this.fontRevision}:${this.cssRevision}:${identity}:${geometry.width}:${geometry.height}:${contextKey}`;
+    let value = enabled ? this.boundaryStyles.get(key) : undefined;
+    if (!value) {
+      const css = getComputedStyle(record.element);
+      const inherited: Array<[string, string]> = inheritedProperties.map((name) => [
+        name,
+        css.getPropertyValue(name),
+      ]);
+      value = {
+        inherited,
+        inheritedId: this.intern(
+          inherited.map(([name, item]) => `${name}=${token(item)}`).join(''),
+        ),
+        position: css.position,
+        boxSizing: css.boxSizing,
+        transformed: css.transform !== 'none',
+      };
+      lruSet(this.boundaryStyles, key, value, 128);
+    }
+    this.boundaries.set(record.key, { ...value, width: geometry.width });
+    return value;
+  }
+
+  getTemplate(key: string): TemplateEntry | undefined {
+    const value = this.templates.get(key);
+    if (value) lruSet(this.templates, key, value, 128);
+    return value;
+  }
+
+  setTemplate(key: string, value: TemplateEntry): void {
+    lruSet(this.templates, key, value, 128);
+  }
+}

@@ -1,0 +1,93 @@
+import type { ReactNode } from 'react';
+import type {
+  BoxProps,
+  CellBounds,
+  CellTextRenderProps,
+  FlexProps,
+  LayoutMetrics,
+  LayoutNode,
+  LayoutNodeType,
+  LayoutTextProps,
+} from './types';
+
+export interface TextStyle {
+  fontRevision: number;
+  fontSize: number;
+  fontFamily: string;
+  fontStyle: string;
+  lineHeight: number;
+  color: string;
+  align: string;
+  paddingLeft: number;
+  paddingTop: number;
+  paddingRight: number;
+  paddingBottom: number;
+  direction?: string;
+  fontVariant?: string;
+  letterSpacing?: string;
+  wordSpacing?: string;
+  whiteSpace?: string;
+  wordBreak?: string;
+  overflowWrap?: string;
+  textTransform?: string;
+}
+
+export type PrimitiveProps = Omit<BoxProps, 'render'> &
+  FlexProps &
+  Partial<LayoutTextProps> & {
+    render?: (bounds: CellBounds) => ReactNode;
+    renderText?: (props: CellTextRenderProps) => ReactNode;
+  };
+
+export interface SceneNode {
+  key: string;
+  layout: LayoutNode;
+  props: PrimitiveProps;
+  textStyle?: TextStyle;
+  children: SceneNode[];
+  revision: number;
+}
+
+export interface Registration {
+  key: string;
+  parent: string | null;
+  element: HTMLDivElement;
+  type: LayoutNodeType;
+  props: PrimitiveProps;
+  signature?: { inner?: number; outer?: number };
+  domFingerprint?: number;
+  domStyle?: string | null;
+  templateUnsafe?: boolean;
+}
+
+export interface LayoutRegistry {
+  update(record: Registration): void;
+  remove(key: string): void;
+}
+
+export interface EngineSnapshot {
+  scene: SceneNode[];
+  tree: LayoutNode[];
+  metrics: LayoutMetrics | null;
+}
+
+export type Geometry = Pick<LayoutNode, 'x' | 'y' | 'width' | 'height' | 'absoluteX' | 'absoluteY'>;
+
+export interface BoundaryStyle {
+  inherited: Array<[string, string]>;
+  inheritedId: number;
+  position: string;
+  boxSizing: string;
+  transformed: boolean;
+}
+
+export interface BoundaryContext extends BoundaryStyle {
+  width: number;
+}
+
+export interface MeasurementResult {
+  roots: SceneNode[];
+  nodes: number;
+  hits: number;
+  misses: number;
+}

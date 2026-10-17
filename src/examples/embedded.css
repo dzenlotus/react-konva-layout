@@ -1,0 +1,54 @@
+.embedded-example {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 32px;
+  color: #26331e;
+}
+.embedded-example a {
+  color: #728166;
+}
+.embedded-eyebrow {
+  margin-top: 40px;
+  font: 10px monospace;
+  letter-spacing: 2px;
+  color: #7c8e6c;
+}
+.embedded-example h1 {
+  font-size: 34px;
+  letter-spacing: -1.2px;
+  margin: 12px 0;
+}
+.embedded-example p {
+  color: #7a8471;
+}
+.embedded-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 24px 0;
+}
+.embedded-controls button {
+  padding: 10px 14px;
+  border: 1px solid #cbd4c1;
+  border-radius: 6px;
+  background: #fff;
+  color: #45583a;
+  cursor: pointer;
+}
+.embedded-stage {
+  max-width: 100%;
+  overflow: auto;
+  border: 1px solid #cbd4c1;
+  border-radius: 10px;
+}
+.embedded-example pre {
+  padding: 24px;
+  color: #57684a;
+  background: #edf1e8;
+  border-radius: 8px;
+  line-height: 1.6;
+}
+.embedded-metrics {
+  font: 12px monospace;
+  line-height: 1.6;
+}
