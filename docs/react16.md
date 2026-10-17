@@ -1,25 +1,44 @@
 # Подключение к React 16
 
-Для React 16 используется отдельная сборка `0.6.2-react16.0` того же `@dzenlotus/react-konva-layout`. Основная сборка остаётся на React 19. Движок измерения, `Flex/Cell/CellText`, размещения, кеширование и выборочный LOD общие; отличаются подключение React DOM и передача контекстов.
+Для React 16.14.0 используется отдельная сборка `0.6.2-react16.1` того же `@dzenlotus/react-konva-layout`. Основная сборка остаётся на React 19. Движок измерения, `Flex/Cell/CellText`, размещения, кеширование и выборочный LOD общие; отличаются подключение React DOM и передача контекстов.
 
 Зафиксированная связка:
 
 | Зависимость                     | Версия            |
 | ------------------------------- | ----------------- |
-| `react`                         | `16.13.1`         |
-| `react-dom`                     | `16.13.1`         |
+| `react`                         | `16.14.0`         |
+| `react-dom`                     | `16.14.0`         |
 | `react-konva`                   | `16.13.0-6`       |
 | `konva`                         | `8.4.3`           |
-| `@dzenlotus/react-konva-layout` | `0.6.2-react16.0` |
+| `@dzenlotus/react-konva-layout` | `0.6.2-react16.1` |
 
 Другие версии React 16 этой инструкцией не подтверждаются. Пакет собран с classic JSX, без зависимости от `react/jsx-runtime`. Официальный `use-sync-external-store` версии 1.7.0 устанавливается как зависимость пакета и используется через `use-sync-external-store/shim`; отдельно подключать полифилл в приложении не нужно.
 
 ## Установка
 
-Установите готовый архив из GitHub Release, а не основную React 19 сборку репозитория:
+Сначала добавьте в **корневой `package.json` своего приложения** эти прямые зависимости и адресный override, сохранив остальные поля:
+
+```json
+{
+  "dependencies": {
+    "react": "16.14.0",
+    "react-dom": "16.14.0"
+  },
+  "overrides": {
+    "react-konva": {
+      "react": "$react",
+      "react-dom": "$react-dom"
+    }
+  }
+}
+```
+
+У `react-konva@16.13.0-6` peer metadata ограничены React `16.13.x`, хотя его `react-reconciler@0.25.1` допускает `^16.13.1`, включая 16.14.0. Override привязывает только зависимости react-konva к вашим прямым версиям React и ReactDOM. Он должен находиться именно в корне приложения: npm не применяет `overrides` из установленных пакетов. `$react` и `$react-dom` ссылаются на объявления в корневом `dependencies`. Это стандартный механизм [npm overrides](https://docs.npmjs.com/cli/v11/configuring-npm/package-json/#overrides); fork, `--legacy-peer-deps` или глобальное отключение peer-проверок не нужны.
+
+Затем установите готовый архив из GitHub Release и остальные версии:
 
 ```sh
-npm install react@16.13.1 react-dom@16.13.1 react-konva@16.13.0-6 konva@8.4.3 https://github.com/dzenlotus/react-konva-layout/releases/download/v0.6.2-react16.0/dzenlotus-react-konva-layout-0.6.2-react16.0.tgz
+npm install --save-exact react@16.14.0 react-dom@16.14.0 react-konva@16.13.0-6 konva@8.4.3 https://github.com/dzenlotus/react-konva-layout/releases/download/v0.6.2-react16.1/dzenlotus-react-konva-layout-0.6.2-react16.1.tgz
 ```
 
 Импорт остаётся обычным:
@@ -136,9 +155,15 @@ npm run dev:react16
 
 ## Проверка совместимости
 
-Готовый архив проверен в отдельном проекте: чистый `npm install` без `--legacy-peer-deps` и других обходов peer dependencies, затем TypeScript 4.9.5 в strict-режиме с `skipLibCheck: false`, `@types/react@16.14.70` и `@types/react-dom@16.9.25`. Версии типов не означают проверку runtime React 16.14: runtime связка остаётся указанной выше 16.13.1.
+Для React/ReactDOM 16.14.0 подтверждены чистый `npm install`, `npm ls` и повторный `npm ci` с корневым override выше, без peer-флагов. Результаты проверки этой связки записываются отдельно: [react16-16.14-verification.json](react16-16.14-verification.json).
 
-В браузере проверены одна и 1000 нод. Тысяча одинаковых корней дала 999 попаданий в шаблон; локальная правка потребовала 17 чтений геометрии и сохранила остальные 999 ветвей. Zoom до 3% не менял ревизию измерения и не читал DOM; в покое измерительного HTML в документе нет. Native drag сохранил геометрию и растровый кеш ноды, вернул её в React-родителя и во время движения рисовал interaction Layer. Также проверены обновление контекста, сохранность Text ref и unmount/remount. Исходные результаты: [react16-verification.json](react16-verification.json).
+В браузере с React 16.14.0 проверены одна и 1000 нод без ошибок и предупреждений. При первом измерении тысячи нод выполнено 1016 чтений геометрии: 999 попаданий в шаблон и одно вычисление; все 1000 корней получили кеши. Zoom с 5% до 3% сохранил ревизию и ссылки модели, без чтений геометрии и подключения HTML. Локальная правка ноды потребовала 17 чтений, обновила Text ref и сохранила модель, native группы и кеши остальных 999 нод.
+
+Native drag дал один `dragstart` и один `dragend`, сохранил геометрию и кеш, вернул группу в исходного React-родителя. Во время движения основной Layer не перерисовывался, interaction Layer выполнил восемь draw; оба слоя использовали DPR 2. Обновление контекста изменило размер заголовка с 18 до 20 с сохранением registry IDs и ref. После unmount измерительного HTML, измерительных корней и native размещений осталось ноль; remount восстановил сцену и ref. Эти проверки описывают корректность и изоляцию отрисовки, без замера FPS.
+
+Свежий архив `0.6.2-react16.1` также установлен в отдельный consumer с React/ReactDOM 16.14.0 и указанным корневым override: `npm install`, `npm ci` и `npm ls` прошли без ошибок. TypeScript 4.9.5 прошёл в strict-режиме с `skipLibCheck: false`, `@types/react@16.14.70` и `@types/react-dom@16.9.25`. [Скриншот React 16.14.0](screenshots/react16-16.14-example.png).
+
+Предыдущая сборка `0.6.2-react16.0` отдельно проверялась с runtime React/ReactDOM 16.13.1: TypeScript 4.9.5 в strict-режиме с `skipLibCheck: false`, `@types/react@16.14.70`, `@types/react-dom@16.9.25`, одна и 1000 нод, локальный relayout, zoom 3%, native drag с сохранением кеша, контексты, refs и unmount/remount. Это исторические результаты другой runtime-связки: [react16-verification.json](react16-verification.json). Они сохранены без изменений и не подменяют новую проверку 16.14.0.
 
 Это проверка совместимости, без замера FPS. Нода React 16 примера содержит 17 измеряемых элементов и отличается от современной стресс-ноды с 35 элементами; результаты их производительности нельзя считать взаимозаменяемыми.
 

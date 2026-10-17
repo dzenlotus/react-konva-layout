@@ -293,7 +293,7 @@ function App() {
     <main>
       <header>
         <div>
-          <p>REACT 16.13.1 · KONVA 8</p>
+          <p>REACT {React.version} · KONVA 8</p>
           <h1>Та же компоновка. Ваш canvas.</h1>
         </div>
         <a href="https://github.com/dzenlotus/react-konva-layout">GitHub ↗</a>

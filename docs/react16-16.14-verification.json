@@ -1,0 +1,103 @@
+{
+  "date": "2026-10-17",
+  "version": "0.6.2-react16.1",
+  "artifact": {
+    "filename": "dzenlotus-react-konva-layout-0.6.2-react16.1.tgz",
+    "sha256": "7a8b51919d6ac8f0c3f1518340686e2e860484603738774ce496e5eefb67a59a"
+  },
+  "packedConsumer": {
+    "npmInstall": "passed",
+    "npmCi": "passed",
+    "npmLs": "passed",
+    "typeScript": "4.9.5",
+    "strict": true,
+    "skipLibCheck": false,
+    "typecheck": "passed",
+    "globalLegacyPeerBypass": false
+  },
+  "dependencies": {
+    "react": "16.14.0",
+    "react-dom": "16.14.0",
+    "react-konva": "16.13.0-6",
+    "react-reconciler": "0.25.1",
+    "konva": "8.4.3"
+  },
+  "consumerRootOverrides": {
+    "react-konva": {
+      "react": "$react",
+      "react-dom": "$react-dom"
+    }
+  },
+  "single": {
+    "react": "16.14.0",
+    "initialMeasuredNodes": 17,
+    "context": {
+      "titleBefore": 18,
+      "titleAfter": 20,
+      "registryIdsStable": true,
+      "textRefPreserved": true
+    },
+    "edit": {
+      "scope": "local",
+      "measuredNodes": 17,
+      "html": 0,
+      "textRefUpdated": true
+    },
+    "unmounted": {
+      "html": 0,
+      "measurementRoots": 0,
+      "placements": 0
+    },
+    "remount": {
+      "html": 0,
+      "textRefRestored": true
+    },
+    "canvasPixelRatios": [2, 2]
+  },
+  "thousand": {
+    "react": "16.14.0",
+    "count": 1000,
+    "initial": {
+      "measuredNodes": 1016,
+      "templateHits": 999,
+      "templateMisses": 1,
+      "totalRoots": 1000,
+      "cachedRoots": 1000,
+      "html": 0
+    },
+    "zoom": {
+      "reads": 0,
+      "attachments": 0,
+      "revisionBefore": 1,
+      "revisionAfter": 1,
+      "allGeometryStable": true,
+      "html": 0
+    },
+    "local": {
+      "scope": "local",
+      "measuredNodes": 17,
+      "measuredRoots": ["node-0"],
+      "other999GeometryStable": true,
+      "otherMountedGroupsAndCachesStable": true,
+      "html": 0
+    },
+    "drag": {
+      "starts": 1,
+      "ends": 1,
+      "during": "application-drag-layer",
+      "duringDraws": [0, 8],
+      "parentRestored": true,
+      "stopped": true,
+      "geometryStable": true,
+      "cacheStable": true,
+      "positionError": 1.1368683772161603e-13,
+      "revisionBefore": 2,
+      "revisionAfter": 2,
+      "html": 0
+    },
+    "canvasPixelRatios": [2, 2]
+  },
+  "consoleErrors": 0,
+  "consoleWarnings": 0,
+  "note": "React16.14 compatibility checks of the existing 17-element demo; no FPS benchmark and no change to shared rendering/measurement code."
+}
