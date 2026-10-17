@@ -7,7 +7,13 @@ import { observeHost, readHost, type Bounds } from '../host';
 import { DrawNode, type BeginEdit } from './DrawNode';
 import { MinimalScene } from './MinimalScene';
 import { FullScene } from './FullScene';
-import { allocatedCacheBytes, cacheRoot, releaseRoot, type CacheEntry } from './cache';
+import {
+  allocatedCacheBytes,
+  cacheDensity,
+  cacheRoot,
+  releaseRoot,
+  type CacheEntry,
+} from './cache';
 import { compileIslands, intersects, settings, type Island } from './scene';
 
 export interface RendererProps {
@@ -49,8 +55,14 @@ export default memo(function Renderer({
   onInvalidate,
   onFocusRequest,
 }: RendererProps) {
+  const [density, setDensity] = useState(1);
+  const densityRef = useRef(density);
+  const fixedRatio = performance?.cachePixelRatio;
+  const automaticDensity = useRef(true);
+  automaticDensity.current =
+    typeof fixedRatio !== 'number' || !Number.isFinite(fixedRatio) || fixedRatio <= 0;
   const config = useMemo(
-    () => settings(performance),
+    () => settings(performance, density),
     [
       performance?.enabled,
       performance?.compact,
@@ -60,6 +72,7 @@ export default memo(function Renderer({
       performance?.cacheBudgetMB,
       performance?.cachePixelRatio,
       performance?.lodScale,
+      density,
     ],
   );
   const islands = useMemo(() => compileIslands(scene), [scene]);
@@ -118,6 +131,13 @@ export default memo(function Renderer({
     const currentRoot = rootRef.current,
       config = configRef.current;
     const host = currentRoot && readHost(currentRoot, config.overscan);
+    if (host && automaticDensity.current) {
+      const nextDensity = cacheDensity(host.scale, host.pixelRatio, densityRef.current);
+      if (nextDensity !== densityRef.current) {
+        densityRef.current = nextDensity;
+        setDensity(nextDensity);
+      }
+    }
     const viewport = host && {
       x: host.viewport.x - 32,
       y: host.viewport.y - 32,

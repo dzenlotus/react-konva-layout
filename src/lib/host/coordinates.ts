@@ -11,6 +11,8 @@ export interface HostState {
   viewport: Bounds;
   /** Largest screen stretch of the complete layout-to-stage matrix. */
   scale: number;
+  /** Density of the consumer's existing scene canvas. */
+  pixelRatio: number;
   matrix: number[];
   visible: boolean;
   listening: boolean;
@@ -37,6 +39,7 @@ export function readHost(root: Konva.Group, overscan = 0): HostState | null {
   return {
     stage,
     matrix,
+    pixelRatio: root.getLayer()?.getCanvas().getPixelRatio() ?? 1,
     visible: root.isVisible(),
     listening: root.isListening(),
     viewport: {

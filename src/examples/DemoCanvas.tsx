@@ -23,6 +23,7 @@ interface DemoCanvasProps extends Omit<LayoutComponentProps, 'x' | 'y' | 'id'> {
   width: number;
   height: number;
   panZoom?: boolean;
+  pixelRatio?: number;
   onViewChange?: (view: ViewTransform) => void;
   style?: CSSProperties;
   className?: string;
@@ -31,12 +32,13 @@ interface DemoCanvasProps extends Omit<LayoutComponentProps, 'x' | 'y' | 'id'> {
 
 /** Application-owned Stage, Layer and camera. This file is excluded from the package. */
 export const DemoCanvas = forwardRef<DemoCanvasHandle, DemoCanvasProps>(function DemoCanvas(
-  { width, height, panZoom = false, onViewChange, style, className, ...layoutProps },
+  { width, height, panZoom = false, pixelRatio, onViewChange, style, className, ...layoutProps },
   forwardedRef,
 ) {
   const stage = useRef<Konva.Stage | null>(null);
   const layer = useRef<Konva.Layer | null>(null);
   const layout = useRef<LayoutHandle | null>(null);
+  const nativeRatio = useRef<number | null>(null);
   const view = useRef<ViewTransform>({ x: 0, y: 0, scale: 1 });
   const [camera, setCamera] = useState(view.current);
   const onChange = useRef(onViewChange);
@@ -64,9 +66,15 @@ export const DemoCanvas = forwardRef<DemoCanvasHandle, DemoCanvasProps>(function
 
   useLayoutEffect(() => {
     // Canvas quality is an application decision, separate from Layout raster caches.
-    layer.current?.getCanvas().setPixelRatio(1);
-    layer.current?.batchDraw();
-  }, [width, height]);
+    const drawing = layer.current;
+    if (!drawing) return;
+    nativeRatio.current ??= drawing.getCanvas().getPixelRatio();
+    const ratio = pixelRatio ?? nativeRatio.current;
+    if (drawing.getCanvas().getPixelRatio() !== ratio) {
+      drawing.getCanvas().setPixelRatio(ratio);
+      drawing.batchDraw();
+    }
+  }, [width, height, pixelRatio]);
 
   useImperativeHandle(
     forwardedRef,

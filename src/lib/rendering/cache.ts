@@ -8,6 +8,16 @@ export interface CacheEntry {
   reserved: number;
 }
 
+/** Powers of two avoid rebuilding caches on every zoom step; downsizing has hysteresis. */
+export function cacheDensity(scale: number, pixelRatio: number, previous = 1): number {
+  const product = scale * pixelRatio;
+  const required = Math.max(0.25, Number.isNaN(product) ? 1 : product);
+  const current = Number.isFinite(previous) && previous > 0 ? Math.max(0.25, previous) : 1;
+  if (required <= current && required > current * 0.45) return current;
+  const next = 2 ** Math.ceil(Math.log2(required));
+  return Number.isFinite(next) ? next : Number.MAX_VALUE;
+}
+
 export function allocatedCacheBytes(group: Konva.Group): number {
   const cache = group._getCanvasCache();
   if (!cache) return 0;
@@ -22,7 +32,7 @@ export function releaseRoot(entries: Map<string, CacheEntry>, key: string) {
   entries.delete(key);
 }
 
-/** Only visible, revised roots inspect Konva bounds; camera updates reuse the recorded bounds. */
+/** Only visible, revised roots or density changes inspect bounds; pan reuses recorded bounds. */
 export function cacheRoot(
   entries: Map<string, CacheEntry>,
   actualBounds: WeakMap<SceneNode, Bounds>,
@@ -39,7 +49,11 @@ export function cacheRoot(
     (island.complex || island.item.props.cache === true)
   ) {
     const bounds = group.getClientRect({ skipTransform: true });
-    if (bounds.width > 0 && bounds.height > 0) {
+    if (
+      bounds.width > 0 &&
+      bounds.height > 0 &&
+      [bounds.x, bounds.y, bounds.width, bounds.height].every(Number.isFinite)
+    ) {
       actualBounds.set(island.item, {
         ...bounds,
         x: bounds.x + island.item.layout.absoluteX,
@@ -52,7 +66,7 @@ export function cacheRoot(
       const reserved =
         4 * (Math.ceil(width * ratio) * Math.ceil(height * ratio) * 2 + width * height);
       const used = [...entries.values()].reduce((bytes, entry) => bytes + entry.reserved, 0);
-      if (reserved <= config.budget - used) {
+      if (Number.isFinite(reserved) && reserved <= config.budget - used) {
         group.cache({
           x: Math.floor(bounds.x) - 2,
           y: Math.floor(bounds.y) - 2,

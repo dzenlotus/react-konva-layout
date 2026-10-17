@@ -56,7 +56,7 @@ export function observeHost(root: Konva.Group, onChange: () => void): () => void
     const host = readHost(root);
     const bounds = host?.stage.content.getBoundingClientRect();
     const next = host
-      ? `${host.matrix.join(',')}|${host.stage.width()},${host.stage.height()}|${bounds?.width},${bounds?.height}|${host.visible},${host.listening}`
+      ? `${host.matrix.join(',')}|${host.stage.width()},${host.stage.height()}|${bounds?.width},${bounds?.height}|${host.visible},${host.listening}|${host.pixelRatio}`
       : 'detached';
     if (next !== signature) {
       signature = next;

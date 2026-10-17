@@ -31,8 +31,13 @@ const information = new WeakMap<SceneNode, { bounds: Bounds; roots: boolean; cou
 const descriptorCache = new WeakMap<SceneNode, Island>();
 const shells = new WeakMap<SceneNode, SceneNode>();
 
-export function settings(options?: PerformanceOptions): Settings {
+export function settings(options?: PerformanceOptions, automaticRatio = 1): Settings {
   const enabled = options?.enabled !== false;
+  const requestedRatio = options?.cachePixelRatio;
+  const ratio =
+    typeof requestedRatio === 'number' && Number.isFinite(requestedRatio) && requestedRatio > 0
+      ? requestedRatio
+      : automaticRatio;
   return {
     enabled,
     compact: enabled && options?.compact !== false,
@@ -40,7 +45,7 @@ export function settings(options?: PerformanceOptions): Settings {
     overscan: Math.max(0, options?.overscan ?? 144),
     cache: enabled && options?.cache !== false,
     budget: Math.max(0, options?.cacheBudgetMB ?? 32) * 1024 * 1024,
-    cacheRatio: Math.min(2, Math.max(0.25, options?.cachePixelRatio ?? 1)),
+    cacheRatio: Number.isFinite(ratio) && ratio > 0 ? Math.max(0.25, ratio) : 1,
     lodScale: enabled ? (options?.lodScale ?? 0.3) : 0,
   };
 }

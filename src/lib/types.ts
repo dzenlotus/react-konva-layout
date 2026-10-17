@@ -30,7 +30,8 @@ export interface PerformanceOptions {
   overscan?: number;
   cache?: boolean;
   cacheBudgetMB?: number;
-  cachePixelRatio?: number;
+  /** Automatic host density by default; a positive number fixes the cache density. */
+  cachePixelRatio?: number | 'auto';
   lodScale?: number;
 }
 

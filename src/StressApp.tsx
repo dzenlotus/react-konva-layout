@@ -14,6 +14,7 @@ import type {
 import './stress.css';
 
 const COUNT = 1000;
+const RETINA = new URLSearchParams(window.location.search).has('retina');
 const COLUMNS = 25;
 const CARD_WIDTH = 230;
 const CARD_HEIGHT = 284;
@@ -30,6 +31,7 @@ const OPTIMIZED: PerformanceOptions = {
   cull: true,
   cache: true,
   cacheBudgetMB: 32,
+  cachePixelRatio: RETINA ? 'auto' : 1,
   lodScale: 0.3,
   overscan: 100,
 };
@@ -51,6 +53,7 @@ export interface StressStats {
   worldWidth: number;
   worldHeight: number;
   devicePixelRatio: number;
+  canvasPixelRatio: number;
   complete: boolean;
   renderedCards: number;
   measurement: LayoutMetrics | null;
@@ -360,6 +363,7 @@ export default function StressApp() {
       worldWidth: configRef.current.worldWidth,
       worldHeight: WORLD_HEIGHT,
       devicePixelRatio: window.devicePixelRatio,
+      canvasPixelRatio: current?.getLayers()[0]?.getCanvas().getPixelRatio() ?? 1,
       measurement: layout.current?.getMetrics() ?? null,
       rendering: renderStats.current,
       complete:
@@ -810,6 +814,7 @@ export default function StressApp() {
                   width={config.width}
                   height={760}
                   panZoom={!busy}
+                  pixelRatio={RETINA ? undefined : 1}
                   performance={config.mode === 'optimized' ? OPTIMIZED : BASELINE}
                   onLayout={onLayout}
                   onMeasure={onMeasure}
@@ -928,7 +933,9 @@ export default function StressApp() {
             Ноды расположены независимо; Flex внутри рассчитывает браузер. Размер описания может
             менять высоту только своей ноды.
           </span>
-          <span>Кеш ≤32 MB · DPR 1 · CPU slowdown задаётся в DevTools</span>
+          <span>
+            Кеш ≤32 MB · {RETINA ? 'DPR устройства' : 'DPR 1'} · CPU slowdown задаётся в DevTools
+          </span>
         </footer>
       </main>
     </div>
