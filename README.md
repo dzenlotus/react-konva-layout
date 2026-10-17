@@ -113,6 +113,10 @@ export function Example() {
 
 ## Что посмотреть в демо
 
+Скриншоты: [нода](docs/screenshots/node.png), [layout-слой](docs/screenshots/layout-overlay.png), [Grid](docs/screenshots/grid.png).
+
+![Пример ноды на canvas](docs/screenshots/node.png)
+
 1. В примере «Нода» измените ширину canvas, расстояние `gap` и максимальную ширину ноды: изображение и описание перестраиваются вместе с портами.
 2. В «Flex» переключите направление, выравнивание и число элементов. В «Grid» измените число колонок.
 3. Включите «Показать layout», чтобы сопоставить HTML-границы с рисунком Konva. После выключения проверьте в DevTools, что `document.querySelector('.konva-layout-measure')` возвращает `null`.
@@ -120,6 +124,12 @@ export function Example() {
 5. Скопируйте JSON дерева или JSX примера через кнопку над результатом.
 
 Структура ноды взята из [исходного примера CodeSandbox](https://codesandbox.io/p/sandbox/reverent-darwin-sdgd8h?file=/src/App.js): `label`, `title`, `subTitle`, входные порты, изображение, выходные порты, `description` и `actionPanel`. Графика и интерфейс демо реализованы здесь отдельно.
+
+## Стресс-сцена
+
+Откройте `/?stress=1`, чтобы запустить сцену с 1000 сложных нод. Для замеров используйте `npm run build` и `npm run preview`: режим разработки добавляет собственные накладные расходы.
+
+На Apple M5 в production-сборке: первый монтаж **588,8 мс**, медиана пяти повторных монтажей **490,9 мс**, resize **482,6–518 мс**. Сцена содержит 51 001 объект Konva. [Методика и все результаты](docs/performance.md) · [скриншот сцены](docs/screenshots/stress-1000.png).
 
 ## Ограничения прототипа
 
