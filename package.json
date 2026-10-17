@@ -1,6 +1,6 @@
 {
   "name": "@dzenlotus/react-konva-layout",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Browser-native Flex and Grid layout for React Konva",
   "type": "module",
   "license": "MIT",

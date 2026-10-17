@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { memo, useRef, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { Circle, Line, Rect, Text } from 'react-konva';
 import { Box, Col, Flex, Grid, LayoutCanvas, LayoutText, Row } from './lib';
@@ -38,9 +38,10 @@ function ImagePreview({ width, height }: { width: number; height: number }) {
   </>;
 }
 
-function NodeExample({ gap, maxWidth, onSelect }: { gap: number; maxWidth: number; onSelect: (id: string) => void }) {
+const NodeExample = memo(function NodeExample({ gap, maxWidth, onSelect }: { gap: number; maxWidth: number; onSelect: (id: string) => void }) {
+  const [description, setDescription] = useState('Этот модуль создан для того, чтобы помогать людям. Размеры и переносы рассчитывает браузер.');
   return <Flex id="scene-root" data-testid="scene-root" width="100%" height="100%" padding={28} alignItems="center" justifyContent="center">
-    <Col id="node" data-testid="node" width="100%" maxWidth={maxWidth} flexShrink={0} gap={gap} padding={24} fill="#ffffff" stroke="#d8ddd2" cornerRadius={16}>
+    <Col id="node" data-testid="node" layoutRoot lodLabel="Image transform" width="100%" maxWidth={maxWidth} flexShrink={0} gap={gap} padding={24} fill="#ffffff" stroke="#d8ddd2" cornerRadius={16}>
       <Row id="main" width="100%" gap={8} alignItems="center">
         <Col id="content" data-testid="node-content" width="100%" gap={gap}>
           <Row id="label-row" alignItems="center" gap={7}>
@@ -56,7 +57,7 @@ function NodeExample({ gap, maxWidth, onSelect }: { gap: number; maxWidth: numbe
             <Box id="image" data-testid="node-image" flexGrow={1} minWidth={0} height={116} render={ImagePreview} onClick={() => onSelect('image')} />
             <Col id="outPorts" data-testid="output-ports" gap={12}>{[0, 1, 2].map(i => <Port key={i} index={i} side="out" />)}</Col>
           </Row>
-          <LayoutText id="description" data-testid="node-description" text="Этот модуль создан для того, чтобы помогать людям. Размеры и переносы рассчитывает браузер." width="100%" fontSize={12} lineHeight={1.5} fontFamily={font} color="#737b6c" />
+          <LayoutText id="description" data-testid="node-description" text={description} editable onTextChange={setDescription} width="100%" fontSize={12} lineHeight={1.5} fontFamily={font} color="#737b6c" />
         </Col>
       </Row>
       <Row id="actionPanel" data-testid="action-panel" height={40} width="100%" padding={5} gap={8} alignItems="center" fill="#f1f3ed" cornerRadius={8}>
@@ -67,7 +68,7 @@ function NodeExample({ gap, maxWidth, onSelect }: { gap: number; maxWidth: numbe
       </Row>
     </Col>
   </Flex>;
-}
+});
 
 function Tile({ index, onSelect, grow = false }: { index: number; onSelect: (id: string) => void; grow?: boolean }) {
   return <Col id={`item-${index}`} data-testid={`item-${index}`} width={grow ? undefined : 144} minWidth={grow ? 0 : 90} height={grow ? undefined : 96} minHeight={96} flexGrow={grow ? 1 : 0} padding={grow ? 12 : 16} gap={10} fill={swatches[index % swatches.length]} cornerRadius={10} onClick={() => onSelect(`item-${index}`)}>
@@ -166,13 +167,13 @@ export default function App() {
 
   return <div className="app-shell">
     <header className="topbar">
-      <a className="brand" href="./"><span className="brand-icon"><Glyph name="layout" size={21} /></span><span>react-konva<span className="brand-light"> / layout</span></span><span className="version">0.1.0</span></a>
+      <a className="brand" href="./"><span className="brand-icon"><Glyph name="layout" size={21} /></span><span>react-konva<span className="brand-light"> / layout</span></span><span className="version">0.2.0</span></a>
       <a className="repo-link" href="https://github.com/dzenlotus/react-konva-layout" target="_blank" rel="noreferrer"><Glyph name="github" size={17} />GitHub <span>↗</span></a>
     </header>
 
     <main>
       <section className="intro">
-        <div><div className="eyebrow"><span /> BROWSER-NATIVE LAYOUT ENGINE</div><h1>CSS считает. <span>Canvas рисует.</span></h1><p>Один JSX. Настоящий Flex и Grid. Точные группы Konva.</p></div>
+        <div><div className="eyebrow"><span /> BROWSER-NATIVE LAYOUT ENGINE</div><h1>CSS считает. <span>Canvas рисует.</span></h1><p>Двойной клик / тап по description — редактирование. Колесо — zoom, фон — pan.</p></div>
         <div className="pipeline" aria-label="Layout pipeline"><span>HTML / CSS</span><Glyph name="arrow" size={16} /><span>DOMRect</span><Glyph name="arrow" size={16} /><span className="pipeline-final">Konva</span></div>
       </section>
 
@@ -181,7 +182,7 @@ export default function App() {
           <div className="preview-toolbar"><div className="scene-tabs" role="tablist" aria-label="Пример раскладки">{(['node', 'flex', 'grid'] as Scene[]).map(s => <button key={s} role="tab" aria-selected={scene === s} className={scene === s ? 'active' : ''} onClick={() => { setScene(s); setSelected(s === 'node' ? 'node' : `${s}-root`); }}>{s === 'node' ? 'Нода' : s === 'flex' ? 'Flex' : 'Grid'}</button>)}</div><div className="toolbar-actions"><button className="remeasure-button" onClick={() => layoutRef.current?.remeasure()}><Glyph name="reset" size={12} />Пересчитать</button><div className="canvas-caption"><span className="live-dot" />LIVE CANVAS</div></div></div>
           <div className="canvas-viewport">
             <div className="ruler"><span>0</span><span>{Math.round(width / 4)}</span><span>{Math.round(width / 2)}</span><span>{Math.round(width * .75)}</span><span>{width} px</span></div>
-            <div className="canvas-scroll"><div className="canvas-frame" style={{ width }}><LayoutCanvas ref={layoutRef} width={width} height={height} debug={debug} onLayout={setTree}>{content}</LayoutCanvas></div></div>
+            <div className="canvas-scroll"><div className="canvas-frame" style={{ width }}><LayoutCanvas ref={layoutRef} width={width} height={height} debug={debug} panZoom onLayout={setTree}>{content}</LayoutCanvas></div></div>
             <span className="canvas-corner">{debug ? 'HTML BOUNDS / OVERLAY' : 'RENDERED WITH KONVA'}</span>
           </div>
           <div className="preview-status"><span><span className="status-dot" />{nodes.length} элементов измерено</span><span>{width} × {height}<span className="status-divider">/</span>CSS px<span className="status-divider">/</span>getBoundingClientRect()</span></div>

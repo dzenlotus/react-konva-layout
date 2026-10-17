@@ -1,6 +1,6 @@
 # react-konva-layout
 
-Рабочий прототип раскладки для React Konva: браузер рассчитывает Flex и Grid в HTML, библиотека измеряет элементы через `getBoundingClientRect()` и переносит координаты в группы Konva. Разметка описывается одним JSX-деревом.
+Рабочий прототип раскладки для React Konva: браузер рассчитывает Flex и Grid в HTML, библиотека измеряет элементы через `getBoundingClientRect()` и переносит геометрию в Konva. Разметка описывается одним JSX-деревом; камера, отрисовка видимой области и редактирование текста работают поверх сохранённой модели.
 
 ## Запуск
 
@@ -35,12 +35,15 @@ import type { LayoutCanvasHandle, LayoutNode } from './lib';
 export function Example() {
   const canvas = useRef<LayoutCanvasHandle>(null);
   const [tree, setTree] = useState<LayoutNode[]>([]);
+  const [description, setDescription] = useState(
+    'Координаты и размеры поступают в Konva из HTML.',
+  );
 
   return <>
     <button onClick={() => canvas.current?.remeasure()}>
       Пересчитать layout
     </button>
-    <LayoutCanvas ref={canvas} width={600} height={300} onLayout={setTree}>
+    <LayoutCanvas ref={canvas} width={600} height={300} panZoom onLayout={setTree}>
       <Row id="root" width="100%" height="100%" padding={24}
         gap={16} alignItems="center">
         <Box id="preview" data-testid="preview" width={120} height={100}
@@ -52,7 +55,7 @@ export function Example() {
           <LayoutText id="title" text="Браузер считает размеры"
             fontFamily="Arial" fontSize={20} fontStyle="bold" />
           <LayoutText id="description" width="100%"
-            text="Координаты и размеры поступают в Konva из HTML."
+            text={description} editable onTextChange={setDescription}
             fontFamily="Arial" fontSize={14} lineHeight={1.5} />
         </Col>
       </Row>
@@ -68,7 +71,7 @@ export function Example() {
 
 | Компонент | Назначение |
 | --- | --- |
-| `LayoutCanvas` | Размер canvas: `width`, `height`; отладка: `debug`; результат: `onLayout`; также `ref`, `style`, `className`. |
+| `LayoutCanvas` | Размеры `width`, `height`; `debug`, `panZoom`, `performance`; события `onLayout`, `onMeasure`, `onRenderStats`, `onViewChange`; также `ref`, `style`, `className`. |
 | `Flex` | CSS Flexbox; направление задаётся через `direction`. |
 | `Row` | Flexbox с направлением `row`. |
 | `Col` | Flexbox с направлением `column`. |
@@ -78,9 +81,62 @@ export function Example() {
 
 Общие свойства: `id`, `data-testid`, `children`, `style`, размеры (`width`, `height`, `minWidth`, `maxWidth`, `minHeight`, `maxHeight`), `padding`, `gap`, `rowGap`, `columnGap`, `alignItems`, `justifyContent`, `alignSelf`, `flexGrow`, `flexShrink`, `flexBasis`, `flexWrap`, `gridTemplateColumns`, `gridTemplateRows`. Числовые размеры задаются в CSS-пикселях; допустимы и CSS-значения вроде `"100%"`.
 
-Для оформления Konva-контейнера используются `fill`, `stroke`, `strokeWidth`, `cornerRadius`. `onClick` задаёт обработчик нажатия. Дополнительные CSS-свойства раскладки можно передавать через `style`.
+Для оформления Konva-контейнера используются `fill`, `stroke`, `strokeWidth`, `cornerRadius`. События: `onClick`, `onDblClick`, `onDblTap`; `listening={false}` отключает взаимодействие. Дополнительные CSS-свойства раскладки можно передавать через `style`.
 
-У `LayoutText` есть обязательный `text` и свойства `fontSize`, `fontFamily`, `fontStyle` (`"bold"`, `"italic"`, `"bold italic"`), `lineHeight`, `color`, `align`. `lineHeight` — множитель размера шрифта, например `1.5`.
+У `LayoutText` есть обязательный `text` и свойства `fontSize`, `fontFamily`, `fontStyle` (`"bold"`, `"italic"`, `"bold italic"`), `lineHeight`, `color`, `align`, `wrap` (`"word"`, `"char"`, `"none"`). `lineHeight` — множитель размера шрифта, например `1.5`.
+
+## Камера и редактирование
+
+При `panZoom` колесо масштабирует сцену относительно курсора. Перетаскивание фона, средней кнопкой или с зажатым пробелом двигает камеру; на сенсорном экране доступны pan и pinch. Камера меняет трансформацию Konva без нового HTML-измерения.
+
+`LayoutText editable onTextChange={setText}` открывает нативный `textarea` двойным кликом или двойным тапом. Поле получает фокус, выделяет текст и сохраняет положение при pan/zoom. Enter добавляет строку; Cmd/Ctrl+Enter и потеря фокуса сохраняют, Escape отменяет. После закрытия поле удаляется из DOM. Значение остаётся управляемым через `text`; доступны `onEditStart` и `onEditEnd(saved)`.
+
+Методы `LayoutCanvasHandle` через `ref`:
+
+| Метод | Назначение |
+| --- | --- |
+| `getStage()` | Текущий `Konva.Stage` или `null`. |
+| `getView()` / `setView({ x?, y?, scale? })` | Чтение и изменение камеры; `setView` сохраняет согласованность отрисовки и culling. |
+| `getLayout(id)` / `getMetrics()` | Последняя геометрия элемента и метрики измерения. |
+| `invalidate(id?)` / `remeasure(id?)` | Запросить измерение ближайшего `layoutRoot`; без `id` — полный пересчёт с обновлением CSS-контекста. |
+
+Хук `useLayout()` внутри `LayoutCanvas` предоставляет `invalidate`, `getLayout` и `getMetrics`, в том числе компонентам в отсоединённом HTML-дереве. `onMeasure` сообщает `scope` (`full`, `local`, `visual`), `measuredNodes`, `measuredRoots`, `durationMs`, `templateHits`, `templateMisses`, `revision`. `onRenderStats` сообщает видимые и общие корни, число групп и фигур, активные кеши и их `cacheBytes`, состояние `lod`.
+
+`lodLevel` различает `full`, `labels` и `minimal`. Ниже масштаба `.12` силуэты одинакового стиля рисуются пакетно; двойной клик/тап возвращает детальную ноду. Для прозрачных или пересекающихся силуэтов сохраняется порядок отдельных заливок.
+
+## Локальные измерения и производительность
+
+`layoutRoot` отмечает независимую карточку. Для узлов графа удобно задавать внешнюю позицию явно, сохраняя Flex/Grid внутри:
+
+```tsx
+<Col id="card-1" layoutRoot layoutTemplate="card-v1" lodLabel="Node 1"
+  width={240} minHeight={180} padding={12} gap={8}
+  style={{ position: 'absolute', left: 20, top: 20 }}>
+  <LayoutText text={description} editable onTextChange={setDescription} />
+</Col>
+```
+
+Изменение описания может пересчитать только эту карточку и изменить её высоту. В обычном потоке Flex/Grid изменение внешних размеров влияет на соседей, поэтому движок переходит к полному измерению. Полный пересчёт также используется при недостаточном контексте, структурных CSS-селекторах (`:nth-child`, соседние элементы, `:has`), ограничениях позиционирования и недоступных для проверки внешних таблицах стилей.
+
+`layoutTemplate` — явное включение повторного использования геометрии для одинаковых карточек одного шаблона. Подпись учитывает структуру, свойства, содержимое, шрифты и CSS-контекст. Используйте общий namespace только для карточек с одинаковыми правилами раскладки; собственный CSS по `id` или позиции среди соседей может требовать разных шаблонов. Без `layoutTemplate` вычисленные стили разных элементов не объединяются.
+
+Оптимизации включены по умолчанию. Их можно настроить через `performance`:
+
+```tsx
+<LayoutCanvas width={800} height={600} performance={{
+  enabled: true,
+  compact: true,       // убирает промежуточные группы без собственного поведения
+  cull: true,          // монтирует видимые корни с запасом overscan
+  overscan: 144,       // CSS-пиксели viewport
+  cache: true,
+  cacheBudgetMB: 32,   // общий бюджет кешей сложных карточек
+  cachePixelRatio: 1,
+  lodScale: 0.3,       // ниже этого масштаба показываются простые карточки с lodLabel
+  pixelRatio: 1,       // плотность canvas; для более чёткой картинки можно увеличить
+}}>{children}</LayoutCanvas>
+```
+
+На корне карточки `cache={false}` запрещает кеш, а `cache={true}` включает его и для простой карточки в пределах бюджета. `performance={{ enabled: false }}` отключает эти оптимизации для сравнения. В модели сохраняются все элементы, включая находящиеся за viewport. Для полной геометрии используйте `getLayout(id)`: вне viewport canvas-объект может отсутствовать, а в минимальном LOD группы служат пустыми metadata-контейнерами.
 
 ## Дерево измерений
 
@@ -107,13 +163,13 @@ export function Example() {
 
 Первое измерение выполняется после монтирования. На время расчёта HTML-дерево добавляется в документ с `opacity: 0`. После измерения весь контейнер раскладки удаляется из документа; Konva продолжает рисовать по сохранённому дереву координат.
 
-В состоянии `idle` HTML-узлов раскладки и их `data-testid` в документе нет. Компоненты React сохраняют состояние: их DOM-поддерево хранится в отсоединённом контейнере portal. При изменении JSX и свойств, размера окна или загрузке шрифтов тот же контейнер временно добавляется для нового измерения и снова удаляется. Актуальные размеры доступны через `onLayout`; для внешних изменений CSS можно вызвать `ref.current?.remeasure()`.
+В состоянии `idle` HTML-узлов раскладки и их `data-testid` в документе нет. Компоненты React сохраняют состояние: их DOM-поддерево хранится в отсоединённом контейнере portal. Это дерево и состояние продолжают занимать память. При изменении JSX и свойств, размера окна или загрузке шрифтов контейнер либо отдельная карточка временно добавляется для измерения и снова удаляется. Актуальные размеры доступны через `onLayout` и `getLayout`; после внешних изменений CSS можно вызвать `ref.current?.remeasure()`.
 
 `debug={true}` оставляет HTML-дерево в документе и показывает его границы и подписи поверх canvas. В этом режиме элементы доступны через `data-testid`. Состояние можно посмотреть на контейнере canvas в DevTools по атрибуту `data-layout-state`: `measuring`, `idle` или `debug`.
 
 ## Что посмотреть в демо
 
-Скриншоты: [нода](docs/screenshots/node.png), [layout-слой](docs/screenshots/layout-overlay.png), [Grid](docs/screenshots/grid.png).
+Скриншоты: [редактор description](docs/screenshots/optimized-editor.png), [оптимизированная сцена](docs/screenshots/optimized-1000.png), [LOD](docs/screenshots/optimized-lod.png). Исходные примеры: [нода](docs/screenshots/node.png), [layout-слой](docs/screenshots/layout-overlay.png), [Grid](docs/screenshots/grid.png).
 
 ![Пример ноды на canvas](docs/screenshots/node.png)
 
@@ -127,9 +183,9 @@ export function Example() {
 
 ## Стресс-сцена
 
-Откройте `/?stress=1`, чтобы запустить сцену с 1000 сложных нод. Для замеров используйте `npm run build` и `npm run preview`: режим разработки добавляет собственные накладные расходы.
+Откройте `/?stress=1`, чтобы запустить 1000 независимо расположенных карточек с Flex внутри. Режимы Baseline и Optimized используют одну сцену, viewport и плотность canvas. Доступны монтаж, resize, повторное измерение, редактирование description, pan/zoom и обзор всех карточек с LOD. Модель содержит все 1000 карточек; число смонтированных Konva-объектов зависит от режима и камеры.
 
-На Apple M5 в production-сборке: первый монтаж **588,8 мс**, медиана пяти повторных монтажей **490,9 мс**, resize **482,6–518 мс**. Сцена содержит 51 001 объект Konva. [Методика и все результаты](docs/performance.md) · [скриншот сцены](docs/screenshots/stress-1000.png).
+Для замеров используйте `npm run build` и `npm run preview`: режим разработки добавляет собственные накладные расходы. [Методика и результаты текущего сравнения](docs/performance-optimized.md). [Исторические замеры](docs/performance.md) относятся к прежней Grid-сцене с другим составом объектов.
 
 ## Ограничения прототипа
 
