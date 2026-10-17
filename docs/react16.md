@@ -153,6 +153,15 @@ npm run dev:react16
 
 `npm run build:react16-demo` собирает пример, `npm run pack:react16` создаёт устанавливаемый архив. Пример находится в [`packages/react16/example`](../packages/react16/example); `?count=1000` включает тысячу нод. Это отдельный React 16 fixture. Результаты FPS современной React 19 сцены не являются замерами этой сборки.
 
+Для сравнения производительности используется другой entrypoint: [`packages/react16/stress`](../packages/react16/stress) импортирует ту же свободную сцену с 35 элементами на ноду, что и React 19:
+
+```sh
+npm run build:react16-stress
+npx vite preview --config vite.react16-stress.config.ts --host 127.0.0.1 --port 4184
+```
+
+Откройте `http://127.0.0.1:4184/?nodes=1&benchmark=1`. Это production-сборка с общим API `window.freeNodes.benchmark`, фиксированным Stage 1400 × 760 и приложенческим редактором текста. Native drag-обработчики примера явно группируют связанные изменения state через `unstable_batchedUpdates` в обоих стеках. [Протокол, 90 прогонов и сравнение](react16-vs-react19-stress.md).
+
 ## Проверка совместимости
 
 Для React/ReactDOM 16.14.0 подтверждены чистый `npm install`, `npm ls` и повторный `npm ci` с корневым override выше, без peer-флагов. Результаты проверки этой связки записываются отдельно: [react16-16.14-verification.json](react16-16.14-verification.json).
@@ -165,6 +174,6 @@ Native drag дал один `dragstart` и один `dragend`, сохранил 
 
 Предыдущая сборка `0.6.2-react16.0` отдельно проверялась с runtime React/ReactDOM 16.13.1: TypeScript 4.9.5 в strict-режиме с `skipLibCheck: false`, `@types/react@16.14.70`, `@types/react-dom@16.9.25`, одна и 1000 нод, локальный relayout, zoom 3%, native drag с сохранением кеша, контексты, refs и unmount/remount. Это исторические результаты другой runtime-связки: [react16-verification.json](react16-verification.json). Они сохранены без изменений и не подменяют новую проверку 16.14.0.
 
-Это проверка совместимости, без замера FPS. Нода React 16 примера содержит 17 измеряемых элементов и отличается от современной стресс-ноды с 35 элементами; результаты их производительности нельзя считать взаимозаменяемыми.
+Эти проверки совместимости не измеряют FPS. Нода простого React 16 примера содержит 17 измеряемых элементов и отличается от общей стресс-ноды с 35 элементами. Свежие парные замеры общей сцены представлены в [отдельном отчёте](react16-vs-react19-stress.md).
 
 Ограничение Konva 8: у `Text` нет современного свойства `direction`. Эквивалентность RTL-поведения с Konva 10 не гарантируется.

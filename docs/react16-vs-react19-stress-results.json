@@ -1,0 +1,3862 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "14f556a17a3d5289f46112ac08ce061393091016",
+  "protocolByCpu": {
+    "1": {
+      "sourceCommit": "14f556a17a3d5289f46112ac08ce061393091016",
+      "counts": {
+        "nodes": 1000,
+        "modelElements": 35001
+      },
+      "browserViewport": {
+        "width": 1600,
+        "height": 1000,
+        "devicePixelRatio": 2
+      },
+      "stageViewport": {
+        "width": 1400,
+        "height": 760
+      },
+      "cpuFactors": [1, 4, 6],
+      "repetitions": 3,
+      "warmupMs": 1000,
+      "durationMs": 5000,
+      "overviewView": {
+        "x": 36,
+        "y": 60,
+        "scale": 0.03
+      },
+      "mountViews": {
+        "mount100": {
+          "x": 0,
+          "y": 0,
+          "scale": 1
+        },
+        "mount3": {
+          "x": 36,
+          "y": 60,
+          "scale": 0.03
+        }
+      },
+      "panAmplitude": {
+        "x": 100,
+        "y": 15
+      },
+      "zoomRange": {
+        "min": 0.025,
+        "max": 0.035
+      },
+      "dragTargetId": "free-node-0168",
+      "dragAmplitude": {
+        "x": 90,
+        "y": 50
+      },
+      "runtimeOrder": "Per CPU and repetition, react19/react16 or reverse according to (cpuIndex + repetition - 1) parity.",
+      "scenarioOrder": "mount100, mount3, then drag/pan/zoom rotated by repetition; each interaction uses a fresh mount.",
+      "assets": "Decoded identical JPEG and document.fonts.ready; existing Stage, freshly mounted Layout; auto scene completed before each runtime block.",
+      "timingClock": "Consistent performance.now timestamps and per-frame draw flags; no dropped/trimmed first interval.",
+      "batchedNativeState": true,
+      "hardware": {
+        "chip": "Apple M5",
+        "logicalCpus": 10,
+        "ramBytes": 25769803776
+      },
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+      "stacks": {
+        "react16": {
+          "react": "16.14.0",
+          "react-dom": "16.14.0",
+          "react-konva": "16.13.0-6",
+          "konva": "8.4.3"
+        },
+        "react19": {
+          "react": "19.3.1",
+          "react-dom": "19.3.1",
+          "react-konva": "19.3.2",
+          "konva": "10.9.0"
+        }
+      },
+      "limitations": "Full supported stack comparison, not an isolated React-major experiment; CPU slowdown does not simulate a weak GPU; JS completed-draw pacing is not physical GPU presentation."
+    },
+    "4": {
+      "sourceCommit": "14f556a17a3d5289f46112ac08ce061393091016",
+      "counts": {
+        "nodes": 1000,
+        "modelElements": 35001
+      },
+      "browserViewport": {
+        "width": 1600,
+        "height": 1000,
+        "devicePixelRatio": 2
+      },
+      "stageViewport": {
+        "width": 1400,
+        "height": 760
+      },
+      "cpuFactors": [1, 4, 6],
+      "repetitions": 3,
+      "warmupMs": 1000,
+      "durationMs": 5000,
+      "overviewView": {
+        "x": 36,
+        "y": 60,
+        "scale": 0.03
+      },
+      "mountViews": {
+        "mount100": {
+          "x": 0,
+          "y": 0,
+          "scale": 1
+        },
+        "mount3": {
+          "x": 36,
+          "y": 60,
+          "scale": 0.03
+        }
+      },
+      "panAmplitude": {
+        "x": 100,
+        "y": 15
+      },
+      "zoomRange": {
+        "min": 0.025,
+        "max": 0.035
+      },
+      "dragTargetId": "free-node-0168",
+      "dragAmplitude": {
+        "x": 90,
+        "y": 50
+      },
+      "runtimeOrder": "Per CPU and repetition, react19/react16 or reverse according to (cpuIndex + repetition - 1) parity.",
+      "scenarioOrder": "mount100, mount3, then drag/pan/zoom rotated by repetition; each interaction uses a fresh mount.",
+      "assets": "Decoded identical JPEG and document.fonts.ready; existing Stage, freshly mounted Layout; auto scene completed before each runtime block.",
+      "timingClock": "Consistent performance.now timestamps and per-frame draw flags; no dropped/trimmed first interval.",
+      "batchedNativeState": true,
+      "hardware": {
+        "chip": "Apple M5",
+        "logicalCpus": 10,
+        "ramBytes": 25769803776
+      },
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+      "stacks": {
+        "react16": {
+          "react": "16.14.0",
+          "react-dom": "16.14.0",
+          "react-konva": "16.13.0-6",
+          "konva": "8.4.3"
+        },
+        "react19": {
+          "react": "19.3.1",
+          "react-dom": "19.3.1",
+          "react-konva": "19.3.2",
+          "konva": "10.9.0"
+        }
+      },
+      "limitations": "Full supported stack comparison, not an isolated React-major experiment; CPU slowdown does not simulate a weak GPU; JS completed-draw pacing is not physical GPU presentation."
+    },
+    "6": {
+      "sourceCommit": "14f556a17a3d5289f46112ac08ce061393091016",
+      "counts": {
+        "nodes": 1000,
+        "modelElements": 35001
+      },
+      "browserViewport": {
+        "width": 1600,
+        "height": 1000,
+        "devicePixelRatio": 2
+      },
+      "stageViewport": {
+        "width": 1400,
+        "height": 760
+      },
+      "cpuFactors": [1, 4, 6],
+      "repetitions": 3,
+      "warmupMs": 1000,
+      "durationMs": 5000,
+      "overviewView": {
+        "x": 36,
+        "y": 60,
+        "scale": 0.03
+      },
+      "mountViews": {
+        "mount100": {
+          "x": 0,
+          "y": 0,
+          "scale": 1
+        },
+        "mount3": {
+          "x": 36,
+          "y": 60,
+          "scale": 0.03
+        }
+      },
+      "panAmplitude": {
+        "x": 100,
+        "y": 15
+      },
+      "zoomRange": {
+        "min": 0.025,
+        "max": 0.035
+      },
+      "dragTargetId": "free-node-0168",
+      "dragAmplitude": {
+        "x": 90,
+        "y": 50
+      },
+      "runtimeOrder": "Per CPU and repetition, react19/react16 or reverse according to (cpuIndex + repetition - 1) parity.",
+      "scenarioOrder": "mount100, mount3, then drag/pan/zoom rotated by repetition; each interaction uses a fresh mount.",
+      "assets": "Decoded identical JPEG and document.fonts.ready; existing Stage, freshly mounted Layout; auto scene completed before each runtime block.",
+      "timingClock": "Consistent performance.now timestamps and per-frame draw flags; no dropped/trimmed first interval.",
+      "batchedNativeState": true,
+      "hardware": {
+        "chip": "Apple M5",
+        "logicalCpus": 10,
+        "ramBytes": 25769803776
+      },
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+      "stacks": {
+        "react16": {
+          "react": "16.14.0",
+          "react-dom": "16.14.0",
+          "react-konva": "16.13.0-6",
+          "konva": "8.4.3"
+        },
+        "react19": {
+          "react": "19.3.1",
+          "react-dom": "19.3.1",
+          "react-konva": "19.3.2",
+          "konva": "10.9.0"
+        }
+      },
+      "limitations": "Full supported stack comparison, not an isolated React-major experiment; CPU slowdown does not simulate a weak GPU; JS completed-draw pacing is not physical GPU presentation."
+    }
+  },
+  "rawFiles": [
+    {
+      "path": "docs/benchmarks/react16-vs-react19/cpu1.json",
+      "rows": 30,
+      "sha256": "87c77f1fa8b387b55d40c9a119f5e5c0c4d0fe197dc4d8b15c9b6361f5e05e2f"
+    },
+    {
+      "path": "docs/benchmarks/react16-vs-react19/cpu4.json",
+      "rows": 30,
+      "sha256": "2d4551feaf30489d73a766e8111524f5b8b5cfe57668cc2fee8a072d80dd3385"
+    },
+    {
+      "path": "docs/benchmarks/react16-vs-react19/cpu6.json",
+      "rows": 30,
+      "sha256": "e51f1f6331f12b1565893c3bdc1df074d5db3eade3ade3d92f9ad29d6c7c1c0d"
+    }
+  ],
+  "validation": {
+    "rows": 90,
+    "interactions": 54,
+    "nativeDrags": 18,
+    "allPassed": true,
+    "clock": "performance.now",
+    "discardedIntervals": 0,
+    "percentile": "nearest-rank",
+    "cacheAccounting": "reportedMaxCacheBytes is SDK-reported, not actual canvas memory; native parity spot-check is separate"
+  },
+  "groups": [
+    {
+      "runtime": "react16",
+      "cpu": 1,
+      "scenario": "mount100",
+      "runs": 3,
+      "metrics": {
+        "mountToLayoutMs": {
+          "runsWithValue": 3,
+          "median": 403.8,
+          "min": 397,
+          "max": 421
+        },
+        "canvasDrawMs": {
+          "runsWithValue": 3,
+          "median": 0.1,
+          "min": 0.1,
+          "max": 0.2
+        },
+        "mountToCompletedDrawMs": {
+          "runsWithValue": 3,
+          "median": 414.3,
+          "min": 403.2,
+          "max": 431.2
+        },
+        "totalToCanvasFrameMs": {
+          "runsWithValue": 3,
+          "median": 425.3,
+          "min": 407.9,
+          "max": 440.2
+        },
+        "validationMs": {
+          "runsWithValue": 3,
+          "median": 1.1,
+          "min": 1,
+          "max": 1.1
+        }
+      }
+    },
+    {
+      "runtime": "react16",
+      "cpu": 1,
+      "scenario": "mount3",
+      "runs": 3,
+      "metrics": {
+        "mountToLayoutMs": {
+          "runsWithValue": 3,
+          "median": 1486.4,
+          "min": 1433.9,
+          "max": 1510.9
+        },
+        "canvasDrawMs": {
+          "runsWithValue": 3,
+          "median": 5.2,
+          "min": 5,
+          "max": 6.1
+        },
+        "mountToCompletedDrawMs": {
+          "runsWithValue": 3,
+          "median": 1590.6,
+          "min": 1526.5,
+          "max": 1601.9
+        },
+        "totalToCanvasFrameMs": {
+          "runsWithValue": 3,
+          "median": 1629.2,
+          "min": 1573.8,
+          "max": 1644.4
+        },
+        "validationMs": {
+          "runsWithValue": 3,
+          "median": 36.1,
+          "min": 33.9,
+          "max": 36.1
+        }
+      }
+    },
+    {
+      "runtime": "react16",
+      "cpu": 1,
+      "scenario": "drag3",
+      "runs": 3,
+      "metrics": {
+        "mountToLayoutMs": {
+          "runsWithValue": 3,
+          "median": 1628.2,
+          "min": 1477.9,
+          "max": 2502.2
+        },
+        "canvasDrawMs": {
+          "runsWithValue": 3,
+          "median": 4.7,
+          "min": 4.7,
+          "max": 4.8
+        },
+        "mountToCompletedDrawMs": {
+          "runsWithValue": 3,
+          "median": 1722.4,
+          "min": 1557.4,
+          "max": 2606.4
+        },
+        "totalToCanvasFrameMs": {
+          "runsWithValue": 3,
+          "median": 1765.6,
+          "min": 1604.7,
+          "max": 2657.1
+        },
+        "validationMs": {
+          "runsWithValue": 3,
+          "median": 41.5,
+          "min": 38.2,
+          "max": 42.1
+        },
+        "renderedFps": {
+          "runsWithValue": 3,
+          "median": 60.01036724009361,
+          "min": 60.00797448165869,
+          "max": 60.0319106501795
+        },
+        "fps": {
+          "runsWithValue": 3,
+          "median": 60.01036724009361,
+          "min": 60.00797448165869,
+          "max": 60.0319106501795
+        },
+        "p95Ms": {
+          "runsWithValue": 3,
+          "median": 17.5,
+          "min": 17.399999856948853,
+          "max": 17.5
+        },
+        "p99Ms": {
+          "runsWithValue": 3,
+          "median": 17.600000143051147,
+          "min": 17.59999990463257,
+          "max": 17.700000047683716
+        },
+        "maxFrameMs": {
+          "runsWithValue": 3,
+          "median": 17.799999952316284,
+          "min": 17.699999809265137,
+          "max": 17.799999952316284
+        },
+        "durationMs": {
+          "runsWithValue": 3,
+          "median": 5015.799999952316,
+          "min": 5014,
+          "max": 5016
+        },
+        "frameCount": {
+          "runsWithValue": 3,
+          "median": 301,
+          "min": 301,
+          "max": 301
+        },
+        "renderedFrameCount": {
+          "runsWithValue": 3,
+          "median": 301,
+          "min": 301,
+          "max": 301
+        },
+        "drawsPerSecond": {
+          "runsWithValue": 3,
+          "median": 60.01036724009361,
+          "min": 60.00797448165869,
+          "max": 60.0319106501795
+        },
+        "actualWarmupMs": {
+          "runsWithValue": 3,
+          "median": 1000.7000000476837,
+          "min": 1000.2000000476837,
+          "max": 1015.5
+        },
+        "warmupMaxFrameMs": {
+          "runsWithValue": 3,
+          "median": 25.799999952316284,
+          "min": 24.299999952316284,
+          "max": 31.09999990463257
+        },
+        "measurementStartRafOffsetMs": {
+          "runsWithValue": 3,
+          "median": 1.5000000476829882,
+          "min": 1.2999999523162842,
+          "max": 2.7000000953676135
+        },
+        "reportedMaxCacheBytes": {
+          "runsWithValue": 3,
+          "median": 6365250,
+          "min": 6365250,
+          "max": 6365250
+        },
+        "postRunTailMs": {
+          "runsWithValue": 3,
+          "median": 268.5,
+          "min": 198.09999990463257,
+          "max": 289.2999999523163
+        },
+        "sceneLayerDrawP50Ms": null,
+        "sceneLayerDrawP95Ms": null,
+        "sceneLayerDrawMaxMs": null,
+        "interactionLayerDrawP50Ms": {
+          "runsWithValue": 3,
+          "median": 0.09999990463256836,
+          "min": 0.09999990463256836,
+          "max": 0.09999990463256836
+        },
+        "interactionLayerDrawP95Ms": {
+          "runsWithValue": 3,
+          "median": 0.20000004768371582,
+          "min": 0.10000014305114746,
+          "max": 0.20000004768371582
+        },
+        "interactionLayerDrawMaxMs": {
+          "runsWithValue": 3,
+          "median": 0.39999985694885254,
+          "min": 0.2999999523162842,
+          "max": 0.40000009536743164
+        },
+        "startCallMs": {
+          "runsWithValue": 3,
+          "median": 1.2000000476837158,
+          "min": 1.0999999046325684,
+          "max": 1.2999999523162842
+        },
+        "firstDrawAfterStartMs": {
+          "runsWithValue": 3,
+          "median": 7.599999904632568,
+          "min": 5.099999904632568,
+          "max": 8.599999904632568
+        },
+        "releaseCallMs": {
+          "runsWithValue": 3,
+          "median": 240.20000004768372,
+          "min": 178.09999990463257,
+          "max": 268
+        },
+        "firstDrawAfterReleaseMs": {
+          "runsWithValue": 3,
+          "median": 0.09999990463256836,
+          "min": 0.09999990463256836,
+          "max": 0.20000004768371582
+        }
+      }
+    },
+    {
+      "runtime": "react16",
+      "cpu": 1,
+      "scenario": "pan3",
+      "runs": 3,
+      "metrics": {
+        "mountToLayoutMs": {
+          "runsWithValue": 3,
+          "median": 1479.6,
+          "min": 1461.1,
+          "max": 1479.9
+        },
+        "canvasDrawMs": {
+          "runsWithValue": 3,
+          "median": 4.9,
+          "min": 4.7,
+          "max": 5.2
+        },
+        "mountToCompletedDrawMs": {
+          "runsWithValue": 3,
+          "median": 1563.6,
+          "min": 1543.8,
+          "max": 1570.3
+        },
+        "totalToCanvasFrameMs": {
+          "runsWithValue": 3,
+          "median": 1605.9,
+          "min": 1594.1,
+          "max": 1620.8
+        },
+        "validationMs": {
+          "runsWithValue": 3,
+          "median": 45.6,
+          "min": 37.5,
+          "max": 46.1
+        },
+        "renderedFps": {
+          "runsWithValue": 3,
+          "median": 60.00199342170836,
+          "min": 60,
+          "max": 60.022333889397714
+        },
+        "fps": {
+          "runsWithValue": 3,
+          "median": 60.00199342170836,
+          "min": 60,
+          "max": 60.022333889397714
+        },
+        "p95Ms": {
+          "runsWithValue": 3,
+          "median": 18,
+          "min": 17.899999856948853,
+          "max": 18.40000009536743
+        },
+        "p99Ms": {
+          "runsWithValue": 3,
+          "median": 19.700000047683716,
+          "min": 19,
+          "max": 22.299999952316284
+        },
+        "maxFrameMs": {
+          "runsWithValue": 3,
+          "median": 28.5,
+          "min": 25.200000047683716,
+          "max": 32.799999952316284
+        },
+        "durationMs": {
+          "runsWithValue": 3,
+          "median": 5014.800000190735,
+          "min": 5000,
+          "max": 5016.5
+        },
+        "frameCount": {
+          "runsWithValue": 3,
+          "median": 301,
+          "min": 300,
+          "max": 301
+        },
+        "renderedFrameCount": {
+          "runsWithValue": 3,
+          "median": 301,
+          "min": 300,
+          "max": 301
+        },
+        "drawsPerSecond": {
+          "runsWithValue": 3,
+          "median": 120.00398684341673,
+          "min": 120,
+          "max": 120.04466777879543
+        },
+        "actualWarmupMs": {
+          "runsWithValue": 3,
+          "median": 1002.1999998092651,
+          "min": 1001.5999999046326,
+          "max": 1003
+        },
+        "warmupMaxFrameMs": {
+          "runsWithValue": 3,
+          "median": 19.700000047683716,
+          "min": 18.899999856948853,
+          "max": 21
+        },
+        "measurementStartRafOffsetMs": {
+          "runsWithValue": 3,
+          "median": 3.399999952314829,
+          "min": 2.600000047683352,
+          "max": 3.8999999046327503
+        },
+        "reportedMaxCacheBytes": {
+          "runsWithValue": 3,
+          "median": 6365250,
+          "min": 6365250,
+          "max": 6365250
+        },
+        "postRunTailMs": {
+          "runsWithValue": 3,
+          "median": 31.40000009536743,
+          "min": 30.700000047683716,
+          "max": 32.799999952316284
+        },
+        "sceneLayerDrawP50Ms": {
+          "runsWithValue": 3,
+          "median": 1.6999998092651367,
+          "min": 1.6999998092651367,
+          "max": 1.7999999523162842
+        },
+        "sceneLayerDrawP95Ms": {
+          "runsWithValue": 3,
+          "median": 3.299999952316284,
+          "min": 3.299999952316284,
+          "max": 4.6000001430511475
+        },
+        "sceneLayerDrawMaxMs": {
+          "runsWithValue": 3,
+          "median": 19.5,
+          "min": 13.799999952316284,
+          "max": 22.100000143051147
+        },
+        "interactionLayerDrawP50Ms": {
+          "runsWithValue": 3,
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "interactionLayerDrawP95Ms": {
+          "runsWithValue": 3,
+          "median": 0.09999990463256836,
+          "min": 0,
+          "max": 0.09999990463256836
+        },
+        "interactionLayerDrawMaxMs": {
+          "runsWithValue": 3,
+          "median": 0.10000014305114746,
+          "min": 0.10000014305114746,
+          "max": 0.10000014305114746
+        }
+      }
+    },
+    {
+      "runtime": "react16",
+      "cpu": 1,
+      "scenario": "zoom3",
+      "runs": 3,
+      "metrics": {
+        "mountToLayoutMs": {
+          "runsWithValue": 3,
+          "median": 1568.1,
+          "min": 1522.5,
+          "max": 2736.7
+        },
+        "canvasDrawMs": {
+          "runsWithValue": 3,
+          "median": 4.8,
+          "min": 4.5,
+          "max": 5.9
+        },
+        "mountToCompletedDrawMs": {
+          "runsWithValue": 3,
+          "median": 1660.6,
+          "min": 1630.9,
+          "max": 2910.8
+        },
+        "totalToCanvasFrameMs": {
+          "runsWithValue": 3,
+          "median": 1743.2,
+          "min": 1679.3,
+          "max": 3058.2
+        },
+        "validationMs": {
+          "runsWithValue": 3,
+          "median": 43.2,
+          "min": 36,
+          "max": 43.4
+        },
+        "renderedFps": {
+          "runsWithValue": 3,
+          "median": 46.568333534528854,
+          "min": 43.66638087493912,
+          "max": 59.616381543708286
+        },
+        "fps": {
+          "runsWithValue": 3,
+          "median": 46.568333534528854,
+          "min": 43.66638087493912,
+          "max": 59.616381543708286
+        },
+        "p95Ms": {
+          "runsWithValue": 3,
+          "median": 18.200000047683716,
+          "min": 17.5,
+          "max": 20
+        },
+        "p99Ms": {
+          "runsWithValue": 3,
+          "median": 97.20000004768372,
+          "min": 18.799999952316284,
+          "max": 110.70000004768372
+        },
+        "maxFrameMs": {
+          "runsWithValue": 3,
+          "median": 644,
+          "min": 68.5,
+          "max": 945.8000001907349
+        },
+        "durationMs": {
+          "runsWithValue": 3,
+          "median": 5015.299999952316,
+          "min": 5003.399999856949,
+          "max": 5015.400000095367
+        },
+        "frameCount": {
+          "runsWithValue": 3,
+          "median": 233,
+          "min": 219,
+          "max": 299
+        },
+        "renderedFrameCount": {
+          "runsWithValue": 3,
+          "median": 233,
+          "min": 219,
+          "max": 299
+        },
+        "drawsPerSecond": {
+          "runsWithValue": 3,
+          "median": 93.13666706905771,
+          "min": 87.33276174987824,
+          "max": 119.23276308741657
+        },
+        "actualWarmupMs": {
+          "runsWithValue": 3,
+          "median": 1519.8999998569489,
+          "min": 1505.5,
+          "max": 1534.2999999523163
+        },
+        "warmupMaxFrameMs": {
+          "runsWithValue": 3,
+          "median": 785,
+          "min": 779.1000001430511,
+          "max": 801.2000000476837
+        },
+        "measurementStartRafOffsetMs": {
+          "runsWithValue": 3,
+          "median": 770.9000000000015,
+          "min": 766.0000001430508,
+          "max": 787.2999999046333
+        },
+        "reportedMaxCacheBytes": {
+          "runsWithValue": 3,
+          "median": 25461000,
+          "min": 25461000,
+          "max": 25461000
+        },
+        "postRunTailMs": {
+          "runsWithValue": 3,
+          "median": 31.800000190734863,
+          "min": 31.5,
+          "max": 32.200000047683716
+        },
+        "sceneLayerDrawP50Ms": {
+          "runsWithValue": 3,
+          "median": 1.7000000476837158,
+          "min": 1.5,
+          "max": 1.7000000476837158
+        },
+        "sceneLayerDrawP95Ms": {
+          "runsWithValue": 3,
+          "median": 3.200000047683716,
+          "min": 2.200000047683716,
+          "max": 3.299999952316284
+        },
+        "sceneLayerDrawMaxMs": {
+          "runsWithValue": 3,
+          "median": 46.5,
+          "min": 4.599999904632568,
+          "max": 585.3999998569489
+        },
+        "interactionLayerDrawP50Ms": {
+          "runsWithValue": 3,
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "interactionLayerDrawP95Ms": {
+          "runsWithValue": 3,
+          "median": 0.09999990463256836,
+          "min": 0,
+          "max": 0.09999990463256836
+        },
+        "interactionLayerDrawMaxMs": {
+          "runsWithValue": 3,
+          "median": 0.10000014305114746,
+          "min": 0.10000014305114746,
+          "max": 0.10000014305114746
+        }
+      }
+    },
+    {
+      "runtime": "react16",
+      "cpu": 4,
+      "scenario": "mount100",
+      "runs": 3,
+      "metrics": {
+        "mountToLayoutMs": {
+          "runsWithValue": 3,
+          "median": 1766.1,
+          "min": 1660.8,
+          "max": 2176.7
+        },
+        "canvasDrawMs": {
+          "runsWithValue": 3,
+          "median": 0.2,
+          "min": 0.1,
+          "max": 0.4
+        },
+        "mountToCompletedDrawMs": {
+          "runsWithValue": 3,
+          "median": 1795.4,
+          "min": 1688.3,
+          "max": 2225.1
+        },
+        "totalToCanvasFrameMs": {
+          "runsWithValue": 3,
+          "median": 1815.7,
+          "min": 1711.1,
+          "max": 2256.5
+        },
+        "validationMs": {
+          "runsWithValue": 3,
+          "median": 4.7,
+          "min": 2.2,
+          "max": 5.3
+        }
+      }
+    },
+    {
+      "runtime": "react16",
+      "cpu": 4,
+      "scenario": "mount3",
+      "runs": 3,
+      "metrics": {
+        "mountToLayoutMs": {
+          "runsWithValue": 3,
+          "median": 6753.8,
+          "min": 6742.2,
+          "max": 8873.5
+        },
+        "canvasDrawMs": {
+          "runsWithValue": 3,
+          "median": 19.7,
+          "min": 17.6,
+          "max": 21.6
+        },
+        "mountToCompletedDrawMs": {
+          "runsWithValue": 3,
+          "median": 7142.1,
+          "min": 7107.2,
+          "max": 9284.6
+        },
+        "totalToCanvasFrameMs": {
+          "runsWithValue": 3,
+          "median": 7418.7,
+          "min": 7339.3,
+          "max": 9551.7
+        },
+        "validationMs": {
+          "runsWithValue": 3,
+          "median": 153.2,
+          "min": 153,
+          "max": 196
+        }
+      }
+    },
+    {
+      "runtime": "react16",
+      "cpu": 4,
+      "scenario": "drag3",
+      "runs": 3,
+      "metrics": {
+        "mountToLayoutMs": {
+          "runsWithValue": 3,
+          "median": 6858.9,
+          "min": 6453.7,
+          "max": 10053
+        },
+        "canvasDrawMs": {
+          "runsWithValue": 3,
+          "median": 20.7,
+          "min": 18.5,
+          "max": 26
+        },
+        "mountToCompletedDrawMs": {
+          "runsWithValue": 3,
+          "median": 7250.6,
+          "min": 6660.8,
+          "max": 10292.3
+        },
+        "totalToCanvasFrameMs": {
+          "runsWithValue": 3,
+          "median": 7504.4,
+          "min": 6929.5,
+          "max": 10560.1
+        },
+        "validationMs": {
+          "runsWithValue": 3,
+          "median": 146,
+          "min": 145.5,
+          "max": 162.8
+        },
+        "renderedFps": {
+          "runsWithValue": 3,
+          "median": 59.85515053684249,
+          "min": 59.44425604745496,
+          "max": 60.00677817541969
+        },
+        "fps": {
+          "runsWithValue": 3,
+          "median": 59.85515053684249,
+          "min": 59.44425604745496,
+          "max": 60.00677817541969
+        },
+        "p95Ms": {
+          "runsWithValue": 3,
+          "median": 19.899999856948853,
+          "min": 17.699999809265137,
+          "max": 20.100000143051147
+        },
+        "p99Ms": {
+          "runsWithValue": 3,
+          "median": 20.799999952316284,
+          "min": 18.100000143051147,
+          "max": 27.399999856948853
+        },
+        "maxFrameMs": {
+          "runsWithValue": 3,
+          "median": 44.700000047683716,
+          "min": 20.799999952316284,
+          "max": 62.40000009536743
+        },
+        "durationMs": {
+          "runsWithValue": 3,
+          "median": 5013.100000143051,
+          "min": 5012.099999904633,
+          "max": 5016.099999904633
+        },
+        "frameCount": {
+          "runsWithValue": 3,
+          "median": 300,
+          "min": 298,
+          "max": 301
+        },
+        "renderedFrameCount": {
+          "runsWithValue": 3,
+          "median": 300,
+          "min": 298,
+          "max": 301
+        },
+        "drawsPerSecond": {
+          "runsWithValue": 3,
+          "median": 59.85515053684249,
+          "min": 59.44425604745496,
+          "max": 60.00677817541969
+        },
+        "actualWarmupMs": {
+          "runsWithValue": 3,
+          "median": 1013.6000001430511,
+          "min": 1007.4000000953674,
+          "max": 1014
+        },
+        "warmupMaxFrameMs": {
+          "runsWithValue": 3,
+          "median": 138.80000019073486,
+          "min": 122.20000004768372,
+          "max": 194.29999995231628
+        },
+        "measurementStartRafOffsetMs": {
+          "runsWithValue": 3,
+          "median": 4.699999952310463,
+          "min": 2.1000000953681592,
+          "max": 6.700000047683716
+        },
+        "reportedMaxCacheBytes": {
+          "runsWithValue": 3,
+          "median": 6365250,
+          "min": 6365250,
+          "max": 6365250
+        },
+        "postRunTailMs": {
+          "runsWithValue": 3,
+          "median": 754.9000000953674,
+          "min": 656.9000000953674,
+          "max": 4841.399999856949
+        },
+        "sceneLayerDrawP50Ms": null,
+        "sceneLayerDrawP95Ms": null,
+        "sceneLayerDrawMaxMs": null,
+        "interactionLayerDrawP50Ms": {
+          "runsWithValue": 3,
+          "median": 0.09999990463256836,
+          "min": 0.09999990463256836,
+          "max": 0.10000014305114746
+        },
+        "interactionLayerDrawP95Ms": {
+          "runsWithValue": 3,
+          "median": 0.6000001430511475,
+          "min": 0.40000009536743164,
+          "max": 0.6000001430511475
+        },
+        "interactionLayerDrawMaxMs": {
+          "runsWithValue": 3,
+          "median": 1,
+          "min": 0.8999998569488525,
+          "max": 12.600000143051147
+        },
+        "startCallMs": {
+          "runsWithValue": 3,
+          "median": 5.099999904632568,
+          "min": 4.200000047683716,
+          "max": 6.300000190734863
+        },
+        "firstDrawAfterStartMs": {
+          "runsWithValue": 3,
+          "median": 61.200000047683716,
+          "min": 31.200000047683716,
+          "max": 124
+        },
+        "releaseCallMs": {
+          "runsWithValue": 3,
+          "median": 678.2000000476837,
+          "min": 571.0999999046326,
+          "max": 4410.300000190735
+        },
+        "firstDrawAfterReleaseMs": {
+          "runsWithValue": 3,
+          "median": 0.5999999046325684,
+          "min": 0.5,
+          "max": 1.1000001430511475
+        }
+      }
+    },
+    {
+      "runtime": "react16",
+      "cpu": 4,
+      "scenario": "pan3",
+      "runs": 3,
+      "metrics": {
+        "mountToLayoutMs": {
+          "runsWithValue": 3,
+          "median": 6867.5,
+          "min": 6579.2,
+          "max": 7837.2
+        },
+        "canvasDrawMs": {
+          "runsWithValue": 3,
+          "median": 23.3,
+          "min": 22.7,
+          "max": 27.4
+        },
+        "mountToCompletedDrawMs": {
+          "runsWithValue": 3,
+          "median": 7137.8,
+          "min": 6846.3,
+          "max": 8074.9
+        },
+        "totalToCanvasFrameMs": {
+          "runsWithValue": 3,
+          "median": 7444.5,
+          "min": 7117.7,
+          "max": 8364.3
+        },
+        "validationMs": {
+          "runsWithValue": 3,
+          "median": 178.6,
+          "min": 157.3,
+          "max": 187.3
+        },
+        "renderedFps": {
+          "runsWithValue": 3,
+          "median": 25.213921260615738,
+          "min": 24.46738676420469,
+          "max": 32.66151517534505
+        },
+        "fps": {
+          "runsWithValue": 3,
+          "median": 25.213921260615738,
+          "min": 24.46738676420469,
+          "max": 32.66151517534505
+        },
+        "p95Ms": {
+          "runsWithValue": 3,
+          "median": 51.59999990463257,
+          "min": 36.5,
+          "max": 54.5
+        },
+        "p99Ms": {
+          "runsWithValue": 3,
+          "median": 56.59999990463257,
+          "min": 42,
+          "max": 66.5
+        },
+        "maxFrameMs": {
+          "runsWithValue": 3,
+          "median": 62.90000009536743,
+          "min": 60.59999990463257,
+          "max": 68.90000009536743
+        },
+        "durationMs": {
+          "runsWithValue": 3,
+          "median": 5027.099999904633,
+          "min": 5021.200000047684,
+          "max": 5036.900000095367
+        },
+        "frameCount": {
+          "runsWithValue": 3,
+          "median": 127,
+          "min": 123,
+          "max": 164
+        },
+        "renderedFrameCount": {
+          "runsWithValue": 3,
+          "median": 127,
+          "min": 123,
+          "max": 164
+        },
+        "drawsPerSecond": {
+          "runsWithValue": 3,
+          "median": 50.427842521231476,
+          "min": 48.93477352840938,
+          "max": 65.3230303506901
+        },
+        "actualWarmupMs": {
+          "runsWithValue": 3,
+          "median": 1016.2999999523163,
+          "min": 1008.5999999046326,
+          "max": 1024.9000000953674
+        },
+        "warmupMaxFrameMs": {
+          "runsWithValue": 3,
+          "median": 75.70000004768372,
+          "min": 53.09999990463257,
+          "max": 101.70000004768372
+        },
+        "measurementStartRafOffsetMs": {
+          "runsWithValue": 3,
+          "median": 19.40000009536743,
+          "min": 19.299999952316284,
+          "max": 31.099999999998545
+        },
+        "reportedMaxCacheBytes": {
+          "runsWithValue": 3,
+          "median": 6365250,
+          "min": 6365250,
+          "max": 6365250
+        },
+        "postRunTailMs": {
+          "runsWithValue": 3,
+          "median": 38.700000047683716,
+          "min": 28.59999990463257,
+          "max": 67.5
+        },
+        "sceneLayerDrawP50Ms": {
+          "runsWithValue": 3,
+          "median": 11.5,
+          "min": 8.399999856948853,
+          "max": 11.5
+        },
+        "sceneLayerDrawP95Ms": {
+          "runsWithValue": 3,
+          "median": 19.40000009536743,
+          "min": 10.700000047683716,
+          "max": 22.59999990463257
+        },
+        "sceneLayerDrawMaxMs": {
+          "runsWithValue": 3,
+          "median": 31.799999952316284,
+          "min": 14.200000047683716,
+          "max": 38.09999990463257
+        },
+        "interactionLayerDrawP50Ms": {
+          "runsWithValue": 3,
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "interactionLayerDrawP95Ms": {
+          "runsWithValue": 3,
+          "median": 0.10000014305114746,
+          "min": 0.10000014305114746,
+          "max": 0.10000014305114746
+        },
+        "interactionLayerDrawMaxMs": {
+          "runsWithValue": 3,
+          "median": 0.7000000476837158,
+          "min": 0.7000000476837158,
+          "max": 0.7999999523162842
+        }
+      }
+    },
+    {
+      "runtime": "react16",
+      "cpu": 4,
+      "scenario": "zoom3",
+      "runs": 3,
+      "metrics": {
+        "mountToLayoutMs": {
+          "runsWithValue": 3,
+          "median": 6726.3,
+          "min": 6702.1,
+          "max": 7280.1
+        },
+        "canvasDrawMs": {
+          "runsWithValue": 3,
+          "median": 27.4,
+          "min": 20.7,
+          "max": 27.7
+        },
+        "mountToCompletedDrawMs": {
+          "runsWithValue": 3,
+          "median": 6975.7,
+          "min": 6955.8,
+          "max": 7754
+        },
+        "totalToCanvasFrameMs": {
+          "runsWithValue": 3,
+          "median": 7257.3,
+          "min": 7229.2,
+          "max": 8019.4
+        },
+        "validationMs": {
+          "runsWithValue": 3,
+          "median": 148.3,
+          "min": 137.5,
+          "max": 178.6
+        },
+        "renderedFps": {
+          "runsWithValue": 3,
+          "median": 21.994721266686238,
+          "min": 21.269828648065307,
+          "max": 23.139836425294234
+        },
+        "fps": {
+          "runsWithValue": 3,
+          "median": 21.994721266686238,
+          "min": 21.269828648065307,
+          "max": 23.139836425294234
+        },
+        "p95Ms": {
+          "runsWithValue": 3,
+          "median": 130.70000004768372,
+          "min": 58.59999990463257,
+          "max": 131.79999995231628
+        },
+        "p99Ms": {
+          "runsWithValue": 3,
+          "median": 134.59999990463257,
+          "min": 133.20000004768372,
+          "max": 137.30000019073486
+        },
+        "maxFrameMs": {
+          "runsWithValue": 3,
+          "median": 176,
+          "min": 151.40000009536743,
+          "max": 238.90000009536743
+        },
+        "durationMs": {
+          "runsWithValue": 3,
+          "median": 5013,
+          "min": 5001.200000047684,
+          "max": 5030.600000143051
+        },
+        "frameCount": {
+          "runsWithValue": 3,
+          "median": 110,
+          "min": 107,
+          "max": 116
+        },
+        "renderedFrameCount": {
+          "runsWithValue": 3,
+          "median": 110,
+          "min": 107,
+          "max": 116
+        },
+        "drawsPerSecond": {
+          "runsWithValue": 3,
+          "median": 43.989442533372475,
+          "min": 42.53965729613061,
+          "max": 46.27967285058847
+        },
+        "actualWarmupMs": {
+          "runsWithValue": 3,
+          "median": 8169.899999856949,
+          "min": 4031.5999999046326,
+          "max": 10569.799999952316
+        },
+        "warmupMaxFrameMs": {
+          "runsWithValue": 3,
+          "median": 7420.399999856949,
+          "min": 3284.7000000476837,
+          "max": 9838.100000143051
+        },
+        "measurementStartRafOffsetMs": {
+          "runsWithValue": 3,
+          "median": 7396,
+          "min": 3279.199999904631,
+          "max": 9824.899999904635
+        },
+        "reportedMaxCacheBytes": {
+          "runsWithValue": 3,
+          "median": 25461000,
+          "min": 25461000,
+          "max": 25461000
+        },
+        "postRunTailMs": {
+          "runsWithValue": 3,
+          "median": 28.299999952316284,
+          "min": 26.799999952316284,
+          "max": 29
+        },
+        "sceneLayerDrawP50Ms": {
+          "runsWithValue": 3,
+          "median": 7.900000095367432,
+          "min": 7.5,
+          "max": 10.599999904632568
+        },
+        "sceneLayerDrawP95Ms": {
+          "runsWithValue": 3,
+          "median": 9.900000095367432,
+          "min": 8.599999904632568,
+          "max": 18.399999856948853
+        },
+        "sceneLayerDrawMaxMs": {
+          "runsWithValue": 3,
+          "median": 14.299999952316284,
+          "min": 9.799999952316284,
+          "max": 29
+        },
+        "interactionLayerDrawP50Ms": {
+          "runsWithValue": 3,
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "interactionLayerDrawP95Ms": {
+          "runsWithValue": 3,
+          "median": 0.10000014305114746,
+          "min": 0.09999990463256836,
+          "max": 0.2999999523162842
+        },
+        "interactionLayerDrawMaxMs": {
+          "runsWithValue": 3,
+          "median": 0.7000000476837158,
+          "min": 0.20000004768371582,
+          "max": 1
+        }
+      }
+    },
+    {
+      "runtime": "react16",
+      "cpu": 6,
+      "scenario": "mount100",
+      "runs": 3,
+      "metrics": {
+        "mountToLayoutMs": {
+          "runsWithValue": 3,
+          "median": 2593.1,
+          "min": 2482.8,
+          "max": 2788
+        },
+        "canvasDrawMs": {
+          "runsWithValue": 3,
+          "median": 1.2,
+          "min": 0.8,
+          "max": 1.8
+        },
+        "mountToCompletedDrawMs": {
+          "runsWithValue": 3,
+          "median": 2635.9,
+          "min": 2543,
+          "max": 2824.6
+        },
+        "totalToCanvasFrameMs": {
+          "runsWithValue": 3,
+          "median": 2662.9,
+          "min": 2571.8,
+          "max": 2850
+        },
+        "validationMs": {
+          "runsWithValue": 3,
+          "median": 6.5,
+          "min": 6.5,
+          "max": 6.6
+        }
+      }
+    },
+    {
+      "runtime": "react16",
+      "cpu": 6,
+      "scenario": "mount3",
+      "runs": 3,
+      "metrics": {
+        "mountToLayoutMs": {
+          "runsWithValue": 3,
+          "median": 11000.5,
+          "min": 9974.3,
+          "max": 15536.6
+        },
+        "canvasDrawMs": {
+          "runsWithValue": 3,
+          "median": 33.3,
+          "min": 28.6,
+          "max": 33.6
+        },
+        "mountToCompletedDrawMs": {
+          "runsWithValue": 3,
+          "median": 11739.7,
+          "min": 10467.8,
+          "max": 16072.5
+        },
+        "totalToCanvasFrameMs": {
+          "runsWithValue": 3,
+          "median": 12119.1,
+          "min": 10810.8,
+          "max": 16436.7
+        },
+        "validationMs": {
+          "runsWithValue": 3,
+          "median": 237.1,
+          "min": 221.3,
+          "max": 252.1
+        }
+      }
+    },
+    {
+      "runtime": "react16",
+      "cpu": 6,
+      "scenario": "drag3",
+      "runs": 3,
+      "metrics": {
+        "mountToLayoutMs": {
+          "runsWithValue": 3,
+          "median": 9756,
+          "min": 9125.6,
+          "max": 14852.7
+        },
+        "canvasDrawMs": {
+          "runsWithValue": 3,
+          "median": 32.2,
+          "min": 28.8,
+          "max": 34.8
+        },
+        "mountToCompletedDrawMs": {
+          "runsWithValue": 3,
+          "median": 10205.6,
+          "min": 9387.2,
+          "max": 15421.2
+        },
+        "totalToCanvasFrameMs": {
+          "runsWithValue": 3,
+          "median": 10549.6,
+          "min": 9736.7,
+          "max": 15790
+        },
+        "validationMs": {
+          "runsWithValue": 3,
+          "median": 225.9,
+          "min": 218.8,
+          "max": 252
+        },
+        "renderedFps": {
+          "runsWithValue": 3,
+          "median": 48.37194427370518,
+          "min": 45.31119006789904,
+          "max": 53.59633393106196
+        },
+        "fps": {
+          "runsWithValue": 3,
+          "median": 48.37194427370518,
+          "min": 45.31119006789904,
+          "max": 53.59633393106196
+        },
+        "p95Ms": {
+          "runsWithValue": 3,
+          "median": 24.700000047683716,
+          "min": 22.700000047683716,
+          "max": 25.90000009536743
+        },
+        "p99Ms": {
+          "runsWithValue": 3,
+          "median": 35.200000047683716,
+          "min": 27.799999952316284,
+          "max": 114.10000014305115
+        },
+        "maxFrameMs": {
+          "runsWithValue": 3,
+          "median": 43,
+          "min": 36.09999990463257,
+          "max": 115
+        },
+        "durationMs": {
+          "runsWithValue": 3,
+          "median": 5009.799999952316,
+          "min": 5002.899999856949,
+          "max": 5019
+        },
+        "frameCount": {
+          "runsWithValue": 3,
+          "median": 242,
+          "min": 227,
+          "max": 269
+        },
+        "renderedFrameCount": {
+          "runsWithValue": 3,
+          "median": 242,
+          "min": 227,
+          "max": 269
+        },
+        "drawsPerSecond": {
+          "runsWithValue": 3,
+          "median": 48.37194427370518,
+          "min": 45.31119006789904,
+          "max": 53.59633393106196
+        },
+        "actualWarmupMs": {
+          "runsWithValue": 3,
+          "median": 1020.2999999523163,
+          "min": 1010.7000000476837,
+          "max": 1069.0999999046326
+        },
+        "warmupMaxFrameMs": {
+          "runsWithValue": 3,
+          "median": 246,
+          "min": 236.79999995231628,
+          "max": 259.2000000476837
+        },
+        "measurementStartRafOffsetMs": {
+          "runsWithValue": 3,
+          "median": 10.499999952313374,
+          "min": 8.19999999999709,
+          "max": 117.29999995231628
+        },
+        "reportedMaxCacheBytes": {
+          "runsWithValue": 3,
+          "median": 6365250,
+          "min": 6365250,
+          "max": 6365250
+        },
+        "postRunTailMs": {
+          "runsWithValue": 3,
+          "median": 944.0999999046326,
+          "min": 926.6000001430511,
+          "max": 1223.1000001430511
+        },
+        "sceneLayerDrawP50Ms": null,
+        "sceneLayerDrawP95Ms": null,
+        "sceneLayerDrawMaxMs": null,
+        "interactionLayerDrawP50Ms": {
+          "runsWithValue": 3,
+          "median": 0.09999990463256836,
+          "min": 0.09999990463256836,
+          "max": 0.10000014305114746
+        },
+        "interactionLayerDrawP95Ms": {
+          "runsWithValue": 3,
+          "median": 1.2000000476837158,
+          "min": 1.2000000476837158,
+          "max": 1.4000000953674316
+        },
+        "interactionLayerDrawMaxMs": {
+          "runsWithValue": 3,
+          "median": 1.7000000476837158,
+          "min": 1.7000000476837158,
+          "max": 1.8000001907348633
+        },
+        "startCallMs": {
+          "runsWithValue": 3,
+          "median": 6.8999998569488525,
+          "min": 6.8999998569488525,
+          "max": 9.799999952316284
+        },
+        "firstDrawAfterStartMs": {
+          "runsWithValue": 3,
+          "median": 141.70000004768372,
+          "min": 126.89999985694885,
+          "max": 142.09999990463257
+        },
+        "releaseCallMs": {
+          "runsWithValue": 3,
+          "median": 803.3000001907349,
+          "min": 790.2999999523163,
+          "max": 1096
+        },
+        "firstDrawAfterReleaseMs": {
+          "runsWithValue": 3,
+          "median": 0.20000004768371582,
+          "min": 0.09999990463256836,
+          "max": 1.3000001907348633
+        }
+      }
+    },
+    {
+      "runtime": "react16",
+      "cpu": 6,
+      "scenario": "pan3",
+      "runs": 3,
+      "metrics": {
+        "mountToLayoutMs": {
+          "runsWithValue": 3,
+          "median": 10000.2,
+          "min": 9322.2,
+          "max": 18575.8
+        },
+        "canvasDrawMs": {
+          "runsWithValue": 3,
+          "median": 41.4,
+          "min": 36.1,
+          "max": 42.3
+        },
+        "mountToCompletedDrawMs": {
+          "runsWithValue": 3,
+          "median": 10265.8,
+          "min": 9620.2,
+          "max": 19249.6
+        },
+        "totalToCanvasFrameMs": {
+          "runsWithValue": 3,
+          "median": 10609.4,
+          "min": 10070.3,
+          "max": 19767
+        },
+        "validationMs": {
+          "runsWithValue": 3,
+          "median": 316,
+          "min": 220.9,
+          "max": 393.8
+        },
+        "renderedFps": {
+          "runsWithValue": 3,
+          "median": 13.536648484832792,
+          "min": 13.212606381156501,
+          "max": 16.89323475666012
+        },
+        "fps": {
+          "runsWithValue": 3,
+          "median": 13.536648484832792,
+          "min": 13.212606381156501,
+          "max": 16.89323475666012
+        },
+        "p95Ms": {
+          "runsWithValue": 3,
+          "median": 112.19999980926514,
+          "min": 64,
+          "max": 158.29999995231628
+        },
+        "p99Ms": {
+          "runsWithValue": 3,
+          "median": 168,
+          "min": 82.40000009536743,
+          "max": 809
+        },
+        "maxFrameMs": {
+          "runsWithValue": 3,
+          "median": 168,
+          "min": 82.40000009536743,
+          "max": 809
+        },
+        "durationMs": {
+          "runsWithValue": 3,
+          "median": 5031.599999904633,
+          "min": 5023.400000095367,
+          "max": 5146.599999904633
+        },
+        "frameCount": {
+          "runsWithValue": 3,
+          "median": 68,
+          "min": 68,
+          "max": 85
+        },
+        "renderedFrameCount": {
+          "runsWithValue": 3,
+          "median": 68,
+          "min": 68,
+          "max": 85
+        },
+        "drawsPerSecond": {
+          "runsWithValue": 3,
+          "median": 27.073296969665584,
+          "min": 26.425212762313002,
+          "max": 33.78646951332024
+        },
+        "actualWarmupMs": {
+          "runsWithValue": 3,
+          "median": 1046.0999999046326,
+          "min": 1032.4000000953674,
+          "max": 1056.2000000476837
+        },
+        "warmupMaxFrameMs": {
+          "runsWithValue": 3,
+          "median": 108.90000009536743,
+          "min": 103.29999995231628,
+          "max": 172.79999995231628
+        },
+        "measurementStartRafOffsetMs": {
+          "runsWithValue": 3,
+          "median": 36.500000047686626,
+          "min": 30.60000004768517,
+          "max": 120.19999980926514
+        },
+        "reportedMaxCacheBytes": {
+          "runsWithValue": 3,
+          "median": 6365250,
+          "min": 6365250,
+          "max": 6365250
+        },
+        "postRunTailMs": {
+          "runsWithValue": 3,
+          "median": 55.799999952316284,
+          "min": 47.200000047683716,
+          "max": 62.5
+        },
+        "sceneLayerDrawP50Ms": {
+          "runsWithValue": 3,
+          "median": 11.900000095367432,
+          "min": 10.900000095367432,
+          "max": 13.099999904632568
+        },
+        "sceneLayerDrawP95Ms": {
+          "runsWithValue": 3,
+          "median": 20,
+          "min": 12.600000143051147,
+          "max": 54.10000014305115
+        },
+        "sceneLayerDrawMaxMs": {
+          "runsWithValue": 3,
+          "median": 35.60000014305115,
+          "min": 27.09999990463257,
+          "max": 336.7000000476837
+        },
+        "interactionLayerDrawP50Ms": {
+          "runsWithValue": 3,
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "interactionLayerDrawP95Ms": {
+          "runsWithValue": 3,
+          "median": 0.09999990463256836,
+          "min": 0,
+          "max": 0.10000014305114746
+        },
+        "interactionLayerDrawMaxMs": {
+          "runsWithValue": 3,
+          "median": 1.2000000476837158,
+          "min": 0,
+          "max": 1.5
+        }
+      }
+    },
+    {
+      "runtime": "react16",
+      "cpu": 6,
+      "scenario": "zoom3",
+      "runs": 3,
+      "metrics": {
+        "mountToLayoutMs": {
+          "runsWithValue": 3,
+          "median": 14310.4,
+          "min": 10332.2,
+          "max": 14520.6
+        },
+        "canvasDrawMs": {
+          "runsWithValue": 3,
+          "median": 32.1,
+          "min": 26.7,
+          "max": 37.4
+        },
+        "mountToCompletedDrawMs": {
+          "runsWithValue": 3,
+          "median": 14628.5,
+          "min": 11010,
+          "max": 15045.4
+        },
+        "totalToCanvasFrameMs": {
+          "runsWithValue": 3,
+          "median": 14963.7,
+          "min": 11375.3,
+          "max": 15474.1
+        },
+        "validationMs": {
+          "runsWithValue": 3,
+          "median": 245.3,
+          "min": 213.8,
+          "max": 293.2
+        },
+        "renderedFps": {
+          "runsWithValue": 3,
+          "median": 15.194226193756565,
+          "min": 13.114754098360656,
+          "max": 15.917863822070895
+        },
+        "fps": {
+          "runsWithValue": 3,
+          "median": 15.194226193756565,
+          "min": 13.114754098360656,
+          "max": 15.917863822070895
+        },
+        "p95Ms": {
+          "runsWithValue": 3,
+          "median": 154.19999980926514,
+          "min": 152.59999990463257,
+          "max": 212.20000004768372
+        },
+        "p99Ms": {
+          "runsWithValue": 3,
+          "median": 204.79999995231628,
+          "min": 191.80000019073486,
+          "max": 362.89999985694885
+        },
+        "maxFrameMs": {
+          "runsWithValue": 3,
+          "median": 204.79999995231628,
+          "min": 191.80000019073486,
+          "max": 362.89999985694885
+        },
+        "durationMs": {
+          "runsWithValue": 3,
+          "median": 5025.800000190735,
+          "min": 5001.900000095367,
+          "max": 5032.5
+        },
+        "frameCount": {
+          "runsWithValue": 3,
+          "median": 76,
+          "min": 66,
+          "max": 80
+        },
+        "renderedFrameCount": {
+          "runsWithValue": 3,
+          "median": 76,
+          "min": 66,
+          "max": 80
+        },
+        "drawsPerSecond": {
+          "runsWithValue": 3,
+          "median": 30.38845238751313,
+          "min": 26.229508196721312,
+          "max": 31.83572764414179
+        },
+        "actualWarmupMs": {
+          "runsWithValue": 3,
+          "median": 6197.699999809265,
+          "min": 5701.399999856949,
+          "max": 6715.599999904633
+        },
+        "warmupMaxFrameMs": {
+          "runsWithValue": 3,
+          "median": 5466.599999904633,
+          "min": 4940.899999856949,
+          "max": 5945.900000095367
+        },
+        "measurementStartRafOffsetMs": {
+          "runsWithValue": 3,
+          "median": 5447.799999856943,
+          "min": 4909.199999856952,
+          "max": 5913.899999952315
+        },
+        "reportedMaxCacheBytes": {
+          "runsWithValue": 3,
+          "median": 25461000,
+          "min": 25461000,
+          "max": 25461000
+        },
+        "postRunTailMs": {
+          "runsWithValue": 3,
+          "median": 51.10000014305115,
+          "min": 47.799999952316284,
+          "max": 53.89999985694885
+        },
+        "sceneLayerDrawP50Ms": {
+          "runsWithValue": 3,
+          "median": 11.399999856948853,
+          "min": 10.600000143051147,
+          "max": 13.399999856948853
+        },
+        "sceneLayerDrawP95Ms": {
+          "runsWithValue": 3,
+          "median": 13.900000095367432,
+          "min": 12.099999904632568,
+          "max": 16.59999990463257
+        },
+        "sceneLayerDrawMaxMs": {
+          "runsWithValue": 3,
+          "median": 16,
+          "min": 13.200000047683716,
+          "max": 29.40000009536743
+        },
+        "interactionLayerDrawP50Ms": {
+          "runsWithValue": 3,
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "interactionLayerDrawP95Ms": {
+          "runsWithValue": 3,
+          "median": 0.09999990463256836,
+          "min": 0.09999990463256836,
+          "max": 0.20000004768371582
+        },
+        "interactionLayerDrawMaxMs": {
+          "runsWithValue": 3,
+          "median": 1.2999999523162842,
+          "min": 0.9000000953674316,
+          "max": 1.5
+        }
+      }
+    },
+    {
+      "runtime": "react19",
+      "cpu": 1,
+      "scenario": "mount100",
+      "runs": 3,
+      "metrics": {
+        "mountToLayoutMs": {
+          "runsWithValue": 3,
+          "median": 355.7,
+          "min": 351.6,
+          "max": 512.2
+        },
+        "canvasDrawMs": {
+          "runsWithValue": 3,
+          "median": 4.6,
+          "min": 4.2,
+          "max": 14.9
+        },
+        "mountToCompletedDrawMs": {
+          "runsWithValue": 3,
+          "median": 377.9,
+          "min": 376.7,
+          "max": 593.2
+        },
+        "totalToCanvasFrameMs": {
+          "runsWithValue": 3,
+          "median": 390,
+          "min": 382.5,
+          "max": 600.4
+        },
+        "validationMs": {
+          "runsWithValue": 3,
+          "median": 1.3,
+          "min": 1.3,
+          "max": 1.7
+        }
+      }
+    },
+    {
+      "runtime": "react19",
+      "cpu": 1,
+      "scenario": "mount3",
+      "runs": 3,
+      "metrics": {
+        "mountToLayoutMs": {
+          "runsWithValue": 3,
+          "median": 352.4,
+          "min": 331.5,
+          "max": 409.3
+        },
+        "canvasDrawMs": {
+          "runsWithValue": 3,
+          "median": 219.9,
+          "min": 177.9,
+          "max": 251.3
+        },
+        "mountToCompletedDrawMs": {
+          "runsWithValue": 3,
+          "median": 1227.6,
+          "min": 1054.8,
+          "max": 1311
+        },
+        "totalToCanvasFrameMs": {
+          "runsWithValue": 3,
+          "median": 1265.8,
+          "min": 1092.9,
+          "max": 1349.2
+        },
+        "validationMs": {
+          "runsWithValue": 3,
+          "median": 32.3,
+          "min": 31.2,
+          "max": 33.6
+        }
+      }
+    },
+    {
+      "runtime": "react19",
+      "cpu": 1,
+      "scenario": "drag3",
+      "runs": 3,
+      "metrics": {
+        "mountToLayoutMs": {
+          "runsWithValue": 3,
+          "median": 353.9,
+          "min": 342.4,
+          "max": 470.3
+        },
+        "canvasDrawMs": {
+          "runsWithValue": 3,
+          "median": 188.1,
+          "min": 173,
+          "max": 189.7
+        },
+        "mountToCompletedDrawMs": {
+          "runsWithValue": 3,
+          "median": 1111.6,
+          "min": 1108.1,
+          "max": 1347.4
+        },
+        "totalToCanvasFrameMs": {
+          "runsWithValue": 3,
+          "median": 1148.1,
+          "min": 1145.4,
+          "max": 1384.3
+        },
+        "validationMs": {
+          "runsWithValue": 3,
+          "median": 31.6,
+          "min": 31.2,
+          "max": 31.7
+        },
+        "renderedFps": {
+          "runsWithValue": 3,
+          "median": 60.005581914026294,
+          "min": 60,
+          "max": 60.00917083559821
+        },
+        "fps": {
+          "runsWithValue": 3,
+          "median": 60.005581914026294,
+          "min": 60,
+          "max": 60.00917083559821
+        },
+        "p95Ms": {
+          "runsWithValue": 3,
+          "median": 17.40000009536743,
+          "min": 17.40000009536743,
+          "max": 17.5
+        },
+        "p99Ms": {
+          "runsWithValue": 3,
+          "median": 17.600000143051147,
+          "min": 17.5,
+          "max": 17.600000143051147
+        },
+        "maxFrameMs": {
+          "runsWithValue": 3,
+          "median": 17.700000047683716,
+          "min": 17.600000143051147,
+          "max": 17.700000047683716
+        },
+        "durationMs": {
+          "runsWithValue": 3,
+          "median": 5015.900000095367,
+          "min": 5000,
+          "max": 5016.200000047684
+        },
+        "frameCount": {
+          "runsWithValue": 3,
+          "median": 301,
+          "min": 300,
+          "max": 301
+        },
+        "renderedFrameCount": {
+          "runsWithValue": 3,
+          "median": 301,
+          "min": 300,
+          "max": 301
+        },
+        "drawsPerSecond": {
+          "runsWithValue": 3,
+          "median": 60.005581914026294,
+          "min": 60,
+          "max": 60.00917083559821
+        },
+        "actualWarmupMs": {
+          "runsWithValue": 3,
+          "median": 1016.5,
+          "min": 1000.6999998092651,
+          "max": 1016.5
+        },
+        "warmupMaxFrameMs": {
+          "runsWithValue": 3,
+          "median": 24,
+          "min": 23.199999809265137,
+          "max": 24.200000047683716
+        },
+        "measurementStartRafOffsetMs": {
+          "runsWithValue": 3,
+          "median": 1.3999999999996362,
+          "min": 1.0999999523155566,
+          "max": 1.7000000476837158
+        },
+        "reportedMaxCacheBytes": {
+          "runsWithValue": 3,
+          "median": 6000000,
+          "min": 6000000,
+          "max": 6000000
+        },
+        "postRunTailMs": {
+          "runsWithValue": 3,
+          "median": 279.7999999523163,
+          "min": 187.29999995231628,
+          "max": 807.9000000953674
+        },
+        "sceneLayerDrawP50Ms": null,
+        "sceneLayerDrawP95Ms": null,
+        "sceneLayerDrawMaxMs": null,
+        "interactionLayerDrawP50Ms": {
+          "runsWithValue": 3,
+          "median": 0.09999990463256836,
+          "min": 0.09999990463256836,
+          "max": 0.09999990463256836
+        },
+        "interactionLayerDrawP95Ms": {
+          "runsWithValue": 3,
+          "median": 0.20000004768371582,
+          "min": 0.19999980926513672,
+          "max": 0.20000004768371582
+        },
+        "interactionLayerDrawMaxMs": {
+          "runsWithValue": 3,
+          "median": 0.2999999523162842,
+          "min": 0.20000004768371582,
+          "max": 0.3000001907348633
+        },
+        "startCallMs": {
+          "runsWithValue": 3,
+          "median": 0.5,
+          "min": 0.5,
+          "max": 0.5999999046325684
+        },
+        "firstDrawAfterStartMs": {
+          "runsWithValue": 3,
+          "median": 10.299999952316284,
+          "min": 9.799999952316284,
+          "max": 13
+        },
+        "releaseCallMs": {
+          "runsWithValue": 3,
+          "median": 244.80000019073486,
+          "min": 163.30000019073486,
+          "max": 688.2999999523163
+        },
+        "firstDrawAfterReleaseMs": {
+          "runsWithValue": 3,
+          "median": 0.20000004768371582,
+          "min": 0.10000014305114746,
+          "max": 0.2999999523162842
+        }
+      }
+    },
+    {
+      "runtime": "react19",
+      "cpu": 1,
+      "scenario": "pan3",
+      "runs": 3,
+      "metrics": {
+        "mountToLayoutMs": {
+          "runsWithValue": 3,
+          "median": 409.6,
+          "min": 328.1,
+          "max": 810.4
+        },
+        "canvasDrawMs": {
+          "runsWithValue": 3,
+          "median": 182.8,
+          "min": 165.5,
+          "max": 184.6
+        },
+        "mountToCompletedDrawMs": {
+          "runsWithValue": 3,
+          "median": 1221.8,
+          "min": 1034.1,
+          "max": 1577
+        },
+        "totalToCanvasFrameMs": {
+          "runsWithValue": 3,
+          "median": 1308.3,
+          "min": 1083.3,
+          "max": 1656.5
+        },
+        "validationMs": {
+          "runsWithValue": 3,
+          "median": 39.6,
+          "min": 26.2,
+          "max": 40.5
+        },
+        "renderedFps": {
+          "runsWithValue": 3,
+          "median": 59.9904015363263,
+          "min": 45.997240163835514,
+          "max": 60.015153326609344
+        },
+        "fps": {
+          "runsWithValue": 3,
+          "median": 59.9904015363263,
+          "min": 45.997240163835514,
+          "max": 60.015153326609344
+        },
+        "p95Ms": {
+          "runsWithValue": 3,
+          "median": 17.59999990463257,
+          "min": 17.5,
+          "max": 21
+        },
+        "p99Ms": {
+          "runsWithValue": 3,
+          "median": 18.5,
+          "min": 17.700000047683716,
+          "max": 107.70000004768372
+        },
+        "maxFrameMs": {
+          "runsWithValue": 3,
+          "median": 23,
+          "min": 17.90000009536743,
+          "max": 676.0999999046326
+        },
+        "durationMs": {
+          "runsWithValue": 3,
+          "median": 5000.799999952316,
+          "min": 5000.300000190735,
+          "max": 5015.400000095367
+        },
+        "frameCount": {
+          "runsWithValue": 3,
+          "median": 300,
+          "min": 230,
+          "max": 301
+        },
+        "renderedFrameCount": {
+          "runsWithValue": 3,
+          "median": 300,
+          "min": 230,
+          "max": 301
+        },
+        "drawsPerSecond": {
+          "runsWithValue": 3,
+          "median": 119.9808030726526,
+          "min": 91.99448032767103,
+          "max": 120.03030665321869
+        },
+        "actualWarmupMs": {
+          "runsWithValue": 3,
+          "median": 1014.3999998569489,
+          "min": 1013.3999998569489,
+          "max": 1015.5
+        },
+        "warmupMaxFrameMs": {
+          "runsWithValue": 3,
+          "median": 20.09999990463257,
+          "min": 18.899999856948853,
+          "max": 20.40000009536743
+        },
+        "measurementStartRafOffsetMs": {
+          "runsWithValue": 3,
+          "median": 2.4999999523161023,
+          "min": 2.100000047683352,
+          "max": 3.0999999523155566
+        },
+        "reportedMaxCacheBytes": {
+          "runsWithValue": 3,
+          "median": 6000000,
+          "min": 6000000,
+          "max": 6000000
+        },
+        "postRunTailMs": {
+          "runsWithValue": 3,
+          "median": 31.899999856948853,
+          "min": 30.800000190734863,
+          "max": 32
+        },
+        "sceneLayerDrawP50Ms": {
+          "runsWithValue": 3,
+          "median": 1.5999999046325684,
+          "min": 1.5,
+          "max": 1.6000001430511475
+        },
+        "sceneLayerDrawP95Ms": {
+          "runsWithValue": 3,
+          "median": 2.200000047683716,
+          "min": 1.6000001430511475,
+          "max": 4.400000095367432
+        },
+        "sceneLayerDrawMaxMs": {
+          "runsWithValue": 3,
+          "median": 8.799999952316284,
+          "min": 1.7999999523162842,
+          "max": 648.5999999046326
+        },
+        "interactionLayerDrawP50Ms": {
+          "runsWithValue": 3,
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "interactionLayerDrawP95Ms": {
+          "runsWithValue": 3,
+          "median": 0.09999990463256836,
+          "min": 0.09999990463256836,
+          "max": 0.09999990463256836
+        },
+        "interactionLayerDrawMaxMs": {
+          "runsWithValue": 3,
+          "median": 0.10000014305114746,
+          "min": 0.10000014305114746,
+          "max": 0.10000014305114746
+        }
+      }
+    },
+    {
+      "runtime": "react19",
+      "cpu": 1,
+      "scenario": "zoom3",
+      "runs": 3,
+      "metrics": {
+        "mountToLayoutMs": {
+          "runsWithValue": 3,
+          "median": 380.9,
+          "min": 319.5,
+          "max": 408.1
+        },
+        "canvasDrawMs": {
+          "runsWithValue": 3,
+          "median": 175.7,
+          "min": 171.4,
+          "max": 179.7
+        },
+        "mountToCompletedDrawMs": {
+          "runsWithValue": 3,
+          "median": 1107,
+          "min": 1005.5,
+          "max": 1209
+        },
+        "totalToCanvasFrameMs": {
+          "runsWithValue": 3,
+          "median": 1148.4,
+          "min": 1042.5,
+          "max": 1256.7
+        },
+        "validationMs": {
+          "runsWithValue": 3,
+          "median": 35.3,
+          "min": 32.7,
+          "max": 40.2
+        },
+        "renderedFps": {
+          "runsWithValue": 3,
+          "median": 59.83604922455408,
+          "min": 59.80742010554903,
+          "max": 59.98560345459883
+        },
+        "fps": {
+          "runsWithValue": 3,
+          "median": 59.83604922455408,
+          "min": 59.80742010554903,
+          "max": 59.98560345459883
+        },
+        "p95Ms": {
+          "runsWithValue": 3,
+          "median": 17.5,
+          "min": 17.5,
+          "max": 18.299999952316284
+        },
+        "p99Ms": {
+          "runsWithValue": 3,
+          "median": 19.299999952316284,
+          "min": 18.200000047683716,
+          "max": 19.799999952316284
+        },
+        "maxFrameMs": {
+          "runsWithValue": 3,
+          "median": 42.799999952316284,
+          "min": 39.299999952316284,
+          "max": 48.299999952316284
+        },
+        "durationMs": {
+          "runsWithValue": 3,
+          "median": 5013.700000047684,
+          "min": 5001.200000047684,
+          "max": 5016.100000143051
+        },
+        "frameCount": {
+          "runsWithValue": 3,
+          "median": 300,
+          "min": 300,
+          "max": 300
+        },
+        "renderedFrameCount": {
+          "runsWithValue": 3,
+          "median": 300,
+          "min": 300,
+          "max": 300
+        },
+        "drawsPerSecond": {
+          "runsWithValue": 3,
+          "median": 119.67209844910816,
+          "min": 119.61484021109806,
+          "max": 119.97120690919766
+        },
+        "actualWarmupMs": {
+          "runsWithValue": 3,
+          "median": 1219.5,
+          "min": 1150.7999999523163,
+          "max": 1220.5999999046326
+        },
+        "warmupMaxFrameMs": {
+          "runsWithValue": 3,
+          "median": 484.10000014305115,
+          "min": 415.5,
+          "max": 485.7000000476837
+        },
+        "measurementStartRafOffsetMs": {
+          "runsWithValue": 3,
+          "median": 469.80000004768226,
+          "min": 401.6999999523159,
+          "max": 472.40000004768444
+        },
+        "reportedMaxCacheBytes": {
+          "runsWithValue": 3,
+          "median": 12444000,
+          "min": 12444000,
+          "max": 12444000
+        },
+        "postRunTailMs": {
+          "runsWithValue": 3,
+          "median": 31.899999856948853,
+          "min": 31.09999990463257,
+          "max": 33
+        },
+        "sceneLayerDrawP50Ms": {
+          "runsWithValue": 3,
+          "median": 1.5,
+          "min": 1.5,
+          "max": 1.7000000476837158
+        },
+        "sceneLayerDrawP95Ms": {
+          "runsWithValue": 3,
+          "median": 1.9000000953674316,
+          "min": 1.7999999523162842,
+          "max": 3.4000000953674316
+        },
+        "sceneLayerDrawMaxMs": {
+          "runsWithValue": 3,
+          "median": 4.099999904632568,
+          "min": 3.9000000953674316,
+          "max": 7.1000001430511475
+        },
+        "interactionLayerDrawP50Ms": {
+          "runsWithValue": 3,
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "interactionLayerDrawP95Ms": {
+          "runsWithValue": 3,
+          "median": 0,
+          "min": 0,
+          "max": 0.09999990463256836
+        },
+        "interactionLayerDrawMaxMs": {
+          "runsWithValue": 3,
+          "median": 0.10000014305114746,
+          "min": 0.10000014305114746,
+          "max": 0.19999980926513672
+        }
+      }
+    },
+    {
+      "runtime": "react19",
+      "cpu": 4,
+      "scenario": "mount100",
+      "runs": 3,
+      "metrics": {
+        "mountToLayoutMs": {
+          "runsWithValue": 3,
+          "median": 1498.4,
+          "min": 1465.4,
+          "max": 1715.8
+        },
+        "canvasDrawMs": {
+          "runsWithValue": 3,
+          "median": 16.7,
+          "min": 14.7,
+          "max": 16.8
+        },
+        "mountToCompletedDrawMs": {
+          "runsWithValue": 3,
+          "median": 1592.2,
+          "min": 1563.2,
+          "max": 1814.5
+        },
+        "totalToCanvasFrameMs": {
+          "runsWithValue": 3,
+          "median": 1784.3,
+          "min": 1583.7,
+          "max": 1831.9
+        },
+        "validationMs": {
+          "runsWithValue": 3,
+          "median": 4.6,
+          "min": 4.6,
+          "max": 4.8
+        }
+      }
+    },
+    {
+      "runtime": "react19",
+      "cpu": 4,
+      "scenario": "mount3",
+      "runs": 3,
+      "metrics": {
+        "mountToLayoutMs": {
+          "runsWithValue": 3,
+          "median": 1495.1,
+          "min": 1468.8,
+          "max": 1540.3
+        },
+        "canvasDrawMs": {
+          "runsWithValue": 3,
+          "median": 794.4,
+          "min": 768.5,
+          "max": 839.1
+        },
+        "mountToCompletedDrawMs": {
+          "runsWithValue": 3,
+          "median": 4760,
+          "min": 4556.8,
+          "max": 4963.7
+        },
+        "totalToCanvasFrameMs": {
+          "runsWithValue": 3,
+          "median": 5016.7,
+          "min": 4820.8,
+          "max": 5240.7
+        },
+        "validationMs": {
+          "runsWithValue": 3,
+          "median": 137,
+          "min": 134.8,
+          "max": 147.2
+        }
+      }
+    },
+    {
+      "runtime": "react19",
+      "cpu": 4,
+      "scenario": "drag3",
+      "runs": 3,
+      "metrics": {
+        "mountToLayoutMs": {
+          "runsWithValue": 3,
+          "median": 1574.1,
+          "min": 1540.2,
+          "max": 1685
+        },
+        "canvasDrawMs": {
+          "runsWithValue": 3,
+          "median": 799.3,
+          "min": 778.9,
+          "max": 927.5
+        },
+        "mountToCompletedDrawMs": {
+          "runsWithValue": 3,
+          "median": 5550.1,
+          "min": 4697.8,
+          "max": 9325.7
+        },
+        "totalToCanvasFrameMs": {
+          "runsWithValue": 3,
+          "median": 5823.3,
+          "min": 4953.7,
+          "max": 9646.4
+        },
+        "validationMs": {
+          "runsWithValue": 3,
+          "median": 156.5,
+          "min": 142.4,
+          "max": 208.8
+        },
+        "renderedFps": {
+          "runsWithValue": 3,
+          "median": 59.81576743515882,
+          "min": 59.63897476812606,
+          "max": 60.02113701341724
+        },
+        "fps": {
+          "runsWithValue": 3,
+          "median": 59.81576743515882,
+          "min": 59.63897476812606,
+          "max": 60.02113701341724
+        },
+        "p95Ms": {
+          "runsWithValue": 3,
+          "median": 20.40000009536743,
+          "min": 17.700000047683716,
+          "max": 21
+        },
+        "p99Ms": {
+          "runsWithValue": 3,
+          "median": 23.200000047683716,
+          "min": 18.09999990463257,
+          "max": 28.700000047683716
+        },
+        "maxFrameMs": {
+          "runsWithValue": 3,
+          "median": 42.89999985694885,
+          "min": 30.700000047683716,
+          "max": 44.10000014305115
+        },
+        "durationMs": {
+          "runsWithValue": 3,
+          "median": 5014.899999856949,
+          "min": 5013.5,
+          "max": 5015.400000095367
+        },
+        "frameCount": {
+          "runsWithValue": 3,
+          "median": 300,
+          "min": 299,
+          "max": 301
+        },
+        "renderedFrameCount": {
+          "runsWithValue": 3,
+          "median": 300,
+          "min": 299,
+          "max": 301
+        },
+        "drawsPerSecond": {
+          "runsWithValue": 3,
+          "median": 59.81576743515882,
+          "min": 59.63897476812606,
+          "max": 60.02113701341724
+        },
+        "actualWarmupMs": {
+          "runsWithValue": 3,
+          "median": 1009.5,
+          "min": 1004.1999998092651,
+          "max": 1014.4000000953674
+        },
+        "warmupMaxFrameMs": {
+          "runsWithValue": 3,
+          "median": 91.20000004768372,
+          "min": 85.29999995231628,
+          "max": 178
+        },
+        "measurementStartRafOffsetMs": {
+          "runsWithValue": 3,
+          "median": 4.300000095368887,
+          "min": 2.499999809264409,
+          "max": 4.800000190734863
+        },
+        "reportedMaxCacheBytes": {
+          "runsWithValue": 3,
+          "median": 6000000,
+          "min": 6000000,
+          "max": 6000000
+        },
+        "postRunTailMs": {
+          "runsWithValue": 3,
+          "median": 2684.7000000476837,
+          "min": 1112.5,
+          "max": 4857.700000047684
+        },
+        "sceneLayerDrawP50Ms": null,
+        "sceneLayerDrawP95Ms": null,
+        "sceneLayerDrawMaxMs": null,
+        "interactionLayerDrawP50Ms": {
+          "runsWithValue": 3,
+          "median": 0.09999990463256836,
+          "min": 0.09999990463256836,
+          "max": 0.10000014305114746
+        },
+        "interactionLayerDrawP95Ms": {
+          "runsWithValue": 3,
+          "median": 0.5999999046325684,
+          "min": 0.5,
+          "max": 0.7000000476837158
+        },
+        "interactionLayerDrawMaxMs": {
+          "runsWithValue": 3,
+          "median": 1.1000001430511475,
+          "min": 0.9000000953674316,
+          "max": 1.2000000476837158
+        },
+        "startCallMs": {
+          "runsWithValue": 3,
+          "median": 2.8999998569488525,
+          "min": 2,
+          "max": 3.3999998569488525
+        },
+        "firstDrawAfterStartMs": {
+          "runsWithValue": 3,
+          "median": 22.399999856948853,
+          "min": 20.600000143051147,
+          "max": 116
+        },
+        "releaseCallMs": {
+          "runsWithValue": 3,
+          "median": 2388.2999999523163,
+          "min": 998.6999998092651,
+          "max": 4458.800000190735
+        },
+        "firstDrawAfterReleaseMs": {
+          "runsWithValue": 3,
+          "median": 0.40000009536743164,
+          "min": 0.20000004768371582,
+          "max": 5
+        }
+      }
+    },
+    {
+      "runtime": "react19",
+      "cpu": 4,
+      "scenario": "pan3",
+      "runs": 3,
+      "metrics": {
+        "mountToLayoutMs": {
+          "runsWithValue": 3,
+          "median": 1447.2,
+          "min": 1438.6,
+          "max": 4537.4
+        },
+        "canvasDrawMs": {
+          "runsWithValue": 3,
+          "median": 798.9,
+          "min": 797.2,
+          "max": 1392.9
+        },
+        "mountToCompletedDrawMs": {
+          "runsWithValue": 3,
+          "median": 4891.2,
+          "min": 4471.1,
+          "max": 9332.1
+        },
+        "totalToCanvasFrameMs": {
+          "runsWithValue": 3,
+          "median": 5176.6,
+          "min": 4762.8,
+          "max": 9788.2
+        },
+        "validationMs": {
+          "runsWithValue": 3,
+          "median": 176.7,
+          "min": 167.4,
+          "max": 294.2
+        },
+        "renderedFps": {
+          "runsWithValue": 3,
+          "median": 31.156381066506892,
+          "min": 30.717676627517093,
+          "max": 32.597392208001615
+        },
+        "fps": {
+          "runsWithValue": 3,
+          "median": 31.156381066506892,
+          "min": 30.717676627517093,
+          "max": 32.597392208001615
+        },
+        "p95Ms": {
+          "runsWithValue": 3,
+          "median": 44.39999985694885,
+          "min": 36.5,
+          "max": 44.90000009536743
+        },
+        "p99Ms": {
+          "runsWithValue": 3,
+          "median": 55.299999952316284,
+          "min": 39.19999980926514,
+          "max": 56.19999980926514
+        },
+        "maxFrameMs": {
+          "runsWithValue": 3,
+          "median": 92.5,
+          "min": 47.60000014305115,
+          "max": 123
+        },
+        "durationMs": {
+          "runsWithValue": 3,
+          "median": 5007,
+          "min": 5000.400000095367,
+          "max": 5013.399999856949
+        },
+        "frameCount": {
+          "runsWithValue": 3,
+          "median": 156,
+          "min": 154,
+          "max": 163
+        },
+        "renderedFrameCount": {
+          "runsWithValue": 3,
+          "median": 156,
+          "min": 154,
+          "max": 163
+        },
+        "drawsPerSecond": {
+          "runsWithValue": 3,
+          "median": 62.312762133013784,
+          "min": 61.43535325503419,
+          "max": 65.19478441600323
+        },
+        "actualWarmupMs": {
+          "runsWithValue": 3,
+          "median": 1022.3999998569489,
+          "min": 1007.8999998569489,
+          "max": 1094.2000000476837
+        },
+        "warmupMaxFrameMs": {
+          "runsWithValue": 3,
+          "median": 49,
+          "min": 45.799999952316284,
+          "max": 187
+        },
+        "measurementStartRafOffsetMs": {
+          "runsWithValue": 3,
+          "median": 18.799999856950308,
+          "min": 17.19999999999709,
+          "max": 122.7000000953667
+        },
+        "reportedMaxCacheBytes": {
+          "runsWithValue": 3,
+          "median": 6000000,
+          "min": 6000000,
+          "max": 6000000
+        },
+        "postRunTailMs": {
+          "runsWithValue": 3,
+          "median": 38.40000009536743,
+          "min": 33.90000009536743,
+          "max": 40
+        },
+        "sceneLayerDrawP50Ms": {
+          "runsWithValue": 3,
+          "median": 9.600000143051147,
+          "min": 7.199999809265137,
+          "max": 9.899999856948853
+        },
+        "sceneLayerDrawP95Ms": {
+          "runsWithValue": 3,
+          "median": 14.700000047683716,
+          "min": 10.899999856948853,
+          "max": 15.199999809265137
+        },
+        "sceneLayerDrawMaxMs": {
+          "runsWithValue": 3,
+          "median": 23.200000047683716,
+          "min": 13.700000047683716,
+          "max": 35.59999990463257
+        },
+        "interactionLayerDrawP50Ms": {
+          "runsWithValue": 3,
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "interactionLayerDrawP95Ms": {
+          "runsWithValue": 3,
+          "median": 0.20000004768371582,
+          "min": 0.10000014305114746,
+          "max": 0.5
+        },
+        "interactionLayerDrawMaxMs": {
+          "runsWithValue": 3,
+          "median": 0.9000000953674316,
+          "min": 0.7000000476837158,
+          "max": 2.1999998092651367
+        }
+      }
+    },
+    {
+      "runtime": "react19",
+      "cpu": 4,
+      "scenario": "zoom3",
+      "runs": 3,
+      "metrics": {
+        "mountToLayoutMs": {
+          "runsWithValue": 3,
+          "median": 1761.2,
+          "min": 1615.8,
+          "max": 1995.3
+        },
+        "canvasDrawMs": {
+          "runsWithValue": 3,
+          "median": 847.4,
+          "min": 781.1,
+          "max": 849.7
+        },
+        "mountToCompletedDrawMs": {
+          "runsWithValue": 3,
+          "median": 5146.9,
+          "min": 5075,
+          "max": 5721.7
+        },
+        "totalToCanvasFrameMs": {
+          "runsWithValue": 3,
+          "median": 5457.4,
+          "min": 5331.7,
+          "max": 6025.5
+        },
+        "validationMs": {
+          "runsWithValue": 3,
+          "median": 160.6,
+          "min": 142.3,
+          "max": 185.3
+        },
+        "renderedFps": {
+          "runsWithValue": 3,
+          "median": 31.37427309516434,
+          "min": 30.1084702501524,
+          "max": 32.1620487833558
+        },
+        "fps": {
+          "runsWithValue": 3,
+          "median": 31.37427309516434,
+          "min": 30.1084702501524,
+          "max": 32.1620487833558
+        },
+        "p95Ms": {
+          "runsWithValue": 3,
+          "median": 39.39999985694885,
+          "min": 38.09999990463257,
+          "max": 40.299999952316284
+        },
+        "p99Ms": {
+          "runsWithValue": 3,
+          "median": 133.29999995231628,
+          "min": 131,
+          "max": 139.29999995231628
+        },
+        "maxFrameMs": {
+          "runsWithValue": 3,
+          "median": 143,
+          "min": 137.20000004768372,
+          "max": 168.59999990463257
+        },
+        "durationMs": {
+          "runsWithValue": 3,
+          "median": 5005.899999856949,
+          "min": 5004.100000143051,
+          "max": 5015.200000047684
+        },
+        "frameCount": {
+          "runsWithValue": 3,
+          "median": 157,
+          "min": 151,
+          "max": 161
+        },
+        "renderedFrameCount": {
+          "runsWithValue": 3,
+          "median": 157,
+          "min": 151,
+          "max": 161
+        },
+        "drawsPerSecond": {
+          "runsWithValue": 3,
+          "median": 62.74854619032868,
+          "min": 60.2169405003048,
+          "max": 64.3240975667116
+        },
+        "actualWarmupMs": {
+          "runsWithValue": 3,
+          "median": 2925.5,
+          "min": 2624.300000190735,
+          "max": 2954
+        },
+        "warmupMaxFrameMs": {
+          "runsWithValue": 3,
+          "median": 2183.2000000476837,
+          "min": 1878.3999998569489,
+          "max": 2226.399999856949
+        },
+        "measurementStartRafOffsetMs": {
+          "runsWithValue": 3,
+          "median": 2173.0999998092666,
+          "min": 1868.5000001907356,
+          "max": 2221.500000095366
+        },
+        "reportedMaxCacheBytes": {
+          "runsWithValue": 3,
+          "median": 12444000,
+          "min": 12444000,
+          "max": 12444000
+        },
+        "postRunTailMs": {
+          "runsWithValue": 3,
+          "median": 30.200000047683716,
+          "min": 28.799999952316284,
+          "max": 30.899999856948853
+        },
+        "sceneLayerDrawP50Ms": {
+          "runsWithValue": 3,
+          "median": 6.799999952316284,
+          "min": 6.6000001430511475,
+          "max": 7.099999904632568
+        },
+        "sceneLayerDrawP95Ms": {
+          "runsWithValue": 3,
+          "median": 9.800000190734863,
+          "min": 8.099999904632568,
+          "max": 16.90000009536743
+        },
+        "sceneLayerDrawMaxMs": {
+          "runsWithValue": 3,
+          "median": 22.200000047683716,
+          "min": 9.400000095367432,
+          "max": 30.700000047683716
+        },
+        "interactionLayerDrawP50Ms": {
+          "runsWithValue": 3,
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "interactionLayerDrawP95Ms": {
+          "runsWithValue": 3,
+          "median": 0.10000014305114746,
+          "min": 0.10000014305114746,
+          "max": 0.5
+        },
+        "interactionLayerDrawMaxMs": {
+          "runsWithValue": 3,
+          "median": 0.7000000476837158,
+          "min": 0.7000000476837158,
+          "max": 0.7999999523162842
+        }
+      }
+    },
+    {
+      "runtime": "react19",
+      "cpu": 6,
+      "scenario": "mount100",
+      "runs": 3,
+      "metrics": {
+        "mountToLayoutMs": {
+          "runsWithValue": 3,
+          "median": 2592.4,
+          "min": 2252.9,
+          "max": 2629.6
+        },
+        "canvasDrawMs": {
+          "runsWithValue": 3,
+          "median": 25.2,
+          "min": 20.5,
+          "max": 28.2
+        },
+        "mountToCompletedDrawMs": {
+          "runsWithValue": 3,
+          "median": 2739.9,
+          "min": 2390.1,
+          "max": 2822.3
+        },
+        "totalToCanvasFrameMs": {
+          "runsWithValue": 3,
+          "median": 2767,
+          "min": 2416,
+          "max": 2853.9
+        },
+        "validationMs": {
+          "runsWithValue": 3,
+          "median": 6.6,
+          "min": 6.5,
+          "max": 8.1
+        }
+      }
+    },
+    {
+      "runtime": "react19",
+      "cpu": 6,
+      "scenario": "mount3",
+      "runs": 3,
+      "metrics": {
+        "mountToLayoutMs": {
+          "runsWithValue": 3,
+          "median": 2280,
+          "min": 2217.6,
+          "max": 2503.7
+        },
+        "canvasDrawMs": {
+          "runsWithValue": 3,
+          "median": 1346.6,
+          "min": 1158.9,
+          "max": 1426.4
+        },
+        "mountToCompletedDrawMs": {
+          "runsWithValue": 3,
+          "median": 7441.8,
+          "min": 6922.8,
+          "max": 7710.1
+        },
+        "totalToCanvasFrameMs": {
+          "runsWithValue": 3,
+          "median": 7769.5,
+          "min": 7238.7,
+          "max": 8040.5
+        },
+        "validationMs": {
+          "runsWithValue": 3,
+          "median": 195.9,
+          "min": 194.4,
+          "max": 195.9
+        }
+      }
+    },
+    {
+      "runtime": "react19",
+      "cpu": 6,
+      "scenario": "drag3",
+      "runs": 3,
+      "metrics": {
+        "mountToLayoutMs": {
+          "runsWithValue": 3,
+          "median": 2389.3,
+          "min": 2250.4,
+          "max": 3100.3
+        },
+        "canvasDrawMs": {
+          "runsWithValue": 3,
+          "median": 1264.9,
+          "min": 1242.5,
+          "max": 1463
+        },
+        "mountToCompletedDrawMs": {
+          "runsWithValue": 3,
+          "median": 8073,
+          "min": 7039.9,
+          "max": 16825.1
+        },
+        "totalToCanvasFrameMs": {
+          "runsWithValue": 3,
+          "median": 8395,
+          "min": 7363.4,
+          "max": 17193.6
+        },
+        "validationMs": {
+          "runsWithValue": 3,
+          "median": 205.2,
+          "min": 204.3,
+          "max": 244.8
+        },
+        "renderedFps": {
+          "runsWithValue": 3,
+          "median": 54.110177103943315,
+          "min": 41.15801882158701,
+          "max": 58.26715089762046
+        },
+        "fps": {
+          "runsWithValue": 3,
+          "median": 54.110177103943315,
+          "min": 41.15801882158701,
+          "max": 58.26715089762046
+        },
+        "p95Ms": {
+          "runsWithValue": 3,
+          "median": 23.299999952316284,
+          "min": 22.90000009536743,
+          "max": 45.700000047683716
+        },
+        "p99Ms": {
+          "runsWithValue": 3,
+          "median": 33.299999952316284,
+          "min": 24.899999856948853,
+          "max": 135.09999990463257
+        },
+        "maxFrameMs": {
+          "runsWithValue": 3,
+          "median": 135.79999995231628,
+          "min": 25.299999952316284,
+          "max": 355.69999980926514
+        },
+        "durationMs": {
+          "runsWithValue": 3,
+          "median": 5008.300000190735,
+          "min": 5005.099999904633,
+          "max": 5011.399999856949
+        },
+        "frameCount": {
+          "runsWithValue": 3,
+          "median": 271,
+          "min": 206,
+          "max": 292
+        },
+        "renderedFrameCount": {
+          "runsWithValue": 3,
+          "median": 271,
+          "min": 206,
+          "max": 292
+        },
+        "drawsPerSecond": {
+          "runsWithValue": 3,
+          "median": 54.110177103943315,
+          "min": 41.35781502945879,
+          "max": 58.26715089762046
+        },
+        "actualWarmupMs": {
+          "runsWithValue": 3,
+          "median": 1015.8999998569489,
+          "min": 1003.1000001430511,
+          "max": 1025.6000001430511
+        },
+        "warmupMaxFrameMs": {
+          "runsWithValue": 3,
+          "median": 205.29999995231628,
+          "min": 169.40000009536743,
+          "max": 205.80000019073486
+        },
+        "measurementStartRafOffsetMs": {
+          "runsWithValue": 3,
+          "median": 8.400000047680805,
+          "min": 3.299999904633296,
+          "max": 130.89999995231483
+        },
+        "reportedMaxCacheBytes": {
+          "runsWithValue": 3,
+          "median": 6000000,
+          "min": 6000000,
+          "max": 6000000
+        },
+        "postRunTailMs": {
+          "runsWithValue": 3,
+          "median": 1285,
+          "min": 1209.2999999523163,
+          "max": 4653.599999904633
+        },
+        "sceneLayerDrawP50Ms": {
+          "runsWithValue": 1,
+          "median": 14.200000047683716,
+          "min": 14.200000047683716,
+          "max": 14.200000047683716
+        },
+        "sceneLayerDrawP95Ms": {
+          "runsWithValue": 1,
+          "median": 23.799999952316284,
+          "min": 23.799999952316284,
+          "max": 23.799999952316284
+        },
+        "sceneLayerDrawMaxMs": {
+          "runsWithValue": 1,
+          "median": 23.799999952316284,
+          "min": 23.799999952316284,
+          "max": 23.799999952316284
+        },
+        "interactionLayerDrawP50Ms": {
+          "runsWithValue": 3,
+          "median": 0.09999990463256836,
+          "min": 0.09999990463256836,
+          "max": 0.10000014305114746
+        },
+        "interactionLayerDrawP95Ms": {
+          "runsWithValue": 3,
+          "median": 1.2999999523162842,
+          "min": 0.7999999523162842,
+          "max": 1.5999999046325684
+        },
+        "interactionLayerDrawMaxMs": {
+          "runsWithValue": 3,
+          "median": 1.8999998569488525,
+          "min": 1.7000000476837158,
+          "max": 9.099999904632568
+        },
+        "startCallMs": {
+          "runsWithValue": 3,
+          "median": 4.5,
+          "min": 3.799999952316284,
+          "max": 7.300000190734863
+        },
+        "firstDrawAfterStartMs": {
+          "runsWithValue": 3,
+          "median": 119.29999995231628,
+          "min": 86.89999985694885,
+          "max": 135.5
+        },
+        "releaseCallMs": {
+          "runsWithValue": 3,
+          "median": 1124.5,
+          "min": 1003.4000000953674,
+          "max": 4292.400000095367
+        },
+        "firstDrawAfterReleaseMs": {
+          "runsWithValue": 3,
+          "median": 1.4000000953674316,
+          "min": 1.2000000476837158,
+          "max": 2.1999998092651367
+        }
+      }
+    },
+    {
+      "runtime": "react19",
+      "cpu": 6,
+      "scenario": "pan3",
+      "runs": 3,
+      "metrics": {
+        "mountToLayoutMs": {
+          "runsWithValue": 3,
+          "median": 2243.9,
+          "min": 2236.5,
+          "max": 2275.8
+        },
+        "canvasDrawMs": {
+          "runsWithValue": 3,
+          "median": 1149.8,
+          "min": 1121,
+          "max": 1432.9
+        },
+        "mountToCompletedDrawMs": {
+          "runsWithValue": 3,
+          "median": 6862.2,
+          "min": 6748.8,
+          "max": 7349.1
+        },
+        "totalToCanvasFrameMs": {
+          "runsWithValue": 3,
+          "median": 7163.9,
+          "min": 7084,
+          "max": 7742.5
+        },
+        "validationMs": {
+          "runsWithValue": 3,
+          "median": 205,
+          "min": 185.7,
+          "max": 268.6
+        },
+        "renderedFps": {
+          "runsWithValue": 3,
+          "median": 21.66911852390894,
+          "min": 19.375247133254252,
+          "max": 21.798256139093105
+        },
+        "fps": {
+          "runsWithValue": 3,
+          "median": 21.66911852390894,
+          "min": 19.375247133254252,
+          "max": 21.798256139093105
+        },
+        "p95Ms": {
+          "runsWithValue": 3,
+          "median": 55.200000047683716,
+          "min": 49.90000009536743,
+          "max": 72.60000014305115
+        },
+        "p99Ms": {
+          "runsWithValue": 3,
+          "median": 58.69999980926514,
+          "min": 56.700000047683716,
+          "max": 109.59999990463257
+        },
+        "maxFrameMs": {
+          "runsWithValue": 3,
+          "median": 60.799999952316284,
+          "min": 58.90000009536743,
+          "max": 109.59999990463257
+        },
+        "durationMs": {
+          "runsWithValue": 3,
+          "median": 5030.200000047684,
+          "min": 5000.400000095367,
+          "max": 5058
+        },
+        "frameCount": {
+          "runsWithValue": 3,
+          "median": 109,
+          "min": 98,
+          "max": 109
+        },
+        "renderedFrameCount": {
+          "runsWithValue": 3,
+          "median": 109,
+          "min": 98,
+          "max": 109
+        },
+        "drawsPerSecond": {
+          "runsWithValue": 3,
+          "median": 43.33823704781788,
+          "min": 38.750494266508504,
+          "max": 43.59651227818621
+        },
+        "actualWarmupMs": {
+          "runsWithValue": 3,
+          "median": 1027.6000001430511,
+          "min": 1010.5999999046326,
+          "max": 1038.2999999523163
+        },
+        "warmupMaxFrameMs": {
+          "runsWithValue": 3,
+          "median": 102.90000009536743,
+          "min": 102.79999995231628,
+          "max": 151.39999985694885
+        },
+        "measurementStartRafOffsetMs": {
+          "runsWithValue": 3,
+          "median": 20.099999999998545,
+          "min": 16.29999985694303,
+          "max": 20.89999995231483
+        },
+        "reportedMaxCacheBytes": {
+          "runsWithValue": 3,
+          "median": 6000000,
+          "min": 6000000,
+          "max": 6000000
+        },
+        "postRunTailMs": {
+          "runsWithValue": 3,
+          "median": 47.09999990463257,
+          "min": 35.39999985694885,
+          "max": 89
+        },
+        "sceneLayerDrawP50Ms": {
+          "runsWithValue": 3,
+          "median": 11,
+          "min": 9.900000095367432,
+          "max": 16.200000047683716
+        },
+        "sceneLayerDrawP95Ms": {
+          "runsWithValue": 3,
+          "median": 13,
+          "min": 11.599999904632568,
+          "max": 32.09999990463257
+        },
+        "sceneLayerDrawMaxMs": {
+          "runsWithValue": 3,
+          "median": 14.400000095367432,
+          "min": 13,
+          "max": 77.40000009536743
+        },
+        "interactionLayerDrawP50Ms": {
+          "runsWithValue": 3,
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "interactionLayerDrawP95Ms": {
+          "runsWithValue": 3,
+          "median": 0.5,
+          "min": 0.2999999523162842,
+          "max": 0.7999999523162842
+        },
+        "interactionLayerDrawMaxMs": {
+          "runsWithValue": 3,
+          "median": 1.3999998569488525,
+          "min": 1.2000000476837158,
+          "max": 1.5
+        }
+      }
+    },
+    {
+      "runtime": "react19",
+      "cpu": 6,
+      "scenario": "zoom3",
+      "runs": 3,
+      "metrics": {
+        "mountToLayoutMs": {
+          "runsWithValue": 3,
+          "median": 2531.1,
+          "min": 2473.2,
+          "max": 2681.7
+        },
+        "canvasDrawMs": {
+          "runsWithValue": 3,
+          "median": 1402.2,
+          "min": 1251.6,
+          "max": 2136.6
+        },
+        "mountToCompletedDrawMs": {
+          "runsWithValue": 3,
+          "median": 7729.6,
+          "min": 7724.8,
+          "max": 9939.6
+        },
+        "totalToCanvasFrameMs": {
+          "runsWithValue": 3,
+          "median": 8079.2,
+          "min": 8050.4,
+          "max": 10335.1
+        },
+        "validationMs": {
+          "runsWithValue": 3,
+          "median": 235.1,
+          "min": 182,
+          "max": 262.7
+        },
+        "renderedFps": {
+          "runsWithValue": 3,
+          "median": 13.732983042490709,
+          "min": 0.6973014434139879,
+          "max": 18.191631849522707
+        },
+        "fps": {
+          "runsWithValue": 3,
+          "median": 13.732983042490709,
+          "min": 0.6973014434139879,
+          "max": 18.191631849522707
+        },
+        "p95Ms": {
+          "runsWithValue": 3,
+          "median": 147,
+          "min": 98.40000009536743,
+          "max": 5609.299999952316
+        },
+        "p99Ms": {
+          "runsWithValue": 3,
+          "median": 390.7999999523163,
+          "min": 167.39999985694885,
+          "max": 5609.299999952316
+        },
+        "maxFrameMs": {
+          "runsWithValue": 3,
+          "median": 390.7999999523163,
+          "min": 167.39999985694885,
+          "max": 5609.299999952316
+        },
+        "durationMs": {
+          "runsWithValue": 3,
+          "median": 5024.400000095367,
+          "min": 5002.299999952316,
+          "max": 7170.5
+        },
+        "frameCount": {
+          "runsWithValue": 3,
+          "median": 69,
+          "min": 5,
+          "max": 91
+        },
+        "renderedFrameCount": {
+          "runsWithValue": 3,
+          "median": 69,
+          "min": 5,
+          "max": 91
+        },
+        "drawsPerSecond": {
+          "runsWithValue": 3,
+          "median": 27.465966084981417,
+          "min": 1.3946028868279758,
+          "max": 36.383263699045415
+        },
+        "actualWarmupMs": {
+          "runsWithValue": 3,
+          "median": 4354.599999904633,
+          "min": 3860.100000143051,
+          "max": 4430.700000047684
+        },
+        "warmupMaxFrameMs": {
+          "runsWithValue": 3,
+          "median": 3614.2000000476837,
+          "min": 3128.7999999523163,
+          "max": 3692.2999999523163
+        },
+        "measurementStartRafOffsetMs": {
+          "runsWithValue": 3,
+          "median": 3604.9999998569474,
+          "min": 3114.600000047678,
+          "max": 3657.399999856949
+        },
+        "reportedMaxCacheBytes": {
+          "runsWithValue": 3,
+          "median": 12444000,
+          "min": 12444000,
+          "max": 12444000
+        },
+        "postRunTailMs": {
+          "runsWithValue": 3,
+          "median": 116.29999995231628,
+          "min": 41.09999990463257,
+          "max": 360.2000000476837
+        },
+        "sceneLayerDrawP50Ms": {
+          "runsWithValue": 3,
+          "median": 20.700000047683716,
+          "min": 13.099999904632568,
+          "max": 127
+        },
+        "sceneLayerDrawP95Ms": {
+          "runsWithValue": 3,
+          "median": 32.200000047683716,
+          "min": 18.799999952316284,
+          "max": 5541.400000095367
+        },
+        "sceneLayerDrawMaxMs": {
+          "runsWithValue": 3,
+          "median": 39.200000047683716,
+          "min": 22.90000009536743,
+          "max": 5541.400000095367
+        },
+        "interactionLayerDrawP50Ms": {
+          "runsWithValue": 3,
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "interactionLayerDrawP95Ms": {
+          "runsWithValue": 3,
+          "median": 0.7999999523162842,
+          "min": 0.5999999046325684,
+          "max": 1
+        },
+        "interactionLayerDrawMaxMs": {
+          "runsWithValue": 3,
+          "median": 1.4000000953674316,
+          "min": 0.5999999046325684,
+          "max": 1.5
+        }
+      }
+    }
+  ],
+  "parity": {
+    "protocol": "Exact model geometry without generated IDs, external positions/order, identical full JPEG source; frozen before main measurements.",
+    "rows": [
+      {
+        "runtime": "react19",
+        "geometryHash": "daeecb5efde7e240efc68383cbdcc5153c98c8566dd588783b8c4b1ad7390450",
+        "positionsHash": "e9ea2f5df7cec59a45f03994dd4314d691ce65a9e509ffac6b7c5c281a8f74e9",
+        "orderHash": "c2cd84ed0078df83a435a5996f56a5e4c2aa5ef568c91d147dc52dd5f67a9ade",
+        "modelNodes": 35001,
+        "firstNode": {
+          "width": 360,
+          "height": 429.78125
+        },
+        "stats": {
+          "mode": "optimized",
+          "arrangement": "free",
+          "cards": 1000,
+          "primitives": 35001,
+          "renderedCards": 1000,
+          "measurement": {
+            "scope": "full",
+            "measuredNodes": 1035,
+            "measuredRoots": ["free-world"],
+            "templateHits": 999,
+            "templateMisses": 1,
+            "durationMs": 160.89999985694885,
+            "revision": 1
+          },
+          "rendering": {
+            "visibleRoots": 1000,
+            "totalRoots": 1000,
+            "lod": true,
+            "lodLevel": "cell",
+            "lodCells": 3000,
+            "groups": 27000,
+            "shapes": 25000,
+            "cachedRoots": 1000,
+            "cacheBytes": 3000000
+          },
+          "idleHtmlNodes": 0,
+          "attachedMeasurementRoots": 0,
+          "viewportWidth": 1400,
+          "viewportHeight": 760,
+          "devicePixelRatio": 2,
+          "canvasPixelRatio": 2,
+          "worldBounds": {
+            "x": -325,
+            "y": -1565.3713544923812,
+            "width": 13399.67335854657,
+            "height": 22177.228434924036
+          },
+          "worldWidth": 13399.67335854657,
+          "worldHeight": 22177.228434924036,
+          "complete": true
+        },
+        "nativeCacheBytes": 6000000,
+        "cached": 1000,
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "hidden": false,
+        "mount": {
+          "mode": "optimized",
+          "arrangement": "free",
+          "cards": 1000,
+          "primitives": 35001,
+          "renderedCards": 1000,
+          "measurement": {
+            "scope": "full",
+            "measuredNodes": 1035,
+            "measuredRoots": ["free-world"],
+            "templateHits": 999,
+            "templateMisses": 1,
+            "durationMs": 160.89999985694885,
+            "revision": 1
+          },
+          "rendering": {
+            "visibleRoots": 1000,
+            "totalRoots": 1000,
+            "lod": true,
+            "lodLevel": "cell",
+            "lodCells": 3000,
+            "groups": 27000,
+            "shapes": 25000,
+            "cachedRoots": 1000,
+            "cacheBytes": 3000000
+          },
+          "idleHtmlNodes": 0,
+          "attachedMeasurementRoots": 0,
+          "viewportWidth": 1400,
+          "viewportHeight": 760,
+          "devicePixelRatio": 2,
+          "canvasPixelRatio": 2,
+          "worldBounds": {
+            "x": -325,
+            "y": -1565.3713544923812,
+            "width": 13399.67335854657,
+            "height": 22177.228434924036
+          },
+          "worldWidth": 13399.67335854657,
+          "worldHeight": 22177.228434924036,
+          "complete": true,
+          "operation": "mount",
+          "mountToLayoutMs": 343.6,
+          "canvasDrawMs": 190.5,
+          "mountToCompletedDrawMs": 1040,
+          "totalToCanvasFrameMs": 1077.2,
+          "validationMs": 31.9,
+          "timestamp": "2026-10-17T21:09:20.002Z"
+        }
+      },
+      {
+        "runtime": "react16",
+        "geometryHash": "daeecb5efde7e240efc68383cbdcc5153c98c8566dd588783b8c4b1ad7390450",
+        "positionsHash": "e9ea2f5df7cec59a45f03994dd4314d691ce65a9e509ffac6b7c5c281a8f74e9",
+        "orderHash": "c2cd84ed0078df83a435a5996f56a5e4c2aa5ef568c91d147dc52dd5f67a9ade",
+        "modelNodes": 35001,
+        "firstNode": {
+          "width": 360,
+          "height": 429.78125
+        },
+        "stats": {
+          "mode": "optimized",
+          "arrangement": "free",
+          "cards": 1000,
+          "primitives": 35001,
+          "renderedCards": 1000,
+          "measurement": {
+            "scope": "full",
+            "measuredNodes": 1035,
+            "measuredRoots": ["free-world"],
+            "templateHits": 999,
+            "templateMisses": 1,
+            "durationMs": 162.59999990463257,
+            "revision": 1
+          },
+          "rendering": {
+            "visibleRoots": 1000,
+            "totalRoots": 1000,
+            "lod": true,
+            "lodLevel": "cell",
+            "lodCells": 3000,
+            "groups": 27000,
+            "shapes": 25000,
+            "cachedRoots": 1000,
+            "cacheBytes": 6365250
+          },
+          "idleHtmlNodes": 0,
+          "attachedMeasurementRoots": 0,
+          "viewportWidth": 1400,
+          "viewportHeight": 760,
+          "devicePixelRatio": 2,
+          "canvasPixelRatio": 2,
+          "worldBounds": {
+            "x": -325,
+            "y": -1565.3713544923812,
+            "width": 13399.67335854657,
+            "height": 22177.228434924036
+          },
+          "worldWidth": 13399.67335854657,
+          "worldHeight": 22177.228434924036,
+          "complete": true
+        },
+        "nativeCacheBytes": 6000000,
+        "cached": 1000,
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "hidden": false,
+        "mount": {
+          "mode": "optimized",
+          "arrangement": "free",
+          "cards": 1000,
+          "primitives": 35001,
+          "renderedCards": 1000,
+          "measurement": {
+            "scope": "full",
+            "measuredNodes": 1035,
+            "measuredRoots": ["free-world"],
+            "templateHits": 999,
+            "templateMisses": 1,
+            "durationMs": 162.59999990463257,
+            "revision": 1
+          },
+          "rendering": {
+            "visibleRoots": 1000,
+            "totalRoots": 1000,
+            "lod": true,
+            "lodLevel": "cell",
+            "lodCells": 3000,
+            "groups": 27000,
+            "shapes": 25000,
+            "cachedRoots": 1000,
+            "cacheBytes": 6365250
+          },
+          "idleHtmlNodes": 0,
+          "attachedMeasurementRoots": 0,
+          "viewportWidth": 1400,
+          "viewportHeight": 760,
+          "devicePixelRatio": 2,
+          "canvasPixelRatio": 2,
+          "worldBounds": {
+            "x": -325,
+            "y": -1565.3713544923812,
+            "width": 13399.67335854657,
+            "height": 22177.228434924036
+          },
+          "worldWidth": 13399.67335854657,
+          "worldHeight": 22177.228434924036,
+          "complete": true,
+          "operation": "mount",
+          "mountToLayoutMs": 1375.4,
+          "canvasDrawMs": 8.4,
+          "mountToCompletedDrawMs": 1446.9,
+          "totalToCanvasFrameMs": 1495.2,
+          "validationMs": 43.4,
+          "timestamp": "2026-10-17T21:09:22.379Z"
+        }
+      }
+    ]
+  },
+  "parityFile": {
+    "path": "docs/benchmarks/react16-vs-react19/parity.json",
+    "sha256": "da4eb27c0e77680e2bd4f4bbafa114e89f5338aa4b479689c93909621349bfd0"
+  },
+  "frozenBuildIndexSha256": {
+    "react16": "93b6957b2a6af460ec9c64e24959e59c8eedbb72ba632bb622c42f2d27f1e909",
+    "react19": "14dfefacc5c35d6499ef2b82c1c39d7a57033590d447cb927eb469fc43ac0fa0"
+  },
+  "jpegSha256": "7ac93a8a67ee699d700dae636c4e283f1c6bab3cffce64078d7676d57d0a8b1d",
+  "diagnosticsFile": {
+    "path": "docs/benchmarks/react16-vs-react19/preflight.json",
+    "sha256": "eeb8d7b8191ee98d90883b411df81dd31590801ca816a022a8e2d6535c9fe75c"
+  }
+}

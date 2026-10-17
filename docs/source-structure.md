@@ -31,6 +31,7 @@
 - `StressApp.tsx` собирает стресс-интерфейс. `stress/useStressBenchmark.ts` управляет сценой и операциями `window.layoutStress`; `types.ts` описывает их контракт, `StressResults.tsx` выводит результаты.
 - `stress/completedDraw.ts` проверяет готовность геометрии, изображения и качества кеша перед завершением замера. `benchmarks/camera.ts` отдельно считает RAF и завершённые `Layer.draw`; прогрев и загрузка фотографии исключены из соответствующих таймеров.
 - `benchmarks/freeMount.ts` проверяет первый завершённый кадр свободной сцены, камеру, геометрию, содержимое ячеек и плотность кешей. `benchmarks/freeScene.ts` измеряет native drag или обычный путь камеры приложения, RAF и завершённые draw каждого слоя. В `?nodes=1&benchmark=1` API `window.freeNodes.benchmark` сравнивает свободное и сеточное размещение на одном Stage 1400 × 760. Протокол и результаты: [стресс-тест свободной сцены](free-scene-stress.md).
+- `packages/react16/stress` запускает тот же `FreeNodesExample` на React 16.14.0; `vite.react16-stress.config.ts` изолирует React/React DOM/react-konva/Konva старого стека. `scripts/summarize-react16-comparison.py` проверяет 90 записей и собирает [парное сравнение](react16-vs-react19-stress.md) из raw JSON.
 
 ## Инварианты при изменениях
 
