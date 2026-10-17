@@ -1,10 +1,12 @@
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import type Konva from 'konva';
 import { Layer, Rect, Stage } from 'react-konva';
 import { Flex, Layout } from '../lib';
 import type {
   LayoutHandle,
   LayoutMetrics,
+  LayoutNode,
   LayoutPlacement,
   RenderMetrics,
   ViewTransform,
@@ -14,6 +16,7 @@ import { DESCRIPTION } from './DesignedStressScene';
 import { normalizeView, readSavedView, zoomAtPoint } from './camera';
 import {
   createFreeNodes,
+  createGridNodes,
   fitFreeNodes,
   FREE_NODE_COUNT,
   FREE_NODE_HEIGHT,
@@ -27,14 +30,33 @@ import type { FreeNodePosition } from './freeNodesModel';
 import { referenceNodeDetail } from './referenceNodeDetail';
 import type { ReferenceNodeDetail } from './referenceNodeDetail';
 import { useDemoGestures } from './useDemoGestures';
+import { useCameraHitGraph } from './useCameraHitGraph';
+import { measureFreeSceneMount } from '../benchmarks/freeMount';
+import type { FreeMountResult, FreeSceneStats, SceneArrangement } from '../benchmarks/freeMount';
+import { runInteractionBenchmark } from '../benchmarks/freeScene';
+import type { InteractionOptions, InteractionResult } from '../benchmarks/freeScene';
 import './free-nodes.css';
 
 type DescriptionSetter = (value: string) => void;
 type RegisterDescription = (id: string, setter: DescriptionSetter | null) => void;
 type PlacementEvent = Konva.KonvaEventObject<Event>;
+type NodeDrag = { group: Konva.Group; parent: Konva.Container };
 
 const INITIAL_NODES = createFreeNodes();
 const PERFORMANCE = { cacheBudgetMB: 32, overscan: 100 };
+const EXPECTED_PRIMITIVES = 35_001;
+const nextFrame = () => new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+
+type BenchmarkInteraction = Pick<
+  InteractionOptions,
+  'kind' | 'view' | 'zoomRange' | 'panAmplitude' | 'durationMs' | 'warmupMs'
+> & { targetId?: string };
+
+function countTree(nodes: readonly LayoutNode[]): number {
+  let total = 0;
+  for (const node of nodes) total += 1 + countTree(node.children);
+  return total;
+}
 
 interface FreeNodesApi {
   stage(): Konva.Stage | null;
@@ -49,6 +71,14 @@ interface FreeNodesApi {
   setDescription(id: string, text: string): void;
   view(): ViewTransform;
   setView(view: Partial<ViewTransform>): void;
+  stats(): FreeSceneStats;
+  benchmark: {
+    mount(options: {
+      arrangement: SceneArrangement;
+      view?: ViewTransform;
+    }): Promise<FreeMountResult>;
+    interact(options: BenchmarkInteraction): Promise<InteractionResult>;
+  };
 }
 
 declare global {
@@ -96,8 +126,25 @@ const FreeNodeContent = memo(function FreeNodeContent({
 export default function FreeNodesExample() {
   const stage = useRef<Konva.Stage | null>(null);
   const layout = useRef<LayoutHandle | null>(null);
+  const sceneLayer = useRef<Konva.Layer | null>(null);
+  const dragLayer = useRef<Konva.Layer | null>(null);
+  const selectionOutline = useRef<Konva.Rect | null>(null);
+  const coordinateStatus = useRef<HTMLSpanElement | null>(null);
+  const zoomOutput = useRef<HTMLOutputElement | null>(null);
+  const activeDrag = useRef<NodeDrag | null>(null);
+  const applyingCamera = useRef(false);
   const container = useRef<HTMLDivElement | null>(null);
-  const [viewport, setViewport] = useState({ width: 1200, height: 680 });
+  const [benchmarkMode] = useState(() =>
+    new URLSearchParams(window.location.search).has('benchmark'),
+  );
+  const [viewport, setViewport] = useState(() =>
+    benchmarkMode ? { width: 1400, height: 760 } : { width: 1200, height: 680 },
+  );
+  const [mountConfig, setMountConfig] = useState({
+    mounted: true,
+    generation: 0,
+    arrangement: 'free' as SceneArrangement,
+  });
   const [nodes, setNodes] = useState(() => INITIAL_NODES);
   const [order, setOrder] = useState(() =>
     shuffled(
@@ -106,38 +153,150 @@ export default function FreeNodesExample() {
     ),
   );
   const [selected, setSelected] = useState<string | null>(null);
-  const [dragPosition, setDragPosition] = useState<FreeNodePosition | null>(null);
+  const [, setDragging] = useState(false);
   const [previewImage, setPreviewImage] = useState<HTMLImageElement>();
   const [imageError, setImageError] = useState(false);
   const [metrics, setMetrics] = useState<LayoutMetrics | null>(null);
   const [renderStats, setRenderStats] = useState<RenderMetrics | null>(null);
-  const [view, setView] = useState<ViewTransform>(() => {
+  const [initialView] = useState<ViewTransform>(() => {
     const params = new URLSearchParams(window.location.search);
     return params.has('zoom') || params.has('x') || params.has('y')
       ? readSavedView(window.location.search)
       : INITIAL_VIEW;
   });
+  const [detail, setDetail] = useState(() => referenceNodeDetail(initialView.scale));
+  const detailRef = useRef(detail);
   const nodesRef = useRef(nodes);
   const orderRef = useRef(order);
   const selectedRef = useRef(selected);
-  const viewRef = useRef(view);
+  const viewRef = useRef(initialView);
   const seed = useRef(INITIAL_SEED);
   const descriptions = useRef(new Map<string, DescriptionSetter>());
+  const measurementRef = useRef<LayoutMetrics | null>(null);
+  const measurementAt = useRef<{ at: number; metrics: LayoutMetrics } | null>(null);
+  const renderingRef = useRef<RenderMetrics | null>(null);
+  const primitiveCount = useRef(0);
+  const imageReady = useRef<Promise<HTMLImageElement> | null>(null);
+  const mountBusy = useRef(false);
+  const arrangementRef = useRef(mountConfig.arrangement);
+  arrangementRef.current = mountConfig.arrangement;
   nodesRef.current = nodes;
   orderRef.current = order;
   selectedRef.current = selected;
 
-  const setCamera = useCallback((next: Partial<ViewTransform>) => {
-    const current = normalizeView({ ...viewRef.current, ...next });
+  useLayoutEffect(() => {
+    const current = stage.current;
+    if (!current) return;
+    // Initialize before the image/content mounts; subsequent camera updates are native.
+    current.position(initialView);
+    current.scale({ x: initialView.scale, y: initialView.scale });
+    current.batchDraw();
+  }, [initialView]);
+
+  const stopActiveDrag = useCallback(() => activeDrag.current?.group.stopDrag(), []);
+
+  useEffect(() => {
+    const current = stage.current;
+    if (!current) return;
+    const events =
+      'xChange.freeNodeDrag yChange.freeNodeDrag scaleXChange.freeNodeDrag scaleYChange.freeNodeDrag widthChange.freeNodeDrag heightChange.freeNodeDrag';
+    // A camera/viewport transition ends the gesture before culling can reorder
+    // React-owned siblings around the temporarily reparented native Group.
+    current.on(events, stopActiveDrag);
+    return () => {
+      current.off('.freeNodeDrag');
+    };
+  }, [stopActiveDrag]);
+
+  useLayoutEffect(() => {
+    const drag = activeDrag.current;
+    const overlay = dragLayer.current;
+    if (!drag || !overlay || !drag.group.isDragging() || drag.group.getParent() === overlay) return;
+    // Wait for the selection React commit before moving its native Group.
+    // Only this app-owned layer is redrawn during drag; the other 999 cards stay still.
+    const position = drag.group.getAbsolutePosition();
+    const sceneLayer = drag.group.getLayer();
+    drag.group.moveTo(overlay);
+    drag.group.absolutePosition(position);
+    selectionOutline.current?.moveToTop();
+    sceneLayer?.batchDraw();
+    overlay.batchDraw();
+  });
+
+  useLayoutEffect(
+    () => () => {
+      const drag = activeDrag.current;
+      activeDrag.current = null;
+      if (!drag) return;
+      if (drag.group.getStage() && drag.parent.getStage()) drag.group.moveTo(drag.parent);
+      drag.group.stopDrag();
+    },
+    [],
+  );
+
+  const cameraChanged = useCameraHitGraph(stage, sceneLayer);
+
+  const recordCamera = useCallback((current: ViewTransform) => {
     viewRef.current = current;
-    stage.current?.position(current);
-    stage.current?.scale({ x: current.scale, y: current.scale });
-    stage.current?.batchDraw();
-    setView(current);
+    if (zoomOutput.current)
+      zoomOutput.current.textContent = String(Math.round(current.scale * 100));
+    const nextDetail = referenceNodeDetail(current.scale);
+    const previous = detailRef.current;
+    if (
+      previous.showPreview !== nextDetail.showPreview ||
+      previous.showDescription !== nextDetail.showDescription ||
+      previous.showActions !== nextDetail.showActions
+    ) {
+      detailRef.current = nextDetail;
+      setDetail(nextDetail);
+    }
   }, []);
+
+  useEffect(() => {
+    const current = stage.current;
+    if (!current) return;
+    const syncCamera = () => {
+      if (!applyingCamera.current) recordCamera({ ...current.position(), scale: current.scaleX() });
+    };
+    const events =
+      'xChange.freeNodeView yChange.freeNodeView scaleXChange.freeNodeView scaleYChange.freeNodeView';
+    current.on(events, syncCamera);
+    return () => {
+      current.off('.freeNodeView');
+    };
+  }, [recordCamera]);
+
+  const setCamera = useCallback(
+    (next: Partial<ViewTransform>) => {
+      stopActiveDrag();
+      const current = normalizeView({ ...viewRef.current, ...next });
+      const native = stage.current;
+      if (
+        native &&
+        (native.x() !== current.x ||
+          native.y() !== current.y ||
+          native.scaleX() !== current.scale ||
+          native.scaleY() !== current.scale)
+      ) {
+        cameraChanged();
+        applyingCamera.current = true;
+        try {
+          native.position(current);
+          native.scale({ x: current.scale, y: current.scale });
+          native.batchDraw();
+        } finally {
+          applyingCamera.current = false;
+        }
+      }
+      // Native camera updates stay off the React render path between Cell LOD changes.
+      recordCamera(current);
+    },
+    [stopActiveDrag, cameraChanged, recordCamera],
+  );
   useDemoGestures(stage, true, viewRef, setCamera);
 
   useEffect(() => {
+    if (benchmarkMode) return;
     const host = container.current;
     if (!host) return;
     const observer = new ResizeObserver(([entry]) => {
@@ -145,13 +304,15 @@ export default function FreeNodesExample() {
     });
     observer.observe(host);
     return () => observer.disconnect();
-  }, []);
+  }, [benchmarkMode]);
 
   useEffect(() => {
     let active = true;
     const image = new Image();
     image.src = `${import.meta.env.BASE_URL}node-preview.jpg`;
-    Promise.all([image.decode(), document.fonts.ready]).then(
+    const ready = Promise.all([image.decode(), document.fonts.ready]).then(() => image);
+    imageReady.current = ready;
+    ready.then(
       () => {
         if (active) setPreviewImage(image);
       },
@@ -164,52 +325,212 @@ export default function FreeNodesExample() {
     };
   }, []);
 
+  const onLayout = useCallback((tree: LayoutNode[]) => {
+    if (!primitiveCount.current) primitiveCount.current = countTree(tree);
+  }, []);
+  const onMeasure = useCallback((next: LayoutMetrics) => {
+    measurementRef.current = next;
+    if (next.scope !== 'visual') measurementAt.current = { at: performance.now(), metrics: next };
+    setMetrics(next);
+  }, []);
+  const onRenderStats = useCallback((next: RenderMetrics) => {
+    renderingRef.current = next;
+    setRenderStats(next);
+  }, []);
+
+  const stats = useCallback((): FreeSceneStats => {
+    const current = stage.current;
+    const model = layout.current?.getLayout('free-world');
+    const cards = model?.children.length ?? 0;
+    const positions = nodesRef.current;
+    let minX = Infinity,
+      minY = Infinity,
+      maxX = -Infinity,
+      maxY = -Infinity;
+    for (const position of positions) {
+      minX = Math.min(minX, position.x);
+      minY = Math.min(minY, position.y);
+      maxX = Math.max(maxX, position.x + FREE_NODE_WIDTH);
+      maxY = Math.max(maxY, position.y + FREE_NODE_HEIGHT);
+    }
+    const idleHtmlNodes = container.current?.querySelectorAll('[data-layout-key]').length ?? 0;
+    const attachedMeasurementRoots =
+      container.current?.querySelectorAll('.konva-layout-measure').length ?? 0;
+    const renderedCards = renderingRef.current?.visibleRoots ?? 0;
+    return {
+      mode: 'optimized',
+      arrangement: arrangementRef.current,
+      cards,
+      primitives: primitiveCount.current,
+      renderedCards,
+      measurement: measurementRef.current,
+      rendering: renderingRef.current,
+      idleHtmlNodes,
+      attachedMeasurementRoots,
+      viewportWidth: current?.width() ?? 0,
+      viewportHeight: current?.height() ?? 0,
+      devicePixelRatio: window.devicePixelRatio,
+      canvasPixelRatio: current?.getLayers()[0]?.getCanvas().getPixelRatio() ?? 1,
+      worldBounds: { x: minX, y: minY, width: maxX - minX, height: maxY - minY },
+      worldWidth: maxX - minX,
+      worldHeight: maxY - minY,
+      complete:
+        cards === FREE_NODE_COUNT &&
+        primitiveCount.current === EXPECTED_PRIMITIVES &&
+        renderedCards > 0 &&
+        idleHtmlNodes === 0 &&
+        attachedMeasurementRoots === 0,
+    };
+  }, []);
+
+  const benchmarkMount = useCallback(
+    async ({
+      arrangement,
+      view: requestedView,
+    }: {
+      arrangement: SceneArrangement;
+      view?: ViewTransform;
+    }): Promise<FreeMountResult> => {
+      if (!benchmarkMode)
+        throw new Error('Open ?nodes=1&benchmark=1 for the fixed 1400×760 benchmark viewport.');
+      if (mountBusy.current) throw new Error('A mount benchmark is already running.');
+      if (arrangement !== 'free' && arrangement !== 'grid')
+        throw new Error('Unknown scene arrangement.');
+      mountBusy.current = true;
+      try {
+        stopActiveDrag();
+        if (!imageReady.current) throw new Error('The preview asset is not ready.');
+        await imageReady.current;
+        await document.fonts.ready;
+        flushSync(() => setMountConfig((previous) => ({ ...previous, mounted: false })));
+        await nextFrame();
+        await nextFrame();
+        const nextNodes = arrangement === 'grid' ? createGridNodes() : createFreeNodes();
+        const camera = normalizeView(requestedView ?? { x: 0, y: 0, scale: 1 });
+        flushSync(() => {
+          setNodes(nextNodes);
+          setOrder(
+            arrangement === 'grid'
+              ? nextNodes.map((node) => node.id)
+              : shuffled(
+                  nextNodes.map((node) => node.id),
+                  INITIAL_SEED,
+                ),
+          );
+          setSelected(null);
+          setCamera(camera);
+          setMountConfig((previous) => ({ ...previous, arrangement }));
+        });
+        measurementRef.current = null;
+        measurementAt.current = null;
+        renderingRef.current = null;
+        primitiveCount.current = 0;
+        const current = stage.current;
+        if (!current) throw new Error('The benchmark Stage is not mounted.');
+        return await measureFreeSceneMount({
+          stage: current,
+          view: camera,
+          stats,
+          getModel: () => layout.current?.getLayout('free-world'),
+          getPositions: () => nodesRef.current,
+          getMeasurement: () => measurementAt.current,
+          mount: () =>
+            flushSync(() =>
+              setMountConfig((previous) => ({
+                ...previous,
+                mounted: true,
+                generation: previous.generation + 1,
+              })),
+            ),
+        });
+      } finally {
+        mountBusy.current = false;
+      }
+    },
+    [benchmarkMode, setCamera, stats, stopActiveDrag],
+  );
+
+  const benchmarkInteract = useCallback(
+    (options: BenchmarkInteraction) => {
+      const current = stage.current;
+      if (mountBusy.current || !current || !stats().complete)
+        throw new Error('Mount a complete scene before benchmarking interaction.');
+      const { targetId = 'free-node-0000', ...interaction } = options;
+      return runInteractionBenchmark({
+        ...interaction,
+        stage: current,
+        setView: setCamera,
+        stats,
+        getTarget: () =>
+          (current.find((node: Konva.Node) => node.getAttr('layoutRootId') === targetId)[0] as
+            Konva.Group | undefined) ?? null,
+      });
+    },
+    [setCamera, stats],
+  );
+
   const registerDescription = useCallback<RegisterDescription>((id, setter) => {
     if (setter) descriptions.current.set(id, setter);
     else descriptions.current.delete(id);
   }, []);
 
-  const select = useCallback((id: string | null) => {
-    if (id && !nodesRef.current.some((node) => node.id === id))
-      throw new Error(`Unknown node: ${id}`);
-    setSelected(id);
-    if (!id) return;
-    stage.current?.find((node: Konva.Node) => node.getAttr('layoutRootId') === id)[0]?.moveToTop();
-    setOrder((previous) =>
-      previous.at(-1) === id ? previous : [...previous.filter((value) => value !== id), id],
-    );
-  }, []);
+  const select = useCallback(
+    (id: string | null, group?: Konva.Group) => {
+      if (id && !nodesRef.current.some((node) => node.id === id))
+        throw new Error(`Unknown node: ${id}`);
+      if (activeDrag.current && activeDrag.current.group.getAttr('layoutRootId') !== id)
+        stopActiveDrag();
+      setSelected(id);
+      if (!id) return;
+      const target =
+        group ?? stage.current?.find((node: Konva.Node) => node.getAttr('layoutRootId') === id)[0];
+      target?.moveToTop();
+      setOrder((previous) =>
+        previous.at(-1) === id ? previous : [...previous.filter((value) => value !== id), id],
+      );
+    },
+    [stopActiveDrag],
+  );
 
-  const move = useCallback((id: string, position: { x: number; y: number }) => {
-    if (!nodesRef.current.some((node) => node.id === id)) throw new Error(`Unknown node: ${id}`);
-    if (!Number.isFinite(position.x) || !Number.isFinite(position.y))
-      throw new Error('Node coordinates must be finite.');
-    setNodes((previous) =>
-      previous.map((node) => (node.id === id ? { ...node, ...position } : node)),
-    );
-  }, []);
+  const move = useCallback(
+    (id: string, position: { x: number; y: number }) => {
+      if (!nodesRef.current.some((node) => node.id === id)) throw new Error(`Unknown node: ${id}`);
+      if (!Number.isFinite(position.x) || !Number.isFinite(position.y))
+        throw new Error('Node coordinates must be finite.');
+      stopActiveDrag();
+      setNodes((previous) =>
+        previous.map((node) => (node.id === id ? { ...node, ...position } : node)),
+      );
+    },
+    [stopActiveDrag],
+  );
 
-  const reorder = useCallback((ids: readonly string[]) => {
-    const known = new Set(nodesRef.current.map((node) => node.id));
-    if (
-      ids.length !== known.size ||
-      new Set(ids).size !== known.size ||
-      ids.some((id) => !known.has(id))
-    ) {
-      throw new Error('Order must contain every node ID exactly once.');
-    }
-    setOrder([...ids]);
-  }, []);
+  const reorder = useCallback(
+    (ids: readonly string[]) => {
+      const known = new Set(nodesRef.current.map((node) => node.id));
+      if (
+        ids.length !== known.size ||
+        new Set(ids).size !== known.size ||
+        ids.some((id) => !known.has(id))
+      ) {
+        throw new Error('Order must contain every node ID exactly once.');
+      }
+      stopActiveDrag();
+      setOrder([...ids]);
+    },
+    [stopActiveDrag],
+  );
 
   const scatter = useCallback(() => {
+    stopActiveDrag();
     seed.current++;
     setNodes((previous) => scatterFreeNodes(previous, seed.current));
     setSelected(null);
-    setDragPosition(null);
     setCamera(INITIAL_VIEW);
-  }, [setCamera]);
+  }, [setCamera, stopActiveDrag]);
 
   const reset = useCallback(() => {
+    stopActiveDrag();
     seed.current = INITIAL_SEED;
     setNodes(createFreeNodes());
     setOrder(
@@ -219,35 +540,51 @@ export default function FreeNodesExample() {
       ),
     );
     setSelected(null);
-    setDragPosition(null);
     setCamera(INITIAL_VIEW);
-  }, [setCamera]);
+  }, [setCamera, stopActiveDrag]);
 
   const onSelect = useCallback(
     (event: PlacementEvent) => {
-      select(event.currentTarget.getAttr('layoutRootId') as string);
+      select(
+        event.currentTarget.getAttr('layoutRootId') as string,
+        event.currentTarget as Konva.Group,
+      );
     },
     [select],
   );
-  const onDragStart = useCallback(
-    (event: PlacementEvent) => {
-      const id = event.currentTarget.getAttr('layoutRootId') as string;
-      event.currentTarget.moveToTop();
-      select(id);
-      setDragPosition({ id, ...event.currentTarget.position() });
-    },
-    [select],
-  );
+  const onDragStart = useCallback((event: PlacementEvent) => {
+    if (event.target !== event.currentTarget) return;
+    const group = event.currentTarget as Konva.Group;
+    const parent = group.getParent();
+    if (!parent) return;
+    activeDrag.current = { group, parent };
+    setSelected(group.getAttr('layoutRootId') as string);
+    setDragging(true);
+  }, []);
   const onDragMove = useCallback((event: PlacementEvent) => {
-    setDragPosition({
-      id: event.currentTarget.getAttr('layoutRootId') as string,
-      ...event.currentTarget.position(),
-    });
+    if (event.target !== event.currentTarget) return;
+    const { x, y } = event.currentTarget.position();
+    selectionOutline.current?.position({ x: x - 4, y: y - 4 });
+    if (coordinateStatus.current)
+      coordinateStatus.current.textContent = `${event.currentTarget.getAttr('layoutRootId')} · x ${Math.round(x)}, y ${Math.round(y)}`;
   }, []);
   const onDragEnd = useCallback(
     (event: PlacementEvent) => {
-      move(event.currentTarget.getAttr('layoutRootId') as string, event.currentTarget.position());
-      setDragPosition(null);
+      if (event.target !== event.currentTarget) return;
+      const drag = activeDrag.current;
+      if (!drag || drag.group !== event.currentTarget) return;
+      activeDrag.current = null;
+      // Restore React's native parent before committing the new external coordinates.
+      const position = drag.group.getAbsolutePosition();
+      drag.group.moveTo(drag.parent);
+      drag.group.absolutePosition(position);
+      const id = drag.group.getAttr('layoutRootId') as string;
+      move(id, drag.group.position());
+      setOrder((previous) =>
+        previous.at(-1) === id ? previous : [...previous.filter((value) => value !== id), id],
+      );
+      dragLayer.current?.batchDraw();
+      setDragging(false);
     },
     [move],
   );
@@ -266,7 +603,7 @@ export default function FreeNodesExample() {
       })),
     [nodeById, order, onSelect, onDragStart, onDragMove, onDragEnd],
   );
-  const { showPreview, showDescription, showActions } = referenceNodeDetail(view.scale);
+  const { showPreview, showDescription, showActions } = detail;
   // Coordinates, selection and z-order never enter the HTML measurement tree.
   const content = useMemo(
     () =>
@@ -303,20 +640,33 @@ export default function FreeNodesExample() {
       setDescription: (id, text) => {
         const setter = descriptions.current.get(id);
         if (!setter) throw new Error(`Node content is not ready: ${id}`);
+        stopActiveDrag();
         setter(text);
       },
       view: () => ({ ...viewRef.current }),
       setView: setCamera,
+      stats,
+      benchmark: { mount: benchmarkMount, interact: benchmarkInteract },
     };
     window.freeNodes = api;
     return () => {
       if (window.freeNodes === api) delete window.freeNodes;
     };
-  }, [select, move, reorder, scatter, setCamera]);
+  }, [
+    select,
+    move,
+    reorder,
+    scatter,
+    setCamera,
+    stats,
+    benchmarkMount,
+    benchmarkInteract,
+    stopActiveDrag,
+  ]);
 
   const selectedNode = selected
-    ? dragPosition?.id === selected
-      ? dragPosition
+    ? activeDrag.current?.group.getAttr('layoutRootId') === selected
+      ? { id: selected, ...activeDrag.current.group.position() }
       : nodeById.get(selected)
     : undefined;
   const selectedBounds = selected ? layout.current?.getLayout(selected) : undefined;
@@ -341,7 +691,7 @@ export default function FreeNodesExample() {
       </div>
       <div className="free-nodes-controls">
         <button onClick={scatter}>Перемешать позиции</button>
-        <button onClick={() => setOrder((previous) => shuffled(previous, ++seed.current))}>
+        <button onClick={() => reorder(shuffled(orderRef.current, ++seed.current))}>
           Перемешать порядок
         </button>
         <button
@@ -362,15 +712,17 @@ export default function FreeNodesExample() {
         </button>
         <button onClick={reset}>Сброс</button>
       </div>
-      <div ref={container} className="free-nodes-stage">
+      <div
+        ref={container}
+        className="free-nodes-stage"
+        style={
+          benchmarkMode ? { width: 1400, height: 760, minHeight: 760, flexShrink: 0 } : undefined
+        }
+      >
         <Stage
           ref={stage}
           width={viewport.width}
           height={viewport.height}
-          x={view.x}
-          y={view.y}
-          scaleX={view.scale}
-          scaleY={view.scale}
           onClick={(event) => {
             if (event.target === stage.current) select(null);
           }}
@@ -378,22 +730,27 @@ export default function FreeNodesExample() {
             if (event.target === stage.current) select(null);
           }}
         >
-          <Layer>
-            {content && (
+          <Layer ref={sceneLayer} name="free-node-scene">
+            {content && mountConfig.mounted && (
               <Layout
+                key={mountConfig.generation}
                 ref={layout}
                 width={FREE_NODE_WIDTH}
                 height={FREE_NODE_HEIGHT}
                 placements={placements}
-                onMeasure={setMetrics}
-                onRenderStats={setRenderStats}
+                onLayout={onLayout}
+                onMeasure={onMeasure}
+                onRenderStats={onRenderStats}
                 performance={PERFORMANCE}
               >
                 {content}
               </Layout>
             )}
+          </Layer>
+          <Layer ref={dragLayer} name="free-node-interaction">
             {selectedNode && selectedBounds && (
               <Rect
+                ref={selectionOutline}
                 name="selected-node-outline"
                 x={selectedNode.x - 4}
                 y={selectedNode.y - 4}
@@ -410,15 +767,15 @@ export default function FreeNodesExample() {
         </Stage>
       </div>
       <div className="free-nodes-status" aria-live="polite">
-        <span>
+        <span ref={coordinateStatus}>
           {selectedNode
             ? `${selectedNode.id} · x ${Math.round(selectedNode.x)}, y ${Math.round(selectedNode.y)}`
             : 'Выберите ноду, чтобы изменить её позицию и порядок'}
         </span>
         <span>
           {FREE_NODE_COUNT} нод · на экране {renderStats?.visibleRoots ?? 0} · zoom{' '}
-          {Math.round(view.scale * 100)}% · layout {metrics?.scope ?? '…'} /{' '}
-          {metrics?.measuredNodes ?? 0} измерений
+          <output ref={zoomOutput}>{Math.round(viewRef.current.scale * 100)}</output>% · layout{' '}
+          {metrics?.scope ?? '…'} / {metrics?.measuredNodes ?? 0} измерений
         </span>
       </div>
       {imageError && <p role="alert">Не удалось загрузить превью нод.</p>}

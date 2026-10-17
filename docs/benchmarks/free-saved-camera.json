@@ -1,0 +1,119 @@
+{
+  "cpu": 1,
+  "viewport": "1600x1000x2",
+  "protocol": "Fresh page navigation to saved camera query; no benchmark remount before capture.",
+  "rows": [
+    {
+      "view": {
+        "x": 36,
+        "y": 60,
+        "scale": 0.03
+      },
+      "nativeView": {
+        "x": 36,
+        "y": 60,
+        "scale": 0.03
+      },
+      "width": 360,
+      "height": 429.78125,
+      "stats": {
+        "mode": "optimized",
+        "arrangement": "free",
+        "cards": 1000,
+        "primitives": 35001,
+        "renderedCards": 1000,
+        "measurement": {
+          "scope": "full",
+          "measuredNodes": 1035,
+          "measuredRoots": ["free-world"],
+          "templateHits": 999,
+          "templateMisses": 1,
+          "durationMs": 171.59999990463257,
+          "revision": 1
+        },
+        "rendering": {
+          "visibleRoots": 1000,
+          "totalRoots": 1000,
+          "lod": true,
+          "lodLevel": "cell",
+          "lodCells": 3000,
+          "groups": 27000,
+          "shapes": 25000,
+          "cachedRoots": 1000,
+          "cacheBytes": 3000000
+        },
+        "idleHtmlNodes": 0,
+        "attachedMeasurementRoots": 0,
+        "viewportWidth": 1400,
+        "viewportHeight": 760,
+        "devicePixelRatio": 2,
+        "canvasPixelRatio": 2,
+        "worldBounds": {
+          "x": -325,
+          "y": -1565.3713544923812,
+          "width": 13399.67335854657,
+          "height": 22177.228434924036
+        },
+        "worldWidth": 13399.67335854657,
+        "worldHeight": 22177.228434924036,
+        "complete": true
+      }
+    },
+    {
+      "view": {
+        "x": 36,
+        "y": 60,
+        "scale": 0.05
+      },
+      "nativeView": {
+        "x": 36,
+        "y": 60,
+        "scale": 0.05
+      },
+      "width": 360,
+      "height": 429.78125,
+      "stats": {
+        "mode": "optimized",
+        "arrangement": "free",
+        "cards": 1000,
+        "primitives": 35001,
+        "renderedCards": 809,
+        "measurement": {
+          "scope": "full",
+          "measuredNodes": 1035,
+          "measuredRoots": ["free-world"],
+          "templateHits": 999,
+          "templateMisses": 1,
+          "durationMs": 170.70000004768372,
+          "revision": 1
+        },
+        "rendering": {
+          "visibleRoots": 809,
+          "totalRoots": 1000,
+          "lod": true,
+          "lodLevel": "cell",
+          "lodCells": 2427,
+          "groups": 21843,
+          "shapes": 20225,
+          "cachedRoots": 809,
+          "cacheBytes": 10067196
+        },
+        "idleHtmlNodes": 0,
+        "attachedMeasurementRoots": 0,
+        "viewportWidth": 1400,
+        "viewportHeight": 760,
+        "devicePixelRatio": 2,
+        "canvasPixelRatio": 2,
+        "worldBounds": {
+          "x": -325,
+          "y": -1565.3713544923812,
+          "width": 13399.67335854657,
+          "height": 22177.228434924036
+        },
+        "worldWidth": 13399.67335854657,
+        "worldHeight": 22177.228434924036,
+        "complete": true
+      }
+    }
+  ]
+}

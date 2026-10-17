@@ -1,7 +1,8 @@
 import { memo, useLayoutEffect, useRef, type ReactNode } from 'react';
 import type Konva from 'konva';
-import { Group, Rect, Text } from 'react-konva';
+import { Group, Rect, Shape, Text } from 'react-konva';
 import type { SceneNode } from '../model';
+import type { LayoutPlacement } from '../types';
 import { textAttributes } from './text';
 import { dispatchEvents, emptyEvents, hasEvents, isReplacedCell, type Events } from './scene';
 import { useCustomContent } from './customContent';
@@ -19,7 +20,17 @@ interface DrawProps {
   inheritedInteraction?: boolean;
   children?: ReactNode;
   ownVisible?: boolean;
+  placement?: LayoutPlacement;
+  hitRegion?: boolean;
 }
+
+// A Shape without sceneFunc emits no scene drawing commands, but still fills the hit graph.
+const drawPlacementHit: NonNullable<Konva.ShapeConfig['hitFunc']> = (context, shape) => {
+  context.beginPath();
+  context.rect(0, 0, shape.width(), shape.height());
+  context.closePath();
+  context.fillStrokeShape(shape);
+};
 
 export const DrawNode = memo(function DrawNode({
   item,
@@ -34,6 +45,8 @@ export const DrawNode = memo(function DrawNode({
   inheritedInteraction = false,
   children,
   ownVisible = true,
+  placement,
+  hitRegion = false,
 }: DrawProps) {
   const { layout, props, textStyle } = item;
   const text = useRef<Konva.Text | null>(null);
@@ -68,6 +81,16 @@ export const DrawNode = memo(function DrawNode({
   });
   const content = (
     <>
+      {hitRegion && (
+        <Shape
+          name="layout-placement-hit"
+          width={width}
+          height={height}
+          fill="#000"
+          hitFunc={drawPlacementHit}
+          listening={active}
+        />
+      )}
       {normalVisible && (props.fill || props.stroke || (!optimized && props.onClick)) && (
         <Rect
           x={contentX}
@@ -125,14 +148,28 @@ export const DrawNode = memo(function DrawNode({
     <Group
       ref={groupRef}
       id={layout.id}
-      name={layout.type}
+      name={placement ? `${layout.type} layout-root-placement` : layout.type}
+      layoutRootId={placement?.id}
       x={x}
       y={y}
       width={width}
       height={height}
       listening={active}
-      onClick={() => dispatchEvents(props.onClick, ancestors.click)}
-      onTap={() => dispatchEvents(props.onClick, ancestors.click)}
+      draggable={placement?.draggable}
+      dragBoundFunc={placement?.dragBoundFunc}
+      onMouseDown={placement?.onMouseDown}
+      onTouchStart={placement?.onTouchStart}
+      onDragStart={placement?.onDragStart}
+      onDragMove={placement?.onDragMove}
+      onDragEnd={placement?.onDragEnd}
+      onClick={(event) => {
+        dispatchEvents(props.onClick, ancestors.click);
+        placement?.onClick?.(event);
+      }}
+      onTap={(event) => {
+        dispatchEvents(props.onClick, ancestors.click);
+        placement?.onTap?.(event);
+      }}
       onDblClick={() => dispatchEvents(props.onDblClick, ancestors.doubleClick)}
       onDblTap={() => dispatchEvents(props.onDblTap, ancestors.doubleTap)}
     >

@@ -1,0 +1,351 @@
+{
+  "cpu": 6,
+  "viewport": "1600x1000x2",
+  "protocol": "Native hit-tested mousedown/move/up; target selected front before acquisition; freshly mounted scene for each check.",
+  "rows": [
+    {
+      "action": "pointer",
+      "scale": 0.03,
+      "pointerCallMs": 69.70000004768372,
+      "pausedBeforePointer": true,
+      "listeningAfterPointer": true,
+      "hitBeforeMove": "free-node-0000",
+      "correctHit": true,
+      "started": 0,
+      "moved": 0,
+      "ended": 0,
+      "parentDuring": null,
+      "stopped": true,
+      "parentRestored": true,
+      "groupPreserved": true,
+      "geometryPreserved": true,
+      "cachedAtStart": true,
+      "cachePreserved": true,
+      "frontOrderPersisted": null,
+      "position": {
+        "x": 80,
+        "y": 90
+      },
+      "saved": {
+        "id": "free-node-0000",
+        "x": 80,
+        "y": 90
+      },
+      "positionError": null,
+      "savedPositionError": 0,
+      "idleHtmlNodes": 0,
+      "attachedMeasurementRoots": 0,
+      "finalView": {
+        "x": 31,
+        "y": 80,
+        "scale": 0.03
+      },
+      "nativeView": {
+        "x": 31,
+        "y": 80,
+        "scale": 0.03
+      }
+    },
+    {
+      "action": "drag",
+      "scale": 0.03,
+      "pointerCallMs": 0.9000000953674316,
+      "pausedBeforePointer": null,
+      "listeningAfterPointer": true,
+      "hitBeforeMove": "free-node-0000",
+      "correctHit": true,
+      "started": 1,
+      "moved": 1,
+      "ended": 1,
+      "parentDuring": "free-node-interaction",
+      "stopped": true,
+      "parentRestored": true,
+      "groupPreserved": true,
+      "geometryPreserved": true,
+      "cachedAtStart": true,
+      "cachePreserved": true,
+      "frontOrderPersisted": true,
+      "position": {
+        "x": 1013.333333333333,
+        "y": 623.333333333333
+      },
+      "saved": {
+        "id": "free-node-0000",
+        "x": 1013.333333333333,
+        "y": 623.333333333333
+      },
+      "positionError": 1.1368683772161603e-13,
+      "savedPositionError": 0,
+      "idleHtmlNodes": 0,
+      "attachedMeasurementRoots": 0,
+      "finalView": {
+        "x": 30,
+        "y": 80,
+        "scale": 0.03
+      },
+      "nativeView": {
+        "x": 30,
+        "y": 80,
+        "scale": 0.03
+      }
+    },
+    {
+      "action": "drag",
+      "scale": 0.1,
+      "pointerCallMs": 0.5,
+      "pausedBeforePointer": null,
+      "listeningAfterPointer": true,
+      "hitBeforeMove": "free-node-0000",
+      "correctHit": true,
+      "started": 1,
+      "moved": 1,
+      "ended": 1,
+      "parentDuring": "free-node-interaction",
+      "stopped": true,
+      "parentRestored": true,
+      "groupPreserved": true,
+      "geometryPreserved": true,
+      "cachedAtStart": false,
+      "cachePreserved": true,
+      "frontOrderPersisted": true,
+      "position": {
+        "x": 360,
+        "y": 250.00000000000034
+      },
+      "saved": {
+        "id": "free-node-0000",
+        "x": 360,
+        "y": 250.00000000000034
+      },
+      "positionError": 3.4576501834057003e-13,
+      "savedPositionError": 0,
+      "idleHtmlNodes": 0,
+      "attachedMeasurementRoots": 0,
+      "finalView": {
+        "x": 30,
+        "y": 80,
+        "scale": 0.1
+      },
+      "nativeView": {
+        "x": 30,
+        "y": 80,
+        "scale": 0.1
+      }
+    },
+    {
+      "action": "drag",
+      "scale": 1,
+      "pointerCallMs": 1.2999999523162842,
+      "pausedBeforePointer": null,
+      "listeningAfterPointer": true,
+      "hitBeforeMove": "free-node-0000",
+      "correctHit": true,
+      "started": 1,
+      "moved": 1,
+      "ended": 1,
+      "parentDuring": "free-node-interaction",
+      "stopped": true,
+      "parentRestored": true,
+      "groupPreserved": true,
+      "geometryPreserved": true,
+      "cachedAtStart": true,
+      "cachePreserved": true,
+      "frontOrderPersisted": true,
+      "position": {
+        "x": 108,
+        "y": 106
+      },
+      "saved": {
+        "id": "free-node-0000",
+        "x": 108,
+        "y": 106
+      },
+      "positionError": 0,
+      "savedPositionError": 0,
+      "idleHtmlNodes": 0,
+      "attachedMeasurementRoots": 0,
+      "finalView": {
+        "x": 30,
+        "y": 80,
+        "scale": 1
+      },
+      "nativeView": {
+        "x": 30,
+        "y": 80,
+        "scale": 1
+      }
+    },
+    {
+      "action": "camera",
+      "scale": 0.03,
+      "pointerCallMs": 1.1000001430511475,
+      "pausedBeforePointer": null,
+      "listeningAfterPointer": true,
+      "hitBeforeMove": "free-node-0000",
+      "correctHit": true,
+      "started": 1,
+      "moved": 1,
+      "ended": 1,
+      "parentDuring": "free-node-interaction",
+      "stopped": true,
+      "parentRestored": true,
+      "groupPreserved": true,
+      "geometryPreserved": true,
+      "cachedAtStart": true,
+      "cachePreserved": true,
+      "frontOrderPersisted": true,
+      "position": {
+        "x": 1013.333333333333,
+        "y": 623.333333333333
+      },
+      "saved": {
+        "id": "free-node-0000",
+        "x": 1013.333333333333,
+        "y": 623.333333333333
+      },
+      "positionError": 1.1368683772161603e-13,
+      "savedPositionError": 0,
+      "idleHtmlNodes": 0,
+      "attachedMeasurementRoots": 0,
+      "finalView": {
+        "x": 47,
+        "y": 71,
+        "scale": 0.03
+      },
+      "nativeView": {
+        "x": 47,
+        "y": 71,
+        "scale": 0.03
+      }
+    },
+    {
+      "action": "native-camera",
+      "scale": 0.03,
+      "pointerCallMs": 1.0999999046325684,
+      "pausedBeforePointer": null,
+      "listeningAfterPointer": true,
+      "hitBeforeMove": "free-node-0000",
+      "correctHit": true,
+      "started": 1,
+      "moved": 1,
+      "ended": 1,
+      "parentDuring": "free-node-interaction",
+      "stopped": true,
+      "parentRestored": true,
+      "groupPreserved": true,
+      "geometryPreserved": true,
+      "cachedAtStart": true,
+      "cachePreserved": true,
+      "frontOrderPersisted": true,
+      "position": {
+        "x": 1013.333333333333,
+        "y": 623.333333333333
+      },
+      "saved": {
+        "id": "free-node-0000",
+        "x": 1013.333333333333,
+        "y": 623.333333333333
+      },
+      "positionError": 1.1368683772161603e-13,
+      "savedPositionError": 0,
+      "idleHtmlNodes": 0,
+      "attachedMeasurementRoots": 0,
+      "finalView": {
+        "x": 47,
+        "y": 71,
+        "scale": 0.03
+      },
+      "nativeView": {
+        "x": 47,
+        "y": 71,
+        "scale": 0.03
+      }
+    },
+    {
+      "action": "resize",
+      "scale": 0.03,
+      "pointerCallMs": 0.09999990463256836,
+      "pausedBeforePointer": null,
+      "listeningAfterPointer": true,
+      "hitBeforeMove": "free-node-0000",
+      "correctHit": true,
+      "started": 1,
+      "moved": 1,
+      "ended": 1,
+      "parentDuring": "free-node-interaction",
+      "stopped": true,
+      "parentRestored": true,
+      "groupPreserved": true,
+      "geometryPreserved": true,
+      "cachedAtStart": true,
+      "cachePreserved": true,
+      "frontOrderPersisted": true,
+      "position": {
+        "x": 1013.333333333333,
+        "y": 623.333333333333
+      },
+      "saved": {
+        "id": "free-node-0000",
+        "x": 1013.333333333333,
+        "y": 623.333333333333
+      },
+      "positionError": 1.1368683772161603e-13,
+      "savedPositionError": 0,
+      "idleHtmlNodes": 0,
+      "attachedMeasurementRoots": 0,
+      "finalView": {
+        "x": 30,
+        "y": 80,
+        "scale": 0.03
+      },
+      "nativeView": {
+        "x": 30,
+        "y": 80,
+        "scale": 0.03
+      }
+    },
+    {
+      "action": "content",
+      "scale": 0.03,
+      "pointerCallMs": 0.8999998569488525,
+      "pausedBeforePointer": null,
+      "listeningAfterPointer": true,
+      "hitBeforeMove": "free-node-0000",
+      "correctHit": true,
+      "started": 1,
+      "moved": 1,
+      "ended": 1,
+      "parentDuring": "free-node-interaction",
+      "stopped": true,
+      "parentRestored": true,
+      "groupPreserved": true,
+      "geometryPreserved": true,
+      "cachedAtStart": true,
+      "cachePreserved": true,
+      "frontOrderPersisted": true,
+      "position": {
+        "x": 1013.333333333333,
+        "y": 623.333333333333
+      },
+      "saved": {
+        "id": "free-node-0000",
+        "x": 1013.333333333333,
+        "y": 623.333333333333
+      },
+      "positionError": 1.1368683772161603e-13,
+      "savedPositionError": 0,
+      "idleHtmlNodes": 0,
+      "attachedMeasurementRoots": 0,
+      "finalView": {
+        "x": 30,
+        "y": 80,
+        "scale": 0.03
+      },
+      "nativeView": {
+        "x": 30,
+        "y": 80,
+        "scale": 0.03
+      }
+    }
+  ]
+}

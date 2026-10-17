@@ -1,0 +1,20 @@
+{
+  "cpu": 1,
+  "view": { "x": 30, "y": 80, "scale": 1 },
+  "target": "free-node-0000",
+  "operation": "Application API changes description content; wait five animation frames",
+  "measurement": {
+    "scope": "local",
+    "measuredNodes": 35,
+    "measuredRoots": ["free-node-0000"],
+    "templateHits": 0,
+    "templateMisses": 1,
+    "durationMs": 2.5,
+    "revision": 2
+  },
+  "unchangedOtherGeometry": true,
+  "updatedTarget": true,
+  "unchangedOtherGroupsAndCaches": true,
+  "idleHtmlNodes": 0,
+  "note": "Geometry identity checked for all other 999 model roots; native Group/cache identity checked for other mounted visible roots."
+}

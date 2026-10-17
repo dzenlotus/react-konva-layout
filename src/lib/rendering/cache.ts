@@ -8,8 +8,10 @@ export interface CacheEntry {
   reserved: number;
 }
 
-const MIN_CACHE_DENSITY = 0.25;
+export const MIN_CACHE_DENSITY = 1 / 64;
 const DENSITY_DOWNSIZE_THRESHOLD = 0.45;
+const OVERVIEW_DOWNSIZE_THRESHOLD = 0.35;
+const OVERVIEW_CACHE_DENSITY = 1 / 8;
 const CACHE_PADDING = 2;
 const BYTES_PER_PIXEL = 4;
 
@@ -19,7 +21,10 @@ export function cacheDensity(scale: number, pixelRatio: number, previous = 1): n
   const required = Math.max(MIN_CACHE_DENSITY, Number.isNaN(product) ? 1 : product);
   const current =
     Number.isFinite(previous) && previous > 0 ? Math.max(MIN_CACHE_DENSITY, previous) : 1;
-  if (required <= current && required > current * DENSITY_DOWNSIZE_THRESHOLD) return current;
+  // Keep tiny overview bitmaps stable across narrow pinch ranges around a density boundary.
+  const threshold =
+    current <= OVERVIEW_CACHE_DENSITY ? OVERVIEW_DOWNSIZE_THRESHOLD : DENSITY_DOWNSIZE_THRESHOLD;
+  if (required <= current && required > current * threshold) return current;
   const next = 2 ** Math.ceil(Math.log2(required));
   return Number.isFinite(next) ? next : Number.MAX_VALUE;
 }
@@ -73,11 +78,15 @@ export function cacheRoot(
     y: bounds.y + island.item.layout.absoluteY,
   });
   const ratio = config.cacheRatio;
+  const hitRatio = Math.min(1, ratio);
   const width = Math.ceil(bounds.width + CACHE_PADDING * 2);
   const height = Math.ceil(bounds.height + CACHE_PADDING * 2);
-  // Reserve scene + filter at the chosen density, plus the 1x hit surface.
+  // Konva allocates its filter surface lazily; plain groups only need scene + hit.
+  const sceneSurfaces = group.filters()?.length ? 2 : 1;
   const reserved =
-    BYTES_PER_PIXEL * (Math.ceil(width * ratio) * Math.ceil(height * ratio) * 2 + width * height);
+    BYTES_PER_PIXEL *
+    (Math.ceil(width * ratio) * Math.ceil(height * ratio) * sceneSurfaces +
+      Math.ceil(width * hitRatio) * Math.ceil(height * hitRatio));
   let used = 0;
   for (const entry of entries.values()) used += entry.reserved;
   if (!(Number.isFinite(reserved) && reserved <= config.budget - used)) return release;
@@ -88,7 +97,7 @@ export function cacheRoot(
     width,
     height,
     pixelRatio: ratio,
-    hitCanvasPixelRatio: 1,
+    hitCanvasPixelRatio: hitRatio,
   });
   if (group.isCached()) entries.set(island.key, { group, reserved });
   return release;

@@ -1,6 +1,7 @@
 import type { SceneNode, PrimitiveProps } from '../model';
 import type { PerformanceOptions } from '../types';
 import type { Bounds } from '../host';
+import { MIN_CACHE_DENSITY } from './cache';
 
 export interface Events {
   click: Array<() => void>;
@@ -60,7 +61,7 @@ export function settings(options?: PerformanceOptions, automaticRatio = 1): Sett
     overscan: Math.max(0, options?.overscan ?? 144),
     cache: enabled && options?.cache !== false,
     budget: Math.max(0, options?.cacheBudgetMB ?? 32) * 1024 * 1024,
-    cacheRatio: Number.isFinite(ratio) && ratio > 0 ? Math.max(0.25, ratio) : 1,
+    cacheRatio: Number.isFinite(ratio) && ratio > 0 ? Math.max(MIN_CACHE_DENSITY, ratio) : 1,
   };
 }
 

@@ -10,6 +10,15 @@ export interface FreeNodePosition {
   y: number;
 }
 
+/** Identical card IDs and contents, with the historical stress scene's grid positions. */
+export function createGridNodes(): FreeNodePosition[] {
+  return Array.from({ length: FREE_NODE_COUNT }, (_, index) => ({
+    id: `free-node-${String(index).padStart(4, '0')}`,
+    x: 20 + (index % 25) * 384,
+    y: 20 + Math.floor(index / 25) * 454,
+  }));
+}
+
 function randomFromSeed(seed: number): () => number {
   let value = seed >>> 0;
   return () => {
