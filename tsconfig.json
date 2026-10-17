@@ -9,11 +9,19 @@
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
     "jsx": "react-jsx",
+    "paths": { "@layout/runtime": ["./src/lib/runtime.tsx"] },
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "skipLibCheck": true,
     "noEmit": true
   },
-  "include": ["src", "vite.config.ts", "vite.lib.config.ts"]
+  "include": [
+    "src",
+    "vite.config.ts",
+    "vite.lib.config.ts",
+    "vite.react16.config.ts",
+    "vite.react16-demo.config.ts"
+  ],
+  "exclude": ["src/react16"]
 }

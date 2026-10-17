@@ -48,7 +48,7 @@ export default function App() {
           <span>
             react-konva<span className="brand-light"> / layout</span>
           </span>
-          <span className="version">0.6.1</span>
+          <span className="version">0.6.2</span>
         </a>
         <a
           className="repo-link"

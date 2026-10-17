@@ -343,9 +343,13 @@ export default memo(function Renderer({
 
   if (!root) return null;
   if (!config.enabled && placed.length === 0) {
-    return scene.map((item) => (
-      <DrawNode key={item.key} item={item} compact={false} optimized={false} />
-    ));
+    return (
+      <>
+        {scene.map((item) => (
+          <DrawNode key={item.key} item={item} compact={false} optimized={false} />
+        ))}
+      </>
+    );
   }
   return (
     <FullScene

@@ -1,4 +1,5 @@
-import { useContext, useId, useLayoutEffect, useRef, type CSSProperties } from 'react';
+import { useContext, useLayoutEffect, useRef, type CSSProperties, type ReactElement } from 'react';
+import { useMeasurementId } from '@layout/runtime';
 import { ParentContext, RegistryContext } from './context';
 import { layoutKeys } from './measurement/comparison';
 import type { PrimitiveProps } from './model';
@@ -43,7 +44,7 @@ function primitiveStyle(type: LayoutNodeType, props: PrimitiveProps): CSSPropert
 function Primitive({ type, props }: { type: LayoutNodeType; props: PrimitiveProps }) {
   const registry = useContext(RegistryContext);
   const parent = useContext(ParentContext);
-  const key = useId();
+  const key = useMeasurementId();
   const element = useRef<HTMLDivElement>(null);
   if (!registry) throw new Error(`${type} must be rendered inside Layout`);
 
@@ -72,31 +73,39 @@ function Primitive({ type, props }: { type: LayoutNodeType; props: PrimitiveProp
   );
 }
 
-export function Flex(props: FlexProps) {
+export function Flex(props: FlexProps): ReactElement {
   return <Primitive type="flex" props={props} />;
 }
-export function Row(props: LayoutProps) {
+export function Row(props: LayoutProps): ReactElement {
   return <Primitive type="row" props={props} />;
 }
-export function Col(props: LayoutProps) {
+export function Col(props: LayoutProps): ReactElement {
   return <Primitive type="col" props={props} />;
 }
-export function Grid(props: LayoutProps) {
+export function Grid(props: LayoutProps): ReactElement {
   return <Primitive type="grid" props={props} />;
 }
-export function Box(props: BoxProps) {
+export function Box(props: BoxProps): ReactElement {
   return <Primitive type="box" props={props} />;
 }
-export function LayoutText(props: LayoutTextProps) {
+export function LayoutText(props: LayoutTextProps): ReactElement {
   return <Primitive type="text" props={props} />;
 }
-export function Cell({ children, fallback, ...props }: CellProps) {
-  const content = typeof children === 'function' ? { render: children } : { children };
-  const replacement = typeof fallback === 'function' ? { renderFallback: fallback } : { fallback };
+export function Cell({ children, fallback, ...props }: CellProps): ReactElement {
+  const content =
+    typeof children === 'function'
+      ? { render: children as NonNullable<PrimitiveProps['render']> }
+      : { children };
+  const replacement =
+    typeof fallback === 'function'
+      ? { renderFallback: fallback as NonNullable<PrimitiveProps['renderFallback']> }
+      : { fallback };
   return <Primitive type="cell" props={{ ...props, ...content, ...replacement }} />;
 }
-export function CellText({ children, fallback, ...props }: CellTextProps) {
+export function CellText({ children, fallback, ...props }: CellTextProps): ReactElement {
   const replacement =
-    typeof fallback === 'function' ? { renderTextFallback: fallback } : { fallback };
+    typeof fallback === 'function'
+      ? { renderTextFallback: fallback as NonNullable<PrimitiveProps['renderTextFallback']> }
+      : { fallback };
   return <Primitive type="cell-text" props={{ ...props, renderText: children, ...replacement }} />;
 }

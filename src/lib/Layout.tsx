@@ -6,11 +6,14 @@ import {
   useLayoutEffect,
   useRef,
   useState,
-  useSyncExternalStore,
   type ReactNode,
+  type ComponentType,
+  type PropsWithChildren,
+  type Context,
 } from 'react';
 import Konva from 'konva';
-import { Group, useContextBridge } from 'react-konva';
+import { Group } from 'react-konva';
+import { CaptureContexts, useSyncExternalStore } from '@layout/runtime';
 import { LayoutContext } from './context';
 import { MeasurementEngine } from './measurement/MeasurementEngine';
 import { MeasurementRoot } from './measurementRoot';
@@ -19,16 +22,38 @@ import Renderer from './rendering/Renderer';
 import type { LayoutComponentProps, LayoutHandle } from './types';
 
 /** Camera and placement updates cannot reconcile the detached measurement tree. */
-const MeasurementContent = memo(function MeasurementContent({
+const noContexts: readonly Context<any>[] = [];
+
+function MeasurementTree({
   engine,
   children,
+  Bridge,
+  measurement,
 }: {
   engine: MeasurementEngine;
   children: ReactNode;
+  Bridge: ComponentType<PropsWithChildren<{}>>;
+  measurement: { current: MeasurementRoot | null };
+}) {
+  useLayoutEffect(() => {
+    measurement.current ??= new MeasurementRoot(engine);
+    measurement.current.render(Bridge, children);
+  });
+  return null;
+}
+
+/** Camera and placement updates cannot reconcile the detached measurement tree. */
+const MeasurementContent = memo(function MeasurementContent({
+  engine,
+  children,
+  contexts,
+}: {
+  engine: MeasurementEngine;
+  children: ReactNode;
+  contexts: readonly Context<any>[];
 }) {
   const measurement = useRef<MeasurementRoot | null>(null);
   const lifetime = useRef(0);
-  const Bridge = useContextBridge();
   useLayoutEffect(() => {
     lifetime.current += 1;
     measurement.current ??= new MeasurementRoot(engine);
@@ -44,11 +69,15 @@ const MeasurementContent = memo(function MeasurementContent({
       });
     };
   }, [engine]);
-  useLayoutEffect(() => {
-    // Context updates still render this component and forward their current values.
-    measurement.current?.render(Bridge, children);
-  });
-  return null;
+  return (
+    <CaptureContexts contexts={contexts}>
+      {(Bridge) => (
+        <MeasurementTree engine={engine} Bridge={Bridge} measurement={measurement}>
+          {children}
+        </MeasurementTree>
+      )}
+    </CaptureContexts>
+  );
 });
 
 /** Measures one logical layout and draws it in the caller's existing Konva tree. */
@@ -62,6 +91,7 @@ export const Layout = forwardRef<LayoutHandle, LayoutComponentProps>(function La
     debug = false,
     performance,
     placements,
+    contexts = noContexts,
     children,
     onLayout,
     onMeasure,
@@ -127,7 +157,9 @@ export const Layout = forwardRef<LayoutHandle, LayoutComponentProps>(function La
 
   return (
     <LayoutContext.Provider value={engine.context}>
-      <MeasurementContent engine={engine}>{children}</MeasurementContent>
+      <MeasurementContent engine={engine} contexts={contexts}>
+        {children}
+      </MeasurementContent>
       <Group ref={attachGroup} x={x} y={y} id={id} width={logicalWidth} height={logicalHeight}>
         <Renderer
           scene={snapshot.scene}

@@ -1,0 +1,24 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "outDir": "packages/react16/dist-lib",
+    "rootDir": "src",
+    "jsx": "preserve",
+    "paths": {
+      "@layout/runtime": ["./src/react16/runtime.tsx"],
+      "react": ["./packages/react16/node_modules/@types/react"],
+      "react/jsx-runtime": ["./packages/react16/node_modules/@types/react/jsx-runtime.d.ts"],
+      "react-dom": ["./packages/react16/node_modules/@types/react-dom"],
+      "react-konva": ["./packages/react16/node_modules/react-konva/react-konva.d.ts"],
+      "konva": ["./packages/react16/node_modules/konva/lib/index-types.d.ts"],
+      "use-sync-external-store/shim": [
+        "./packages/react16/node_modules/@types/use-sync-external-store/shim"
+      ]
+    }
+  },
+  "include": ["src/lib/index.ts", "src/react16/runtime.tsx"],
+  "exclude": []
+}

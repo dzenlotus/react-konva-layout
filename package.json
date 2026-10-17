@@ -1,6 +1,6 @@
 {
   "name": "@dzenlotus/react-konva-layout",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "Browser-native Flex and Grid layout for React Konva",
   "type": "module",
   "license": "MIT",
@@ -22,6 +22,10 @@
     "dev": "vite --host 127.0.0.1",
     "typecheck": "tsc --noEmit",
     "build": "npm run typecheck && vite build && vite build --config vite.lib.config.ts && tsc -p tsconfig.lib.json",
+    "build:react16": "npm --prefix packages/react16 ci --ignore-scripts && vite build --config vite.react16.config.ts && tsc -p tsconfig.react16.json",
+    "build:react16-demo": "npm run build:react16 && tsc -p tsconfig.react16-demo.json && vite build --config vite.react16-demo.config.ts",
+    "dev:react16": "npm run build:react16 && vite --config vite.react16-demo.config.ts --host 127.0.0.1",
+    "pack:react16": "npm run build:react16 && npm pack ./packages/react16 --pack-destination .artifacts",
     "preview": "vite preview --host 127.0.0.1",
     "prepare": "npm run build",
     "format": "prettier --write src README.md docs/embedded-layout.md *.json *.ts",

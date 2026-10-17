@@ -7,8 +7,9 @@ import {
   type ReactNode,
   type Ref,
   type RefCallback,
-  type RefObject,
+  type MutableRefObject,
 } from 'react';
+import { getElementRef } from '@layout/runtime';
 import type Konva from 'konva';
 import { Text } from 'react-konva';
 import type { SceneNode } from '../model';
@@ -22,13 +23,13 @@ interface CustomTextProps {
 }
 
 function bindTextRef(
-  textRef: RefObject<Konva.Text | null>,
+  textRef: MutableRefObject<Konva.Text | null>,
   consumerRef?: Ref<Konva.Text>,
 ): RefCallback<Konva.Text> {
   return (node) => {
     textRef.current = node;
     if (typeof consumerRef === 'function') {
-      const cleanup = consumerRef(node);
+      const cleanup = (consumerRef as (node: Konva.Text | null) => void | (() => void))(node);
       if (cleanup) {
         return () => {
           textRef.current = null;
@@ -36,7 +37,7 @@ function bindTextRef(
         };
       }
     } else if (consumerRef) {
-      consumerRef.current = node;
+      (consumerRef as MutableRefObject<Konva.Text | null>).current = node;
     }
   };
 }
@@ -70,7 +71,7 @@ function decorateCustomContent(content: ReactNode, interactive = false): ReactNo
 
 interface CustomContentOptions {
   item: SceneNode;
-  textRef: RefObject<Konva.Text | null>;
+  textRef: MutableRefObject<Konva.Text | null>;
   optimized: boolean;
   bubbling: boolean;
   ownVisible: boolean;
@@ -118,7 +119,7 @@ export function useCustomContent({
           bound = true;
           const textElement = element as ReactElement<CustomTextProps>;
           return cloneElement(textElement, {
-            ref: bindTextRef(textRef, textElement.props.ref),
+            ref: bindTextRef(textRef, getElementRef(textElement)),
           });
         }
         if (typeof element.type === 'function' || typeof element.type === 'object') return child;

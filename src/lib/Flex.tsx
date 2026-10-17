@@ -7,6 +7,7 @@ import type { FlexProps, LayoutComponentProps, LayoutHandle } from './types';
 export interface FlexComponentProps extends FlexProps {
   debug?: LayoutComponentProps['debug'];
   performance?: LayoutComponentProps['performance'];
+  contexts?: LayoutComponentProps['contexts'];
   onLayout?: LayoutComponentProps['onLayout'];
   onMeasure?: LayoutComponentProps['onMeasure'];
   onRenderStats?: LayoutComponentProps['onRenderStats'];
@@ -14,7 +15,7 @@ export interface FlexComponentProps extends FlexProps {
 
 /** A root Flex starts a layout; nested Flex participates in the same browser pass. */
 export const Flex = forwardRef<LayoutHandle, FlexComponentProps>(function Flex(
-  { debug, performance, onLayout, onMeasure, onRenderStats, ...props },
+  { debug, performance, contexts, onLayout, onMeasure, onRenderStats, ...props },
   ref,
 ) {
   const registry = useContext(RegistryContext);
@@ -26,6 +27,7 @@ export const Flex = forwardRef<LayoutHandle, FlexComponentProps>(function Flex(
       height={typeof props.height === 'number' ? props.height : undefined}
       debug={debug}
       performance={performance}
+      contexts={contexts}
       onLayout={onLayout}
       onMeasure={onMeasure}
       onRenderStats={onRenderStats}

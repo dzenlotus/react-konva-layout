@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react';
+import type { CSSProperties, ReactNode, Context } from 'react';
 import type Konva from 'konva';
 import type { KonvaNodeEvents } from 'react-konva';
 
@@ -183,6 +183,8 @@ export interface LayoutComponentProps {
   debug?: boolean;
   performance?: PerformanceOptions;
   placements?: readonly LayoutPlacement[];
+  /** React 16: contexts to forward from the Konva tree into the detached measurement tree. */
+  contexts?: readonly Context<any>[];
   children: ReactNode;
   onLayout?: (tree: LayoutNode[]) => void;
   onMeasure?: (metrics: LayoutMetrics) => void;

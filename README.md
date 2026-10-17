@@ -46,6 +46,8 @@ npm install github:dzenlotus/react-konva-layout
 
 Нужны peer dependencies React/ReactDOM 19, react-konva 19 и Konva 10. Точные диапазоны указаны в `package.json`. GitHub-установка запускает `prepare` и собирает ESM + TypeScript declarations в `dist-lib/`.
 
+Для React/ReactDOM 16.13.1, react-konva 16.13.0-6 и Konva 8.4.3 подготовлена отдельная сборка: [установка и обязательные aliases Konva](docs/react16.md). Она проверена чистой установкой архива, TypeScript 4.9.5 и браузерным примером на 1/1000 нод. Контексты можно передать через `Layout.contexts` или `contexts` самостоятельного корневого `Flex`.
+
 Для разработки:
 
 ```sh

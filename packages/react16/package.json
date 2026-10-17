@@ -1,0 +1,44 @@
+{
+  "name": "@dzenlotus/react-konva-layout",
+  "version": "0.6.2-react16.0",
+  "description": "Browser-native Flex and Grid layout for React Konva (React 16 compatibility build)",
+  "type": "module",
+  "license": "MIT",
+  "files": [
+    "dist-lib",
+    "README.md",
+    "LICENSE"
+  ],
+  "main": "./dist-lib/react-konva-layout.js",
+  "module": "./dist-lib/react-konva-layout.js",
+  "types": "./dist-lib/lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist-lib/lib/index.d.ts",
+      "import": "./dist-lib/react-konva-layout.js"
+    }
+  },
+  "dependencies": {
+    "use-sync-external-store": "^1.7.0"
+  },
+  "peerDependencies": {
+    "react": "~16.13.1",
+    "react-dom": "~16.13.1",
+    "react-konva": "16.13.0-6",
+    "konva": "^8.4.3"
+  },
+  "devDependencies": {
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
+    "react-konva": "16.13.0-6",
+    "konva": "8.4.3",
+    "@types/react": "16.14.70",
+    "@types/react-dom": "16.9.25",
+    "@types/use-sync-external-store": "1.7.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dzenlotus/react-konva-layout.git",
+    "directory": "packages/react16"
+  }
+}

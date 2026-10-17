@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.react16.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "emitDeclarationOnly": false,
+    "rootDir": ".",
+    "skipLibCheck": false,
+    "types": ["vite/client"],
+    "paths": {
+      "@dzenlotus/react-konva-layout": ["./packages/react16/dist-lib/lib/index.d.ts"],
+      "react": ["./packages/react16/node_modules/@types/react"],
+      "react-dom": ["./packages/react16/node_modules/@types/react-dom"],
+      "react-konva": ["./packages/react16/node_modules/react-konva/react-konva.d.ts"],
+      "konva": ["./packages/react16/node_modules/konva/lib/index-types.d.ts"]
+    }
+  },
+  "include": ["packages/react16/example/main.tsx"]
+}

@@ -1,0 +1,189 @@
+{
+  "date": "2026-10-17",
+  "version": "0.6.2-react16.0",
+  "artifact": {
+    "filename": "dzenlotus-react-konva-layout-0.6.2-react16.0.tgz",
+    "sha256": "9fb3e75e9be38582fdc508fe30474820a59f87608c12fc6de35b6cf99a2b3dcc"
+  },
+  "dependencies": {
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
+    "react-konva": "16.13.0-6",
+    "react-reconciler": "0.25.1",
+    "konva": "8.4.3"
+  },
+  "installation": {
+    "packedTarball": true,
+    "peerOverrides": false,
+    "typeScript": "4.9.5",
+    "strict": true,
+    "skipLibCheck": false,
+    "passed": true
+  },
+  "single": {
+    "react": "16.13.1",
+    "initialMeasurement": {
+      "scope": "full",
+      "measuredNodes": 17,
+      "measuredRoots": ["node-0"],
+      "templateHits": 0,
+      "templateMisses": 1,
+      "durationMs": 1.5,
+      "revision": 1
+    },
+    "context": {
+      "titleBefore": 18,
+      "titleAfter": 20,
+      "registryIdsStable": true,
+      "textRefPreserved": true
+    },
+    "removed": {
+      "html": 0,
+      "roots": 0,
+      "placements": 0
+    },
+    "remount": {
+      "hasTextRef": true,
+      "html": 0,
+      "measuredNodes": 17
+    },
+    "pixelRatios": [2, 2]
+  },
+  "thousand": {
+    "initial": {
+      "react": "16.13.1",
+      "count": 1000,
+      "theme": "light",
+      "selected": "node-0",
+      "view": {
+        "x": 20,
+        "y": 20,
+        "scale": 0.05
+      },
+      "render": {
+        "visibleRoots": 1000,
+        "totalRoots": 1000,
+        "lod": true,
+        "lodLevel": "cell",
+        "lodCells": 4000,
+        "groups": 17000,
+        "shapes": 11000,
+        "cachedRoots": 1000,
+        "cacheBytes": 12834750
+      },
+      "htmlNodes": 0,
+      "measure": {
+        "scope": "full",
+        "measuredNodes": 1016,
+        "templateHits": 999,
+        "templateMisses": 1,
+        "durationMs": 72.5,
+        "revision": 1,
+        "measuredRootCount": 1000
+      },
+      "textRefPresent": false
+    },
+    "afterZoom": {
+      "react": "16.13.1",
+      "count": 1000,
+      "theme": "light",
+      "selected": "node-0",
+      "view": {
+        "x": 20,
+        "y": 20,
+        "scale": 0.03
+      },
+      "render": {
+        "visibleRoots": 1000,
+        "totalRoots": 1000,
+        "lod": true,
+        "lodLevel": "cell",
+        "lodCells": 4000,
+        "groups": 17000,
+        "shapes": 11000,
+        "cachedRoots": 1000,
+        "cacheBytes": 12834750
+      },
+      "htmlNodes": 0,
+      "measure": {
+        "scope": "full",
+        "measuredNodes": 1016,
+        "templateHits": 999,
+        "templateMisses": 1,
+        "durationMs": 72.5,
+        "revision": 1,
+        "measuredRootCount": 1000
+      },
+      "textRefPresent": false
+    },
+    "zoomGeometryPreserved": true,
+    "local": {
+      "react": "16.13.1",
+      "count": 1000,
+      "theme": "light",
+      "selected": "node-0",
+      "view": {
+        "x": 20,
+        "y": 20,
+        "scale": 0.03
+      },
+      "render": {
+        "visibleRoots": 1000,
+        "totalRoots": 1000,
+        "lod": true,
+        "lodLevel": "cell",
+        "lodCells": 4000,
+        "groups": 17000,
+        "shapes": 11000,
+        "cachedRoots": 1000,
+        "cacheBytes": 12847094.25
+      },
+      "htmlNodes": 0,
+      "measure": {
+        "scope": "local",
+        "measuredNodes": 17,
+        "templateHits": 0,
+        "templateMisses": 1,
+        "durationMs": 1.1999998092651367,
+        "revision": 2,
+        "measuredRootCount": 1
+      },
+      "textRefPresent": false
+    },
+    "other999GeometryPreserved": true,
+    "otherMountedGroupsPreserved": true,
+    "canvasPixelRatios": [2, 2]
+  },
+  "nativeDrag": {
+    "starts": 1,
+    "ends": 1,
+    "cacheDuring": true,
+    "cacheAfter": true,
+    "geometryStable": true,
+    "parentRestored": true,
+    "layerDuring": "application-drag-layer",
+    "revisionBefore": 3,
+    "revisionAfter": 3,
+    "html": 0
+  },
+  "eightNativeMoves": {
+    "sceneLayerDraws": 0,
+    "interactionLayerDraws": 8
+  },
+  "modernRegression": {
+    "production": {
+      "localMeasuredNodes": 35,
+      "scope": "local",
+      "html": 0,
+      "canvasPixelRatio": 2
+    },
+    "development": {
+      "strictMode": true,
+      "measuredNodes": 35,
+      "html": 0,
+      "canvasCount": 1,
+      "consoleErrors": 0
+    }
+  },
+  "note": "Functional integration checks of the separate 17-element React16 example, not a repeat of the prior 35-element-node FPS benchmark."
+}
