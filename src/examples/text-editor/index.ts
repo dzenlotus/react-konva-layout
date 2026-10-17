@@ -1,19 +1,18 @@
 import type Konva from 'konva';
-import type { TextStyle } from '../model';
-import type { LayoutNode } from '../types';
+import type { CellTextRenderProps, LayoutNode } from '../../lib';
 import { createEditorElements, resizeEditor, syncEditorStyles } from './dom';
 
 export interface TextEditorHandle {
   /** Cancel this edit session and release its DOM and listeners. */
   (): void;
   /** Refresh measured geometry and CSS without replacing the native draft. */
-  update(node: LayoutNode, textStyle: TextStyle): void;
+  update(node: LayoutNode, bounds: CellTextRenderProps): void;
 }
 
 export interface OpenTextEditorOptions {
   target: Konva.Text;
   node: LayoutNode;
-  textStyle: TextStyle;
+  bounds: CellTextRenderProps;
   onCommit(value: string): void;
   onClose(saved: boolean): void;
 }
@@ -68,7 +67,7 @@ let nextEditorId = 0;
 export function openTextEditor({
   target,
   node: initialNode,
-  textStyle: initialStyle,
+  bounds: initialBounds,
   onCommit,
   onClose,
 }: OpenTextEditorOptions): TextEditorHandle {
@@ -93,7 +92,7 @@ export function openTextEditor({
     .join(' ');
   const destroyEvent = `destroy.${namespace}`;
   let node = initialNode;
-  let textStyle = initialStyle;
+  let bounds = initialBounds;
   let observedNodes: Konva.Node[] = [];
   let finished = false;
   let destroyed = false;
@@ -122,7 +121,7 @@ export function openTextEditor({
       item.on(destroyEvent, cancelDestroyed);
     });
   };
-  const fitHeight = () => resizeEditor(textarea, target, node, textStyle);
+  const fitHeight = () => resizeEditor(textarea, target, node, bounds);
   const update = () => {
     if (finished) return;
     if (target.getStage() !== stage) {
@@ -130,7 +129,7 @@ export function openTextEditor({
       return;
     }
     bindNodes();
-    syncEditorStyles(textarea, target, stage, view, textStyle);
+    syncEditorStyles(textarea, target, stage, view, node, bounds);
     fitHeight();
   };
   function scheduleUpdate() {
@@ -213,9 +212,9 @@ export function openTextEditor({
   });
 
   return Object.assign(() => finish(false), {
-    update(nextNode: LayoutNode, nextStyle: TextStyle) {
+    update(nextNode: LayoutNode, nextBounds: CellTextRenderProps) {
       node = nextNode;
-      textStyle = nextStyle;
+      bounds = nextBounds;
       update();
     },
   });

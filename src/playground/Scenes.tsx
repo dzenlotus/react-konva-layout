@@ -1,6 +1,7 @@
 import { memo, useState } from 'react';
 import { Circle, Line, Rect, Text } from 'react-konva';
-import { Box, Col, Flex, Grid, LayoutText, Row } from '../lib';
+import { Box, CellText, Col, Flex, Grid, LayoutText, Row } from '../lib';
+import { EditableText } from '../examples/text-editor/EditableText';
 import type { PlaygroundSettings, Scene } from './settings';
 
 const font = 'Arial';
@@ -74,6 +75,7 @@ const NodeExample = memo(function NodeExample({
   const [description, setDescription] = useState(
     'Этот модуль создан для того, чтобы помогать людям. Размеры и переносы рассчитывает браузер.',
   );
+  const [editing, setEditing] = useState(false);
   return (
     <Flex
       id="scene-root"
@@ -88,6 +90,7 @@ const NodeExample = memo(function NodeExample({
         id="node"
         data-testid="node"
         layoutRoot
+        cache={editing ? false : undefined}
         lodLabel="Image transform"
         width="100%"
         maxWidth={maxWidth}
@@ -155,18 +158,25 @@ const NodeExample = memo(function NodeExample({
                 ))}
               </Col>
             </Row>
-            <LayoutText
+            <CellText
               id="description"
               data-testid="node-description"
               text={description}
-              editable
-              onTextChange={setDescription}
               width="100%"
               fontSize={12}
               lineHeight={1.5}
               fontFamily={font}
               color="#737b6c"
-            />
+            >
+              {(textProps) => (
+                <EditableText
+                  cellId="description"
+                  bounds={textProps}
+                  onChange={setDescription}
+                  onEditingChange={setEditing}
+                />
+              )}
+            </CellText>
           </Col>
         </Row>
         <Row

@@ -128,10 +128,6 @@ export interface LayoutTextProps extends LayoutProps {
   color?: string;
   align?: 'left' | 'center' | 'right' | 'justify';
   wrap?: 'word' | 'char' | 'none';
-  editable?: boolean;
-  onTextChange?: (text: string) => void;
-  onEditStart?: () => void;
-  onEditEnd?: (saved: boolean) => void;
 }
 
 export interface CellTextRenderProps extends CellBounds {

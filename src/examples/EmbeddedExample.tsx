@@ -14,6 +14,7 @@ interface ReferenceDemoApi {
   stage(): Konva.Stage | null;
   layout(): LayoutHandle | null;
   parent(): Konva.Group | null;
+  setDescription(text: string): void;
 }
 declare global {
   interface Window {
@@ -27,6 +28,8 @@ export default function EmbeddedExample() {
   const parent = useRef<Konva.Group | null>(null);
   const layout = useRef<LayoutHandle | null>(null);
   const [width, setWidth] = useState(360);
+  const [position, setPosition] = useState({ x: 300, y: 84 });
+  const [selected, setSelected] = useState(false);
   const [debug, setDebug] = useState(false);
   const [description, setDescription] = useState(
     'Этот модуль обрабатывает изображение: приводит цвета и размеры к единому формату и передаёт результат дальше по графу.',
@@ -69,6 +72,7 @@ export default function EmbeddedExample() {
       stage: () => stage.current,
       layout: () => layout.current,
       parent: () => parent.current,
+      setDescription,
     };
     window.referenceDemo = api;
     return () => {
@@ -84,6 +88,7 @@ export default function EmbeddedExample() {
     const scale = previous.scale === 1 ? 0.8 : 1;
     setCamera(zoomAtPoint(previous, { x: CANVAS_WIDTH / 2, y: CANVAS_HEIGHT / 2 }, scale));
   };
+  const nodeBounds = layout.current?.getLayout('reference-node');
 
   return (
     <main className="embedded-example">
@@ -95,6 +100,7 @@ export default function EmbeddedExample() {
       <p className="embedded-eyebrow">REACT KONVA / FLEX LAYOUT</p>
       <h1>Нода обработки изображения.</h1>
       <p>Двойной клик по описанию — редактирование. Колесо — zoom, перетаскивание фона — pan.</p>
+      <p>Клик по ноде — выделение, перетаскивание ноды — изменение её позиции в графе.</p>
       <div className="embedded-controls">
         <button aria-pressed={debug} onClick={() => setDebug((value) => !value)}>
           HTML overlay
@@ -124,6 +130,12 @@ export default function EmbeddedExample() {
           y={view.y}
           scaleX={view.scale}
           scaleY={view.scale}
+          onClick={(event) => {
+            if (event.target === stage.current) setSelected(false);
+          }}
+          onTap={(event) => {
+            if (event.target === stage.current) setSelected(false);
+          }}
         >
           <Layer>
             <Rect
@@ -147,7 +159,21 @@ export default function EmbeddedExample() {
                 context.fillStrokeShape(shape);
               }}
             />
-            <Group ref={parent} x={(CANVAS_WIDTH - width) / 2} y={84}>
+            <Group
+              ref={parent}
+              x={position.x}
+              y={position.y}
+              draggable
+              onClick={() => setSelected(true)}
+              onTap={() => setSelected(true)}
+              onDragStart={() => setSelected(true)}
+              onDragEnd={(event) => setPosition(event.target.position())}
+            >
+              <Rect
+                width={nodeBounds?.width ?? width}
+                height={nodeBounds?.height ?? 0}
+                fill="transparent"
+              />
               <ReferenceNode
                 ref={layout}
                 width={width}
@@ -159,6 +185,19 @@ export default function EmbeddedExample() {
                 onAction={setAction}
                 onPortSelect={selectPort}
               />
+              {selected && nodeBounds && (
+                <Rect
+                  x={-4}
+                  y={-4}
+                  width={nodeBounds.width + 8}
+                  height={nodeBounds.height + 8}
+                  stroke="#789b58"
+                  strokeWidth={1.5}
+                  strokeScaleEnabled={false}
+                  cornerRadius={20}
+                  listening={false}
+                />
+              )}
             </Group>
           </Layer>
         </Stage>
@@ -176,6 +215,10 @@ export default function EmbeddedExample() {
       <p className="embedded-caption">
         Один существующий Stage/Layer. Внутри — Flex, Cell и CellText. HTML отсутствует после
         измерения.
+      </p>
+      <p className="embedded-caption">
+        Позиция Group: {Math.round(position.x)}, {Math.round(position.y)}. Внутренняя раскладка
+        считается от 0, 0 и не пересчитывается при перемещении Group.
       </p>
     </main>
   );

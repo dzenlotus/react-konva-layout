@@ -8,14 +8,12 @@ import {
   dispatchEvents,
   emptyEvents,
   hasEvents,
-  type BeginEdit,
   type Island,
   type Settings,
 } from './scene';
 
 export interface IslandRenderOptions {
   config: Settings;
-  beginEdit: BeginEdit;
   requestFocus: (island: Island) => void;
   register: (island: Island, group: Konva.Group, cache: boolean) => () => void;
 }
@@ -24,7 +22,6 @@ export interface IslandProps extends IslandRenderOptions {
   island: Island;
   lod: boolean;
   minimal: boolean;
-  editing: boolean;
   local?: boolean;
 }
 
@@ -33,8 +30,6 @@ export const SceneIsland = memo(function SceneIsland({
   config,
   lod,
   minimal,
-  editing,
-  beginEdit,
   requestFocus,
   register,
   local = false,
@@ -42,19 +37,10 @@ export const SceneIsland = memo(function SceneIsland({
   const group = useRef<Konva.Group | null>(null);
   const { item } = island;
   const ancestors = local ? emptyEvents : island.ancestors;
-  const lowDetail = lod && !island.shell && !editing;
+  const lowDetail = lod && !island.shell;
   useLayoutEffect(() => {
-    if (group.current) return register(island, group.current, !lowDetail && !editing);
-  }, [
-    island,
-    config.compact,
-    config.cache,
-    config.budget,
-    config.cacheRatio,
-    lowDetail,
-    editing,
-    register,
-  ]);
+    if (group.current) return register(island, group.current, !lowDetail);
+  }, [island, config.compact, config.cache, config.budget, config.cacheRatio, lowDetail, register]);
   const setGroup = useCallback((node: Konva.Group | null) => {
     group.current = node;
   }, []);
@@ -128,8 +114,6 @@ export const SceneIsland = memo(function SceneIsland({
       item={item}
       compact={config.compact}
       optimized={config.enabled}
-      islandKey={island.key}
-      beginEdit={beginEdit}
       x={local ? item.layout.x : item.layout.absoluteX}
       y={local ? item.layout.y : item.layout.absoluteY}
       forceGroup={!island.shell}

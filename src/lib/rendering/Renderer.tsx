@@ -2,33 +2,18 @@ import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useStat
 import Konva from 'konva';
 import type { SceneNode } from '../model';
 import type { LayoutNode, PerformanceOptions, RenderMetrics } from '../types';
-import { openTextEditor } from '../editor';
 import { observeHost, readHost, type Bounds, type HostState } from '../host';
 import { DrawNode } from './DrawNode';
 import { MinimalScene } from './MinimalScene';
 import { FullScene } from './FullScene';
-import {
-  allocatedCacheBytes,
-  cacheDensity,
-  cacheRoot,
-  releaseRoot,
-  type CacheEntry,
-} from './cache';
-import {
-  compileIslands,
-  intersects,
-  settings,
-  type BeginEdit,
-  type Island,
-  type Settings,
-} from './scene';
+import { allocatedCacheBytes, cacheDensity, cacheRoot, type CacheEntry } from './cache';
+import { compileIslands, intersects, settings, type Island, type Settings } from './scene';
 
 export interface RendererProps {
   scene: SceneNode[];
   root: Konva.Group | null;
   performance?: PerformanceOptions;
   onRenderStats?: (metrics: RenderMetrics) => void;
-  onInvalidate?: (id?: string) => void;
   onFocusRequest?: (node: LayoutNode) => void;
 }
 
@@ -36,21 +21,6 @@ interface SceneSelection {
   items: Island[];
   lod: boolean;
   minimal: boolean;
-}
-interface EditSession {
-  item: SceneNode;
-  target: Konva.Text;
-  islandKey: string;
-  changed: boolean;
-  editor?: ReturnType<typeof openTextEditor>;
-}
-
-function findNode(scene: SceneNode[], id: string): SceneNode | undefined {
-  for (const item of scene) {
-    if (item.layout.id === id) return item;
-    const found = findNode(item.children, id);
-    if (found) return found;
-  }
 }
 
 const VIEWPORT_PADDING = 32;
@@ -80,13 +50,12 @@ function sumCacheBytes(entries: Map<string, CacheEntry>): number {
   return bytes;
 }
 
-/** Keep an active editor mounted when its layout root leaves the viewport. */
+/** Select visible layout roots using the host camera and recorded logical bounds. */
 function selectIslands(
   islands: Island[],
   host: HostState | null,
   config: Settings,
   actualBounds: WeakMap<SceneNode, Bounds>,
-  editingKey?: string,
 ): Island[] {
   if (!host?.visible) return [];
   if (!config.cull) return islands;
@@ -96,10 +65,8 @@ function selectIslands(
     width: host.viewport.width + VIEWPORT_PADDING * 2,
     height: host.viewport.height + VIEWPORT_PADDING * 2,
   };
-  return islands.filter(
-    (island) =>
-      island.key === editingKey ||
-      intersects(actualBounds.get(island.item) ?? island.bounds, viewport),
+  return islands.filter((island) =>
+    intersects(actualBounds.get(island.item) ?? island.bounds, viewport),
   );
 }
 
@@ -123,7 +90,6 @@ export default memo(function Renderer({
   root,
   performance,
   onRenderStats,
-  onInvalidate,
   onFocusRequest,
 }: RendererProps) {
   const [density, setDensity] = useState(1);
@@ -150,13 +116,11 @@ export default memo(function Renderer({
   const configRef = useRef(config);
   const islandsRef = useRef(islands);
   const rootRef = useRef(root);
-  const callbacks = useRef({ onRenderStats, onInvalidate, onFocusRequest });
+  const callbacks = useRef({ onRenderStats, onFocusRequest });
   const mounted = useRef(true);
   const statsFrame = useRef(0);
   const entries = useRef(new Map<string, CacheEntry>());
   const actualBounds = useRef(new WeakMap<SceneNode, Bounds>());
-  const editingRef = useRef<EditSession | null>(null);
-  const [editingKey, setEditingKey] = useState<string>();
   const [selection, setSelection] = useState<SceneSelection>({
     items: [],
     lod: false,
@@ -166,7 +130,7 @@ export default memo(function Renderer({
   configRef.current = config;
   islandsRef.current = islands;
   rootRef.current = root;
-  callbacks.current = { onRenderStats, onInvalidate, onFocusRequest };
+  callbacks.current = { onRenderStats, onFocusRequest };
   selectionRef.current = selection;
 
   const report = useCallback(() => {
@@ -201,13 +165,7 @@ export default memo(function Renderer({
         setDensity(nextDensity);
       }
     }
-    const next = selectIslands(
-      islandsRef.current,
-      host,
-      currentConfig,
-      actualBounds.current,
-      editingRef.current?.islandKey,
-    );
+    const next = selectIslands(islandsRef.current, host, currentConfig, actualBounds.current);
     const lod = Boolean(host && host.scale < currentConfig.lodScale);
     const minimal = Boolean(lod && host && host.scale < MINIMAL_LOD_SCALE);
     const previous = selectionRef.current;
@@ -237,44 +195,6 @@ export default memo(function Renderer({
     [report],
   );
 
-  const finishEdit = useCallback(
-    (saved: boolean) => {
-      const current = editingRef.current;
-      if (!current) return;
-      editingRef.current = null;
-      current.editor?.();
-      if (mounted.current) setEditingKey(undefined);
-      if (saved && current.changed) callbacks.current.onInvalidate?.(current.item.layout.id);
-      current.item.props.onEditEnd?.(saved);
-      if (mounted.current) selectVisible();
-      report();
-    },
-    [report, selectVisible],
-  );
-
-  const beginEdit = useCallback<BeginEdit>(
-    (item, target, islandKey) => {
-      if (editingRef.current || !item.props.editable || !item.textStyle) return;
-      releaseRoot(entries.current, islandKey);
-      const current: EditSession = { item, target, islandKey, changed: false };
-      editingRef.current = current;
-      setEditingKey(islandKey);
-      item.props.onEditStart?.();
-      current.editor = openTextEditor({
-        target,
-        node: item.layout,
-        textStyle: item.textStyle,
-        onCommit: (value) => {
-          current.changed = true;
-          current.item.props.onTextChange?.(value);
-        },
-        onClose: finishEdit,
-      });
-      report();
-    },
-    [finishEdit, report],
-  );
-
   const requestFocus = useCallback((island: Island) => {
     callbacks.current.onFocusRequest?.(island.item.layout);
   }, []);
@@ -293,19 +213,7 @@ export default memo(function Renderer({
   }, [islands, config, selectVisible, report]);
   useLayoutEffect(() => {
     report();
-  }, [selection, scene, editingKey, report]);
-
-  useLayoutEffect(() => {
-    const current = editingRef.current;
-    if (!current) return;
-    const next = findNode(scene, current.item.layout.id);
-    if (!next?.props.editable || !next.textStyle || !root?.isAncestorOf(current.target)) {
-      finishEdit(false);
-      return;
-    }
-    current.item = next;
-    current.editor?.update(next.layout, next.textStyle);
-  }, [scene, root, config.compact, config.enabled, finishEdit]);
+  }, [selection, scene, report]);
 
   useEffect(() => {
     mounted.current = true;
@@ -316,9 +224,8 @@ export default memo(function Renderer({
       statsFrame.current = 0;
       entries.current.forEach((entry) => entry.group.clearCache());
       entries.current.clear();
-      finishEdit(false);
     };
-  }, [finishEdit, report]);
+  }, [report]);
 
   if (!root) return null;
   return config.enabled ? (
@@ -330,32 +237,20 @@ export default memo(function Renderer({
         config={config}
         lod={selection.lod}
         minimal={selection.minimal}
-        editingKey={editingKey}
-        beginEdit={beginEdit}
         requestFocus={requestFocus}
         register={register}
       />
       {selection.minimal && (
         <MinimalScene
-          islands={selection.items.filter((island) => !island.shell && island.key !== editingKey)}
+          islands={selection.items.filter((island) => !island.shell)}
           config={config}
           root={root}
-          beginEdit={beginEdit}
           requestFocus={requestFocus}
           register={register}
         />
       )}
     </>
   ) : (
-    scene.map((item) => (
-      <DrawNode
-        key={item.key}
-        item={item}
-        compact={false}
-        optimized={false}
-        islandKey={item.key}
-        beginEdit={beginEdit}
-      />
-    ))
+    scene.map((item) => <DrawNode key={item.key} item={item} compact={false} optimized={false} />)
   );
 });

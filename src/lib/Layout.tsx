@@ -124,7 +124,6 @@ export const Layout = forwardRef<LayoutHandle, LayoutComponentProps>(function La
           root={root}
           performance={performance}
           onRenderStats={onRenderStats}
-          onInvalidate={engine.invalidate}
           onFocusRequest={onFocusRequest}
         />
       </Group>

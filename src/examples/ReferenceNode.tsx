@@ -1,8 +1,9 @@
-import { forwardRef, memo } from 'react';
+import { forwardRef, memo, useState } from 'react';
 import type Konva from 'konva';
 import { Circle, Image as CanvasImage, Line, Rect, Text } from 'react-konva';
 import { Cell, CellText, Flex } from '../lib';
 import type { LayoutHandle, LayoutMetrics } from '../lib';
+import { EditableText } from './text-editor/EditableText';
 
 const FONT = 'Helvetica Neue, Arial, sans-serif';
 
@@ -126,6 +127,7 @@ export const ReferenceNode = memo(
     },
     ref,
   ) {
+    const [editing, setEditing] = useState(false);
     return (
       <Flex
         ref={ref}
@@ -133,6 +135,7 @@ export const ReferenceNode = memo(
         data-testid={id}
         direction="column"
         layoutRoot
+        cache={editing ? false : undefined}
         layoutTemplate={layoutTemplate}
         width={width}
         padding={24}
@@ -233,14 +236,19 @@ export const ReferenceNode = memo(
                   id={`${id}-description-text`}
                   text={description}
                   width="100%"
-                  editable
-                  onTextChange={onDescriptionChange}
                   fontSize={13}
                   lineHeight={1.5}
                   fontFamily={FONT}
                   color="#78816f"
                 >
-                  {(textProps) => <Text {...textProps} />}
+                  {(textProps) => (
+                    <EditableText
+                      cellId={`${id}-description-text`}
+                      bounds={textProps}
+                      onChange={onDescriptionChange}
+                      onEditingChange={setEditing}
+                    />
+                  )}
                 </CellText>
               </Flex>
             </Cell>

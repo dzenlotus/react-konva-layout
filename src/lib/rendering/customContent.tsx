@@ -13,15 +13,11 @@ import type Konva from 'konva';
 import { Text } from 'react-konva';
 import type { SceneNode } from '../model';
 import { textAttributes } from './text';
-import type { BeginEdit } from './scene';
 
 const eventHandlerName = /^on[A-Z]/;
 
 interface CustomTextProps {
   ref?: Ref<Konva.Text>;
-  listening?: boolean;
-  onDblClick?: (event: Konva.KonvaEventObject<MouseEvent>) => void;
-  onDblTap?: (event: Konva.KonvaEventObject<TouchEvent>) => void;
 }
 
 function bindTextRef(
@@ -76,22 +72,16 @@ interface CustomContentOptions {
   textRef: RefObject<Konva.Text | null>;
   optimized: boolean;
   bubbling: boolean;
-  active: boolean;
   ownVisible: boolean;
-  beginEdit: BeginEdit;
-  islandKey: string;
 }
 
-/** Keep consumer render functions and editable Text refs stable between scene updates. */
+/** Keep consumer render functions and Text refs stable between scene updates. */
 export function useCustomContent({
   item,
   textRef,
   optimized,
   bubbling,
-  active,
   ownVisible,
-  beginEdit,
-  islandKey,
 }: CustomContentOptions): ReactNode {
   const { layout, props, textStyle } = item;
   const { width, height } = layout;
@@ -117,25 +107,8 @@ export function useCustomContent({
         if (element.type === Text && !bound) {
           bound = true;
           const textElement = element as ReactElement<CustomTextProps>;
-          const edit = () => {
-            if (active && props.editable && textRef.current)
-              beginEdit(item, textRef.current, islandKey);
-          };
           return cloneElement(textElement, {
             ref: bindTextRef(textRef, textElement.props.ref),
-            ...(props.editable
-              ? {
-                  listening: textElement.props.listening ?? active,
-                  onDblClick: (event: Konva.KonvaEventObject<MouseEvent>) => {
-                    textElement.props.onDblClick?.(event);
-                    edit();
-                  },
-                  onDblTap: (event: Konva.KonvaEventObject<TouchEvent>) => {
-                    textElement.props.onDblTap?.(event);
-                    edit();
-                  },
-                }
-              : {}),
           });
         }
         if (typeof element.type === 'function' || typeof element.type === 'object') return child;
@@ -149,7 +122,6 @@ export function useCustomContent({
   }, [
     props.render,
     props.renderText,
-    props.editable,
     props.text,
     props.wrap,
     width,
@@ -159,10 +131,6 @@ export function useCustomContent({
     bubbling,
     ownVisible,
     layout.type,
-    active,
-    beginEdit,
-    item,
-    islandKey,
     textRef,
   ]);
 }

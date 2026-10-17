@@ -1,6 +1,15 @@
 import type Konva from 'konva';
-import type { TextStyle } from '../model';
-import type { LayoutNode } from '../types';
+import type { CellTextRenderProps, LayoutNode } from '../../lib';
+
+/** CellText's measured content bounds expose its CSS padding without internal library types. */
+function contentPadding(node: LayoutNode, bounds: CellTextRenderProps) {
+  return {
+    left: bounds.x,
+    top: bounds.y,
+    right: Math.max(0, node.width - bounds.x - bounds.width),
+    bottom: Math.max(0, node.height - bounds.y - bounds.height),
+  };
+}
 
 /** The overlay inherits CSS transforms from the caller's Stage container. */
 export function createEditorElements(document: Document, value: string) {
@@ -47,13 +56,10 @@ export function resizeEditor(
   textarea: HTMLTextAreaElement,
   target: Konva.Text,
   node: LayoutNode,
-  style: TextStyle,
+  bounds: CellTextRenderProps,
 ): void {
-  const minimum = Math.max(
-    1,
-    node.height,
-    target.height() + style.paddingTop + style.paddingBottom,
-  );
+  const padding = contentPadding(node, bounds);
+  const minimum = Math.max(1, node.height, target.height() + padding.top + padding.bottom);
   textarea.style.height = '0px';
   textarea.style.height = `${Math.max(minimum, textarea.scrollHeight)}px`;
 }
@@ -64,13 +70,19 @@ export function syncEditorStyles(
   target: Konva.Text,
   stage: Konva.Stage,
   view: Window,
-  style: TextStyle,
+  node: LayoutNode,
+  bounds: CellTextRenderProps,
 ): void {
   const css = view.getComputedStyle(stage.content);
   const scaleX = (parseFloat(css.width) || stage.width()) / (stage.width() || 1);
   const scaleY = (parseFloat(css.height) || stage.height()) / (stage.height() || 1);
   const [a, b, c, d, e, f] = target.getAbsoluteTransform().getMatrix();
-  const { paddingLeft, paddingTop, paddingRight, paddingBottom } = style;
+  const {
+    left: paddingLeft,
+    top: paddingTop,
+    right: paddingRight,
+    bottom: paddingBottom,
+  } = contentPadding(node, bounds);
   const nativePadding = target.padding();
   const fontStyle = target.fontStyle();
   const fill = target.fill();
@@ -86,17 +98,16 @@ export function syncEditorStyles(
     fontVariant: target.fontVariant(),
     lineHeight: String(target.lineHeight()),
     letterSpacing: `${target.letterSpacing()}px`,
-    wordSpacing: style.wordSpacing ?? 'normal',
+    wordSpacing: 'normal',
     // Konva padding is inside Text bounds; HTML padding surrounds those bounds.
     padding: `${paddingTop + nativePadding}px ${paddingRight + nativePadding}px ${paddingBottom + nativePadding}px ${paddingLeft + nativePadding}px`,
     textAlign: target.align(),
-    color: typeof fill === 'string' ? fill : style.color,
+    color: typeof fill === 'string' ? fill : bounds.fill,
     direction:
-      target.direction() === 'inherit' ? (style.direction ?? 'inherit') : target.direction(),
-    whiteSpace: wrap === 'none' ? 'pre' : (style.whiteSpace ?? 'pre-wrap'),
-    overflowWrap: wrap === 'char' ? 'anywhere' : (style.overflowWrap ?? 'break-word'),
-    wordBreak: wrap === 'char' ? 'break-all' : (style.wordBreak ?? 'normal'),
-    textTransform: style.textTransform ?? 'none',
+      target.direction() === 'inherit' ? (bounds.direction ?? 'inherit') : target.direction(),
+    whiteSpace: wrap === 'none' ? 'pre' : 'pre-wrap',
+    overflowWrap: wrap === 'char' ? 'anywhere' : 'break-word',
+    wordBreak: wrap === 'char' ? 'break-all' : 'normal',
   });
   textarea.wrap = wrap === 'none' ? 'off' : 'soft';
 }

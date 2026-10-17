@@ -185,13 +185,13 @@ const MinimalBatch = memo(function MinimalBatch({
   );
 });
 
-/** Keep draw order and editable roots intact while batching adjacent compatible roots. */
-function partitionBatches(islands: Island[], editingKey?: string): Array<Island | Island[]> {
+/** Keep draw order and shells intact while batching adjacent compatible roots. */
+function partitionBatches(islands: Island[]): Array<Island | Island[]> {
   const result: Array<Island | Island[]> = [];
   let batch: Island[] = [],
     previousStyle = '';
   for (const island of islands) {
-    if (island.shell || island.key === editingKey) {
+    if (island.shell) {
       if (batch.length) result.push(batch);
       batch = [];
       previousStyle = '';
@@ -213,13 +213,11 @@ function partitionBatches(islands: Island[], editingKey?: string): Array<Island 
 
 interface MinimalSceneProps extends IslandRenderOptions {
   islands: Island[];
-  editingKey?: string;
   root: Konva.Group;
 }
 
 export const MinimalScene = memo(function MinimalScene({
   islands,
-  editingKey,
   root,
   ...props
 }: MinimalSceneProps) {
@@ -246,7 +244,7 @@ export const MinimalScene = memo(function MinimalScene({
     return () =>
       clickResetEvents.forEach((event) => container.removeEventListener(event, reset, true));
   }, [root]);
-  const pieces = useMemo(() => partitionBatches(islands, editingKey), [islands, editingKey]);
+  const pieces = useMemo(() => partitionBatches(islands), [islands]);
   return (
     <>
       {pieces.map((piece) =>
@@ -259,14 +257,7 @@ export const MinimalScene = memo(function MinimalScene({
             clicks={clicks}
           />
         ) : (
-          <SceneIsland
-            key={piece.key}
-            island={piece}
-            {...props}
-            lod
-            minimal
-            editing={piece.key === editingKey}
-          />
+          <SceneIsland key={piece.key} island={piece} {...props} lod minimal />
         ),
       )}
     </>

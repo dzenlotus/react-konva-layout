@@ -3,15 +3,13 @@ import type Konva from 'konva';
 import { Group, Rect, Text } from 'react-konva';
 import type { SceneNode } from '../model';
 import { textAttributes } from './text';
-import { dispatchEvents, emptyEvents, hasEvents, type BeginEdit, type Events } from './scene';
+import { dispatchEvents, emptyEvents, hasEvents, type Events } from './scene';
 import { useCustomContent } from './customContent';
 
 interface DrawProps {
   item: SceneNode;
   compact: boolean;
   optimized: boolean;
-  islandKey: string;
-  beginEdit: BeginEdit;
   x?: number;
   y?: number;
   forceGroup?: boolean;
@@ -27,8 +25,6 @@ export const DrawNode = memo(function DrawNode({
   item,
   compact,
   optimized,
-  islandKey,
-  beginEdit,
   x = item.layout.x,
   y = item.layout.y,
   forceGroup = false,
@@ -42,7 +38,7 @@ export const DrawNode = memo(function DrawNode({
   const { layout, props, textStyle } = item;
   const text = useRef<Konva.Text | null>(null);
   useLayoutEffect(() => {
-    // Refresh Konva's line measurement when a webfont loads without replacing an active editor's target.
+    // Refresh Konva's line measurement when a webfont loads without replacing the consumer's Text.
     if (textStyle?.fontRevision) text.current?.fire('fontFamilyChange');
   }, [textStyle?.fontRevision]);
   const { width, height } = layout;
@@ -66,10 +62,7 @@ export const DrawNode = memo(function DrawNode({
     textRef: text,
     optimized,
     bubbling,
-    active,
     ownVisible,
-    beginEdit,
-    islandKey,
   });
   const content = (
     <>
@@ -86,7 +79,7 @@ export const DrawNode = memo(function DrawNode({
           listening={active && (props.listening ?? !optimized)}
         />
       )}
-      {ownVisible && ((optimized && interactive) || props.editable) && (
+      {ownVisible && optimized && interactive && (
         <Rect
           x={contentX}
           y={contentY}
@@ -94,21 +87,6 @@ export const DrawNode = memo(function DrawNode({
           height={height}
           fill="transparent"
           listening={active}
-          name={props.editable ? 'layout-text-hit' : undefined}
-          onDblClick={
-            props.editable
-              ? () => {
-                  if (active && text.current) beginEdit(item, text.current, islandKey);
-                }
-              : undefined
-          }
-          onDblTap={
-            props.editable
-              ? () => {
-                  if (active && text.current) beginEdit(item, text.current, islandKey);
-                }
-              : undefined
-          }
         />
       )}
       {ownVisible && textStyle && layout.type !== 'cell-text' && (
@@ -121,21 +99,7 @@ export const DrawNode = memo(function DrawNode({
           x={contentX + textStyle.paddingLeft}
           y={contentY + textStyle.paddingTop}
           width={Math.max(0, width - textStyle.paddingLeft - textStyle.paddingRight)}
-          listening={!props.editable && active && (props.listening ?? !optimized)}
-          onDblClick={
-            props.editable
-              ? (event) => {
-                  if (active) beginEdit(item, event.target as Konva.Text, islandKey);
-                }
-              : undefined
-          }
-          onDblTap={
-            props.editable
-              ? (event) => {
-                  if (active) beginEdit(item, event.target as Konva.Text, islandKey);
-                }
-              : undefined
-          }
+          listening={active && (props.listening ?? !optimized)}
         />
       )}
       {custom}
@@ -146,8 +110,6 @@ export const DrawNode = memo(function DrawNode({
             item={child}
             compact={compact}
             optimized={optimized}
-            islandKey={islandKey}
-            beginEdit={beginEdit}
             x={contentX + child.layout.x}
             y={contentY + child.layout.y}
             listening={active}

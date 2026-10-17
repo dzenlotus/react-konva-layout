@@ -18,7 +18,15 @@ export function useDemoGestures(
     container.style.touchAction = 'none';
     const pointers = new Map<
       number,
-      { x: number; y: number; startX: number; startY: number; canPan: boolean; pointerType: string }
+      {
+        x: number;
+        y: number;
+        startX: number;
+        startY: number;
+        canPan: boolean;
+        pointerType: string;
+        dragTarget?: Konva.Node;
+      }
     >();
     let space = false,
       dragging = false,
@@ -37,6 +45,9 @@ export function useDemoGestures(
         ? { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2, distance: Math.hypot(a.x - b.x, a.y - b.y) }
         : null;
     };
+    const stopNodeDrags = () => {
+      for (const pointer of pointers.values()) pointer.dragTarget?.stopDrag();
+    };
     const wheel = (event: WheelEvent) => {
       event.preventDefault();
       const position = point(event),
@@ -50,17 +61,27 @@ export function useDemoGestures(
     const down = (event: PointerEvent) => {
       if (event.button !== 0 && event.button !== 1) return;
       const position = point(event);
-      const background = !currentStage.getIntersection(position);
-      const canPan = event.pointerType === 'touch' || event.button === 1 || space || background;
+      const hit = currentStage.getIntersection(position);
+      const background = !hit;
+      let dragTarget: Konva.Node | undefined = hit ?? undefined;
+      while (dragTarget && !dragTarget.draggable())
+        dragTarget = dragTarget.getParent() ?? undefined;
+      const canPan =
+        event.button === 1 || space || background || (event.pointerType === 'touch' && !dragTarget);
       pointers.set(event.pointerId, {
         ...position,
         startX: position.x,
         startY: position.y,
         canPan,
         pointerType: event.pointerType,
+        dragTarget,
       });
       if (event.button === 1) event.preventDefault();
-      if (pointers.size > 1) lastPinch = pinch();
+      if (pointers.size > 1) {
+        // Two fingers switch to the application camera, ending any native node drag.
+        stopNodeDrags();
+        lastPinch = pinch();
+      }
     };
     const move = (event: PointerEvent) => {
       const previous = pointers.get(event.pointerId);
@@ -70,6 +91,7 @@ export function useDemoGestures(
       const current = view.current;
       const wasDragging = dragging;
       if (pointers.size > 1) {
+        stopNodeDrags();
         const next = pinch();
         if (lastPinch && next && lastPinch.distance > 0) {
           const scale = clampZoom((current.scale * next.distance) / lastPinch.distance);

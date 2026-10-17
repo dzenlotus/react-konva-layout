@@ -8,7 +8,6 @@ interface FullSceneProps extends IslandRenderOptions {
   scene: SceneNode[];
   allIslands: Island[];
   islands: Island[];
-  editingKey?: string;
   lod: boolean;
   minimal: boolean;
 }
@@ -18,7 +17,6 @@ export const FullScene = memo(function FullScene({
   scene,
   allIslands,
   islands,
-  editingKey,
   lod,
   minimal,
   ...props
@@ -39,7 +37,6 @@ export const FullScene = memo(function FullScene({
             local
             lod={lod}
             minimal={minimal}
-            editing={editingKey === island.key}
           />
         ) : null;
       }
@@ -54,25 +51,12 @@ export const FullScene = memo(function FullScene({
           optimized={props.config.enabled}
           forceGroup
           ownVisible={shellVisible}
-          islandKey={`${item.key}:shell`}
-          beginEdit={props.beginEdit}
         >
           {children}
         </DrawNode>
       );
     };
     return scene.map(visit);
-  }, [
-    scene,
-    allIslands,
-    islands,
-    editingKey,
-    lod,
-    minimal,
-    props.config,
-    props.beginEdit,
-    props.requestFocus,
-    props.register,
-  ]);
+  }, [scene, allIslands, islands, lod, minimal, props.config, props.requestFocus, props.register]);
   return <>{forest}</>;
 });

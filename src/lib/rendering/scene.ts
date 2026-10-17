@@ -1,9 +1,6 @@
 import type { SceneNode, PrimitiveProps } from '../model';
 import type { PerformanceOptions } from '../types';
 import type { Bounds } from '../host';
-import type Konva from 'konva';
-
-export type BeginEdit = (item: SceneNode, target: Konva.Text, islandKey: string) => void;
 
 export const DEFAULT_LOD_FILL = '#e4eadd';
 export const DEFAULT_LOD_STROKE = '#a8b69b';
