@@ -57,6 +57,16 @@
 .free-nodes-controls button:hover {
   background: #edf2e7;
 }
+.free-nodes-controls button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.free-nodes-actions-label {
+  align-self: center;
+  margin-left: 12px;
+  color: #7a8471;
+  font-size: 12px;
+}
 .free-nodes-stage {
   width: 100%;
   height: min(680px, calc(100vh - 275px));

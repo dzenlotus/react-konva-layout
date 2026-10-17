@@ -8,6 +8,16 @@ import { EditableText } from './text-editor/EditableText';
 
 const FONT = 'Helvetica Neue, Arial, sans-serif';
 
+export interface ReferenceNodeAction {
+  id: string;
+  kind: 'run' | 'settings';
+}
+
+export const DEFAULT_NODE_ACTIONS: readonly ReferenceNodeAction[] = [
+  { id: 'run', kind: 'run' },
+  { id: 'settings', kind: 'settings' },
+];
+
 function cursor(event: Konva.KonvaEventObject<MouseEvent>, value: string) {
   const stage = event.target.getStage();
   if (stage) stage.container().style.cursor = value;
@@ -114,6 +124,7 @@ export interface ReferenceNodeProps extends Partial<ReferenceNodeDetail> {
   description: string;
   onDescriptionChange(value: string): void;
   onMeasure?(metrics: LayoutMetrics): void;
+  actions?: readonly ReferenceNodeAction[];
   onAction?(action: 'run' | 'settings'): void;
   onPortSelect?(side: 'input' | 'output', index: number): void;
 }
@@ -135,6 +146,7 @@ export const ReferenceNode = memo(
       description,
       onDescriptionChange,
       onMeasure,
+      actions = DEFAULT_NODE_ACTIONS,
       onAction,
       onPortSelect,
       showPreview = true,
@@ -277,64 +289,66 @@ export const ReferenceNode = memo(
             </Cell>
           </Flex>
         </Cell>
-        <Cell id={`${id}-actions`} width="100%" height={44} flexShrink={0} renderWhen={showActions}>
+        <Cell
+          id={`${id}-actions`}
+          layoutRoot
+          width="100%"
+          minWidth={0}
+          minHeight={44}
+          flexShrink={0}
+          renderWhen={showActions}
+        >
           <Cell width="100%" height="100%" style={{ position: 'absolute', left: 0, top: 0 }}>
             {(bounds) => <Rect {...bounds} fill="#f1f5ec" cornerRadius={8} listening={false} />}
           </Cell>
-          <Flex width="100%" height="100%" padding={5} gap={7} alignItems="center">
-            <Cell
-              id={`${id}-run`}
-              width={34}
-              height={34}
-              flexShrink={0}
-              onClick={() => onAction?.('run')}
-            >
-              {(bounds) => (
-                <>
-                  <Rect
-                    {...bounds}
-                    fill="#d6e8c1"
-                    cornerRadius={5}
-                    onMouseEnter={(event) => cursor(event, 'pointer')}
-                    onMouseLeave={(event) => cursor(event, '')}
-                  />
-                  <Line points={[13, 10, 23, 17, 13, 24]} closed fill="#5e7b43" listening={false} />
-                </>
-              )}
-            </Cell>
-            <Cell
-              id={`${id}-settings`}
-              width={34}
-              height={34}
-              flexShrink={0}
-              onClick={() => onAction?.('settings')}
-            >
-              {(bounds) => (
-                <>
-                  <Rect
-                    {...bounds}
-                    fill="#e3eadd"
-                    cornerRadius={5}
-                    onMouseEnter={(event) => cursor(event, 'pointer')}
-                    onMouseLeave={(event) => cursor(event, '')}
-                  />
-                  <Line
-                    points={[9, 12, 25, 12]}
-                    stroke="#7c8b6d"
-                    strokeWidth={1.5}
-                    listening={false}
-                  />
-                  <Line
-                    points={[9, 22, 25, 22]}
-                    stroke="#7c8b6d"
-                    strokeWidth={1.5}
-                    listening={false}
-                  />
-                  <Circle x={14} y={12} radius={2.7} fill="#7c8b6d" listening={false} />
-                  <Circle x={21} y={22} radius={2.7} fill="#7c8b6d" listening={false} />
-                </>
-              )}
-            </Cell>
+          <Flex width="100%" minHeight={44} padding={5} gap={7} flexWrap="wrap" alignItems="center">
+            {actions.map((action) => (
+              <Cell
+                key={action.id}
+                id={`${id}-${action.id === 'run' || action.id === 'settings' ? action.id : `action-${action.id}`}`}
+                width={34}
+                height={34}
+                flexShrink={0}
+                onClick={() => onAction?.(action.kind)}
+              >
+                {(bounds) => (
+                  <>
+                    <Rect
+                      {...bounds}
+                      fill={action.kind === 'run' ? '#d6e8c1' : '#e3eadd'}
+                      cornerRadius={5}
+                      onMouseEnter={(event) => cursor(event, 'pointer')}
+                      onMouseLeave={(event) => cursor(event, '')}
+                    />
+                    {action.kind === 'run' ? (
+                      <Line
+                        points={[13, 10, 23, 17, 13, 24]}
+                        closed
+                        fill="#5e7b43"
+                        listening={false}
+                      />
+                    ) : (
+                      <>
+                        <Line
+                          points={[9, 12, 25, 12]}
+                          stroke="#7c8b6d"
+                          strokeWidth={1.5}
+                          listening={false}
+                        />
+                        <Line
+                          points={[9, 22, 25, 22]}
+                          stroke="#7c8b6d"
+                          strokeWidth={1.5}
+                          listening={false}
+                        />
+                        <Circle x={14} y={12} radius={2.7} fill="#7c8b6d" listening={false} />
+                        <Circle x={21} y={22} radius={2.7} fill="#7c8b6d" listening={false} />
+                      </>
+                    )}
+                  </>
+                )}
+              </Cell>
+            ))}
             <Cell flexGrow={1} />
             <CellText
               text={footerLabel}

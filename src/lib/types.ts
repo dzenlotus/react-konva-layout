@@ -94,7 +94,7 @@ export interface LayoutProps extends LayoutStyles {
   onDblClick?: () => void;
   onDblTap?: () => void;
   listening?: boolean;
-  /** Independent boundary; normal-flow size changes still measure the parent layout. */
+  /** Measurement boundary. Nest to isolate updates; flow size changes measure the nearest enclosing boundary. */
   layoutRoot?: boolean;
   /** Template namespace. Contents and geometry constraints form the cache key. */
   layoutTemplate?: string;

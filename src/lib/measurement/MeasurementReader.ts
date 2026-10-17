@@ -210,6 +210,8 @@ export class MeasurementReader {
               },
         );
         this.styles.set(item.key, cached.styles[index]);
+        const context = cached.boundaries[index];
+        if (index > 0 && context && item.props.layoutRoot) cache.boundaries.set(item.key, context);
       }
       return;
     }
@@ -228,6 +230,9 @@ export class MeasurementReader {
           };
         }),
         styles: subtree.map((item) => this.styles.get(item.key)),
+        boundaries: subtree.map((item) =>
+          item.props.layoutRoot ? cache.boundaries.get(item.key) : undefined,
+        ),
       });
     }
   }

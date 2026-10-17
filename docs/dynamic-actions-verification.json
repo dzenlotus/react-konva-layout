@@ -1,0 +1,3336 @@
+{
+  "baseCommit": "858684bd775c394e74ed97cfbe4dfd7b9899248f",
+  "purpose": "Functional verification of automatic structural updates; durations are diagnostics, not a repeated performance benchmark.",
+  "viewport": {
+    "width": 1600,
+    "height": 1000,
+    "devicePixelRatio": 2,
+    "stage": {
+      "width": 1400,
+      "height": 760
+    }
+  },
+  "view": {
+    "x": 36,
+    "y": 60,
+    "scale": 0.03
+  },
+  "nodes": 1000,
+  "initialModelElements": 35001,
+  "templateHits": 999,
+  "clonedTarget": "free-node-0168",
+  "invariants": [
+    "local measurement roots only",
+    "read count equals measuredNodes",
+    "all 999 unrelated LayoutNode, Konva Group and defined native canvas cache objects unchanged in single-node cases",
+    "positions, z-order and external camera unchanged",
+    "stable keyed order and increasing row positions",
+    "empty and reserved action IDs handled",
+    "measurement HTML fully removed after each update"
+  ],
+  "runtimes": [
+    {
+      "runtime": "react19-production",
+      "cases": [
+        {
+          "label": "add 2→3 same height",
+          "items": [
+            {
+              "id": "run",
+              "kind": "run"
+            },
+            {
+              "id": "settings",
+              "kind": "settings"
+            },
+            {
+              "id": "third",
+              "kind": "run"
+            }
+          ],
+          "metrics": {
+            "scope": "local",
+            "measuredNodes": 8,
+            "measuredRoots": ["free-node-0168-actions"],
+            "templateHits": 0,
+            "templateMisses": 0,
+            "durationMs": 1.6000001430511475,
+            "revision": 2
+          },
+          "bcr": 8,
+          "reads": [
+            "free-node-0168-actions",
+            "cell",
+            "flex",
+            "free-node-0168-run",
+            "free-node-0168-settings",
+            "free-node-0168-action-third",
+            "cell",
+            "cell-text"
+          ],
+          "attached": 1,
+          "otherModelsStable": 999,
+          "otherGroupsStable": 999,
+          "otherCachesStable": 999,
+          "positionsUnchanged": true,
+          "orderUnchanged": true,
+          "viewUnchanged": true,
+          "nodeHeight": 429.78125,
+          "actionsBox": {
+            "absoluteX": 24,
+            "absoluteY": 361.78125,
+            "width": 312,
+            "height": 44,
+            "x": 24,
+            "y": 361.78125,
+            "id": "free-node-0168-actions",
+            "type": "cell",
+            "children": [
+              {
+                "absoluteX": 24,
+                "absoluteY": 361.78125,
+                "width": 312,
+                "height": 44,
+                "x": 0,
+                "y": 0,
+                "id": "_r_17uj_",
+                "type": "cell",
+                "children": []
+              },
+              {
+                "absoluteX": 24,
+                "absoluteY": 361.78125,
+                "width": 312,
+                "height": 44,
+                "x": 0,
+                "y": 0,
+                "id": "_r_17uk_",
+                "type": "flex",
+                "children": [
+                  {
+                    "absoluteX": 29,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 5,
+                    "y": 5,
+                    "id": "free-node-0168-run",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 70,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 46,
+                    "y": 5,
+                    "id": "free-node-0168-settings",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 111,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 87,
+                    "y": 5,
+                    "id": "free-node-0168-action-third",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 152,
+                    "absoluteY": 383.78125,
+                    "width": 108,
+                    "height": 0,
+                    "x": 128,
+                    "y": 22,
+                    "id": "_r_17un_",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 267,
+                    "absoluteY": 379.28125,
+                    "width": 64,
+                    "height": 9,
+                    "x": 243,
+                    "y": 17.5,
+                    "id": "_r_17uo_",
+                    "type": "cell-text",
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          "mainStable": true,
+          "stats": {
+            "mode": "optimized",
+            "arrangement": "free",
+            "cards": 1000,
+            "primitives": 35002,
+            "renderedCards": 1000,
+            "measurement": {
+              "scope": "local",
+              "measuredNodes": 8,
+              "measuredRoots": ["free-node-0168-actions"],
+              "templateHits": 0,
+              "templateMisses": 0,
+              "durationMs": 1.6000001430511475,
+              "revision": 2
+            },
+            "rendering": {
+              "visibleRoots": 1000,
+              "totalRoots": 1000,
+              "lod": true,
+              "lodLevel": "cell",
+              "lodCells": 3000,
+              "groups": 27000,
+              "shapes": 25000,
+              "cachedRoots": 1000,
+              "cacheBytes": 6000000
+            },
+            "idleHtmlNodes": 0,
+            "attachedMeasurementRoots": 0,
+            "viewportWidth": 1400,
+            "viewportHeight": 760,
+            "devicePixelRatio": 2,
+            "canvasPixelRatio": 2,
+            "worldBounds": {
+              "x": -325,
+              "y": -1565.3713544923812,
+              "width": 13399.67335854657,
+              "height": 22177.228434924036
+            },
+            "worldWidth": 13399.67335854657,
+            "worldHeight": 22177.228434924036,
+            "complete": true
+          },
+          "settledMs": 91.59999990463257
+        },
+        {
+          "label": "reorder 3 stable keys",
+          "items": [
+            {
+              "id": "third",
+              "kind": "run"
+            },
+            {
+              "id": "settings",
+              "kind": "settings"
+            },
+            {
+              "id": "run",
+              "kind": "run"
+            }
+          ],
+          "metrics": {
+            "scope": "local",
+            "measuredNodes": 8,
+            "measuredRoots": ["free-node-0168-actions"],
+            "templateHits": 0,
+            "templateMisses": 0,
+            "durationMs": 1.0999999046325684,
+            "revision": 3
+          },
+          "bcr": 8,
+          "reads": [
+            "free-node-0168-actions",
+            "cell",
+            "flex",
+            "free-node-0168-action-third",
+            "free-node-0168-settings",
+            "free-node-0168-run",
+            "cell",
+            "cell-text"
+          ],
+          "attached": 1,
+          "otherModelsStable": 999,
+          "otherGroupsStable": 999,
+          "otherCachesStable": 999,
+          "positionsUnchanged": true,
+          "orderUnchanged": true,
+          "viewUnchanged": true,
+          "nodeHeight": 429.78125,
+          "actionsBox": {
+            "absoluteX": 24,
+            "absoluteY": 361.78125,
+            "width": 312,
+            "height": 44,
+            "x": 24,
+            "y": 361.78125,
+            "id": "free-node-0168-actions",
+            "type": "cell",
+            "children": [
+              {
+                "absoluteX": 24,
+                "absoluteY": 361.78125,
+                "width": 312,
+                "height": 44,
+                "x": 0,
+                "y": 0,
+                "id": "_r_17uj_",
+                "type": "cell",
+                "children": []
+              },
+              {
+                "absoluteX": 24,
+                "absoluteY": 361.78125,
+                "width": 312,
+                "height": 44,
+                "x": 0,
+                "y": 0,
+                "id": "_r_17uk_",
+                "type": "flex",
+                "children": [
+                  {
+                    "absoluteX": 29,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 5,
+                    "y": 5,
+                    "id": "free-node-0168-action-third",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 70,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 46,
+                    "y": 5,
+                    "id": "free-node-0168-settings",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 111,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 87,
+                    "y": 5,
+                    "id": "free-node-0168-run",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 152,
+                    "absoluteY": 383.78125,
+                    "width": 108,
+                    "height": 0,
+                    "x": 128,
+                    "y": 22,
+                    "id": "_r_17un_",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 267,
+                    "absoluteY": 379.28125,
+                    "width": 64,
+                    "height": 9,
+                    "x": 243,
+                    "y": 17.5,
+                    "id": "_r_17uo_",
+                    "type": "cell-text",
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          "mainStable": true,
+          "stats": {
+            "mode": "optimized",
+            "arrangement": "free",
+            "cards": 1000,
+            "primitives": 35002,
+            "renderedCards": 1000,
+            "measurement": {
+              "scope": "local",
+              "measuredNodes": 8,
+              "measuredRoots": ["free-node-0168-actions"],
+              "templateHits": 0,
+              "templateMisses": 0,
+              "durationMs": 1.0999999046325684,
+              "revision": 3
+            },
+            "rendering": {
+              "visibleRoots": 1000,
+              "totalRoots": 1000,
+              "lod": true,
+              "lodLevel": "cell",
+              "lodCells": 3000,
+              "groups": 27000,
+              "shapes": 25000,
+              "cachedRoots": 1000,
+              "cacheBytes": 6000000
+            },
+            "idleHtmlNodes": 0,
+            "attachedMeasurementRoots": 0,
+            "viewportWidth": 1400,
+            "viewportHeight": 760,
+            "devicePixelRatio": 2,
+            "canvasPixelRatio": 2,
+            "worldBounds": {
+              "x": -325,
+              "y": -1565.3713544923812,
+              "width": 13399.67335854657,
+              "height": 22177.228434924036
+            },
+            "worldWidth": 13399.67335854657,
+            "worldHeight": 22177.228434924036,
+            "complete": true
+          },
+          "settledMs": 88
+        },
+        {
+          "label": "remove 3→2",
+          "items": [
+            {
+              "id": "run",
+              "kind": "run"
+            },
+            {
+              "id": "settings",
+              "kind": "settings"
+            }
+          ],
+          "metrics": {
+            "scope": "local",
+            "measuredNodes": 7,
+            "measuredRoots": ["free-node-0168-actions"],
+            "templateHits": 0,
+            "templateMisses": 0,
+            "durationMs": 1.0999999046325684,
+            "revision": 4
+          },
+          "bcr": 7,
+          "reads": [
+            "free-node-0168-actions",
+            "cell",
+            "flex",
+            "free-node-0168-run",
+            "free-node-0168-settings",
+            "cell",
+            "cell-text"
+          ],
+          "attached": 1,
+          "otherModelsStable": 999,
+          "otherGroupsStable": 999,
+          "otherCachesStable": 999,
+          "positionsUnchanged": true,
+          "orderUnchanged": true,
+          "viewUnchanged": true,
+          "nodeHeight": 429.78125,
+          "actionsBox": {
+            "absoluteX": 24,
+            "absoluteY": 361.78125,
+            "width": 312,
+            "height": 44,
+            "x": 24,
+            "y": 361.78125,
+            "id": "free-node-0168-actions",
+            "type": "cell",
+            "children": [
+              {
+                "absoluteX": 24,
+                "absoluteY": 361.78125,
+                "width": 312,
+                "height": 44,
+                "x": 0,
+                "y": 0,
+                "id": "_r_17uj_",
+                "type": "cell",
+                "children": []
+              },
+              {
+                "absoluteX": 24,
+                "absoluteY": 361.78125,
+                "width": 312,
+                "height": 44,
+                "x": 0,
+                "y": 0,
+                "id": "_r_17uk_",
+                "type": "flex",
+                "children": [
+                  {
+                    "absoluteX": 29,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 5,
+                    "y": 5,
+                    "id": "free-node-0168-run",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 70,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 46,
+                    "y": 5,
+                    "id": "free-node-0168-settings",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 111,
+                    "absoluteY": 383.78125,
+                    "width": 149,
+                    "height": 0,
+                    "x": 87,
+                    "y": 22,
+                    "id": "_r_17un_",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 267,
+                    "absoluteY": 379.28125,
+                    "width": 64,
+                    "height": 9,
+                    "x": 243,
+                    "y": 17.5,
+                    "id": "_r_17uo_",
+                    "type": "cell-text",
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          "mainStable": true,
+          "stats": {
+            "mode": "optimized",
+            "arrangement": "free",
+            "cards": 1000,
+            "primitives": 35001,
+            "renderedCards": 1000,
+            "measurement": {
+              "scope": "local",
+              "measuredNodes": 7,
+              "measuredRoots": ["free-node-0168-actions"],
+              "templateHits": 0,
+              "templateMisses": 0,
+              "durationMs": 1.0999999046325684,
+              "revision": 4
+            },
+            "rendering": {
+              "visibleRoots": 1000,
+              "totalRoots": 1000,
+              "lod": true,
+              "lodLevel": "cell",
+              "lodCells": 3000,
+              "groups": 27000,
+              "shapes": 25000,
+              "cachedRoots": 1000,
+              "cacheBytes": 6000000
+            },
+            "idleHtmlNodes": 0,
+            "attachedMeasurementRoots": 0,
+            "viewportWidth": 1400,
+            "viewportHeight": 760,
+            "devicePixelRatio": 2,
+            "canvasPixelRatio": 2,
+            "worldBounds": {
+              "x": -325,
+              "y": -1565.3713544923812,
+              "width": 13399.67335854657,
+              "height": 22177.228434924036
+            },
+            "worldWidth": 13399.67335854657,
+            "worldHeight": 22177.228434924036,
+            "complete": true
+          },
+          "settledMs": 91
+        },
+        {
+          "label": "grow 2→8 wrap",
+          "items": [
+            {
+              "id": "a0",
+              "kind": "run"
+            },
+            {
+              "id": "a1",
+              "kind": "settings"
+            },
+            {
+              "id": "a2",
+              "kind": "run"
+            },
+            {
+              "id": "a3",
+              "kind": "settings"
+            },
+            {
+              "id": "a4",
+              "kind": "run"
+            },
+            {
+              "id": "a5",
+              "kind": "settings"
+            },
+            {
+              "id": "a6",
+              "kind": "run"
+            },
+            {
+              "id": "a7",
+              "kind": "settings"
+            }
+          ],
+          "metrics": {
+            "scope": "local",
+            "measuredNodes": 54,
+            "measuredRoots": ["free-node-0168-actions", "free-node-0168"],
+            "templateHits": 0,
+            "templateMisses": 1,
+            "durationMs": 2.299999952316284,
+            "revision": 5
+          },
+          "bcr": 54,
+          "reads": [
+            "free-node-0168-actions",
+            "cell",
+            "flex",
+            "free-node-0168-action-a0",
+            "free-node-0168-action-a1",
+            "free-node-0168-action-a2",
+            "free-node-0168-action-a3",
+            "free-node-0168-action-a4",
+            "free-node-0168-action-a5",
+            "free-node-0168-action-a6",
+            "free-node-0168-action-a7",
+            "cell",
+            "cell-text",
+            "free-node-0168",
+            "cell",
+            "free-node-0168-main",
+            "flex",
+            "cell",
+            "free-node-0168-content",
+            "free-node-0168-label",
+            "flex",
+            "cell",
+            "cell-text",
+            "free-node-0168-title",
+            "free-node-0168-subtitle",
+            "free-node-0168-media",
+            "flex",
+            "cell",
+            "free-node-0168-input-ports",
+            "free-node-0168-input-0",
+            "free-node-0168-input-1",
+            "free-node-0168-input-2",
+            "free-node-0168-preview",
+            "cell",
+            "cell-text",
+            "cell",
+            "free-node-0168-output-ports",
+            "free-node-0168-output-0",
+            "free-node-0168-output-1",
+            "free-node-0168-output-2",
+            "free-node-0168-description-text",
+            "free-node-0168-actions",
+            "cell",
+            "flex",
+            "free-node-0168-action-a0",
+            "free-node-0168-action-a1",
+            "free-node-0168-action-a2",
+            "free-node-0168-action-a3",
+            "free-node-0168-action-a4",
+            "free-node-0168-action-a5",
+            "free-node-0168-action-a6",
+            "free-node-0168-action-a7",
+            "cell",
+            "cell-text"
+          ],
+          "attached": 2,
+          "otherModelsStable": 999,
+          "otherGroupsStable": 999,
+          "otherCachesStable": 999,
+          "positionsUnchanged": true,
+          "orderUnchanged": true,
+          "viewUnchanged": true,
+          "nodeHeight": 470.78125,
+          "actionsBox": {
+            "absoluteX": 24,
+            "absoluteY": 361.78125,
+            "width": 312,
+            "height": 85,
+            "x": 24,
+            "y": 361.78125,
+            "id": "free-node-0168-actions",
+            "type": "cell",
+            "children": [
+              {
+                "absoluteX": 24,
+                "absoluteY": 361.78125,
+                "width": 312,
+                "height": 85,
+                "x": 0,
+                "y": 0,
+                "id": "_r_17uj_",
+                "type": "cell",
+                "children": []
+              },
+              {
+                "absoluteX": 24,
+                "absoluteY": 361.78125,
+                "width": 312,
+                "height": 85,
+                "x": 0,
+                "y": 0,
+                "id": "_r_17uk_",
+                "type": "flex",
+                "children": [
+                  {
+                    "absoluteX": 29,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 5,
+                    "y": 5,
+                    "id": "free-node-0168-action-a0",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 70,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 46,
+                    "y": 5,
+                    "id": "free-node-0168-action-a1",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 111,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 87,
+                    "y": 5,
+                    "id": "free-node-0168-action-a2",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 152,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 128,
+                    "y": 5,
+                    "id": "free-node-0168-action-a3",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 193,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 169,
+                    "y": 5,
+                    "id": "free-node-0168-action-a4",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 234,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 210,
+                    "y": 5,
+                    "id": "free-node-0168-action-a5",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 275,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 251,
+                    "y": 5,
+                    "id": "free-node-0168-action-a6",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 29,
+                    "absoluteY": 407.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 5,
+                    "y": 46,
+                    "id": "free-node-0168-action-a7",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 70,
+                    "absoluteY": 424.78125,
+                    "width": 190,
+                    "height": 0,
+                    "x": 46,
+                    "y": 63,
+                    "id": "_r_17un_",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 267,
+                    "absoluteY": 420.28125,
+                    "width": 64,
+                    "height": 9,
+                    "x": 243,
+                    "y": 58.5,
+                    "id": "_r_17uo_",
+                    "type": "cell-text",
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          "mainStable": true,
+          "stats": {
+            "mode": "optimized",
+            "arrangement": "free",
+            "cards": 1000,
+            "primitives": 35007,
+            "renderedCards": 1000,
+            "measurement": {
+              "scope": "local",
+              "measuredNodes": 54,
+              "measuredRoots": ["free-node-0168-actions", "free-node-0168"],
+              "templateHits": 0,
+              "templateMisses": 1,
+              "durationMs": 2.299999952316284,
+              "revision": 5
+            },
+            "rendering": {
+              "visibleRoots": 1000,
+              "totalRoots": 1000,
+              "lod": true,
+              "lodLevel": "cell",
+              "lodCells": 3000,
+              "groups": 27000,
+              "shapes": 25000,
+              "cachedRoots": 1000,
+              "cacheBytes": 6000600
+            },
+            "idleHtmlNodes": 0,
+            "attachedMeasurementRoots": 0,
+            "viewportWidth": 1400,
+            "viewportHeight": 760,
+            "devicePixelRatio": 2,
+            "canvasPixelRatio": 2,
+            "worldBounds": {
+              "x": -325,
+              "y": -1565.3713544923812,
+              "width": 13399.67335854657,
+              "height": 22177.228434924036
+            },
+            "worldWidth": 13399.67335854657,
+            "worldHeight": 22177.228434924036,
+            "complete": true
+          },
+          "settledMs": 92
+        },
+        {
+          "label": "reorder 8 stable keys",
+          "items": [
+            {
+              "id": "a7",
+              "kind": "settings"
+            },
+            {
+              "id": "a6",
+              "kind": "run"
+            },
+            {
+              "id": "a5",
+              "kind": "settings"
+            },
+            {
+              "id": "a4",
+              "kind": "run"
+            },
+            {
+              "id": "a3",
+              "kind": "settings"
+            },
+            {
+              "id": "a2",
+              "kind": "run"
+            },
+            {
+              "id": "a1",
+              "kind": "settings"
+            },
+            {
+              "id": "a0",
+              "kind": "run"
+            }
+          ],
+          "metrics": {
+            "scope": "local",
+            "measuredNodes": 13,
+            "measuredRoots": ["free-node-0168-actions"],
+            "templateHits": 0,
+            "templateMisses": 0,
+            "durationMs": 1.2000000476837158,
+            "revision": 6
+          },
+          "bcr": 13,
+          "reads": [
+            "free-node-0168-actions",
+            "cell",
+            "flex",
+            "free-node-0168-action-a7",
+            "free-node-0168-action-a6",
+            "free-node-0168-action-a5",
+            "free-node-0168-action-a4",
+            "free-node-0168-action-a3",
+            "free-node-0168-action-a2",
+            "free-node-0168-action-a1",
+            "free-node-0168-action-a0",
+            "cell",
+            "cell-text"
+          ],
+          "attached": 1,
+          "otherModelsStable": 999,
+          "otherGroupsStable": 999,
+          "otherCachesStable": 999,
+          "positionsUnchanged": true,
+          "orderUnchanged": true,
+          "viewUnchanged": true,
+          "nodeHeight": 470.78125,
+          "actionsBox": {
+            "absoluteX": 24,
+            "absoluteY": 361.78125,
+            "width": 312,
+            "height": 85,
+            "x": 24,
+            "y": 361.78125,
+            "id": "free-node-0168-actions",
+            "type": "cell",
+            "children": [
+              {
+                "absoluteX": 24,
+                "absoluteY": 361.78125,
+                "width": 312,
+                "height": 85,
+                "x": 0,
+                "y": 0,
+                "id": "_r_17uj_",
+                "type": "cell",
+                "children": []
+              },
+              {
+                "absoluteX": 24,
+                "absoluteY": 361.78125,
+                "width": 312,
+                "height": 85,
+                "x": 0,
+                "y": 0,
+                "id": "_r_17uk_",
+                "type": "flex",
+                "children": [
+                  {
+                    "absoluteX": 29,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 5,
+                    "y": 5,
+                    "id": "free-node-0168-action-a7",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 70,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 46,
+                    "y": 5,
+                    "id": "free-node-0168-action-a6",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 111,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 87,
+                    "y": 5,
+                    "id": "free-node-0168-action-a5",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 152,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 128,
+                    "y": 5,
+                    "id": "free-node-0168-action-a4",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 193,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 169,
+                    "y": 5,
+                    "id": "free-node-0168-action-a3",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 234,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 210,
+                    "y": 5,
+                    "id": "free-node-0168-action-a2",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 275,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 251,
+                    "y": 5,
+                    "id": "free-node-0168-action-a1",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 29,
+                    "absoluteY": 407.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 5,
+                    "y": 46,
+                    "id": "free-node-0168-action-a0",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 70,
+                    "absoluteY": 424.78125,
+                    "width": 190,
+                    "height": 0,
+                    "x": 46,
+                    "y": 63,
+                    "id": "_r_17un_",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 267,
+                    "absoluteY": 420.28125,
+                    "width": 64,
+                    "height": 9,
+                    "x": 243,
+                    "y": 58.5,
+                    "id": "_r_17uo_",
+                    "type": "cell-text",
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          "mainStable": true,
+          "stats": {
+            "mode": "optimized",
+            "arrangement": "free",
+            "cards": 1000,
+            "primitives": 35007,
+            "renderedCards": 1000,
+            "measurement": {
+              "scope": "local",
+              "measuredNodes": 13,
+              "measuredRoots": ["free-node-0168-actions"],
+              "templateHits": 0,
+              "templateMisses": 0,
+              "durationMs": 1.2000000476837158,
+              "revision": 6
+            },
+            "rendering": {
+              "visibleRoots": 1000,
+              "totalRoots": 1000,
+              "lod": true,
+              "lodLevel": "cell",
+              "lodCells": 3000,
+              "groups": 27000,
+              "shapes": 25000,
+              "cachedRoots": 1000,
+              "cacheBytes": 6000600
+            },
+            "idleHtmlNodes": 0,
+            "attachedMeasurementRoots": 0,
+            "viewportWidth": 1400,
+            "viewportHeight": 760,
+            "devicePixelRatio": 2,
+            "canvasPixelRatio": 2,
+            "worldBounds": {
+              "x": -325,
+              "y": -1565.3713544923812,
+              "width": 13399.67335854657,
+              "height": 22177.228434924036
+            },
+            "worldWidth": 13399.67335854657,
+            "worldHeight": 22177.228434924036,
+            "complete": true
+          },
+          "settledMs": 92.79999995231628
+        },
+        {
+          "label": "remove all 8→0 shrink",
+          "items": [],
+          "metrics": {
+            "scope": "local",
+            "measuredNodes": 38,
+            "measuredRoots": ["free-node-0168-actions", "free-node-0168"],
+            "templateHits": 0,
+            "templateMisses": 1,
+            "durationMs": 2,
+            "revision": 7
+          },
+          "bcr": 38,
+          "reads": [
+            "free-node-0168-actions",
+            "cell",
+            "flex",
+            "cell",
+            "cell-text",
+            "free-node-0168",
+            "cell",
+            "free-node-0168-main",
+            "flex",
+            "cell",
+            "free-node-0168-content",
+            "free-node-0168-label",
+            "flex",
+            "cell",
+            "cell-text",
+            "free-node-0168-title",
+            "free-node-0168-subtitle",
+            "free-node-0168-media",
+            "flex",
+            "cell",
+            "free-node-0168-input-ports",
+            "free-node-0168-input-0",
+            "free-node-0168-input-1",
+            "free-node-0168-input-2",
+            "free-node-0168-preview",
+            "cell",
+            "cell-text",
+            "cell",
+            "free-node-0168-output-ports",
+            "free-node-0168-output-0",
+            "free-node-0168-output-1",
+            "free-node-0168-output-2",
+            "free-node-0168-description-text",
+            "free-node-0168-actions",
+            "cell",
+            "flex",
+            "cell",
+            "cell-text"
+          ],
+          "attached": 2,
+          "otherModelsStable": 999,
+          "otherGroupsStable": 999,
+          "otherCachesStable": 999,
+          "positionsUnchanged": true,
+          "orderUnchanged": true,
+          "viewUnchanged": true,
+          "nodeHeight": 429.78125,
+          "actionsBox": {
+            "absoluteX": 24,
+            "absoluteY": 361.78125,
+            "width": 312,
+            "height": 44,
+            "x": 24,
+            "y": 361.78125,
+            "id": "free-node-0168-actions",
+            "type": "cell",
+            "children": [
+              {
+                "absoluteX": 24,
+                "absoluteY": 361.78125,
+                "width": 312,
+                "height": 44,
+                "x": 0,
+                "y": 0,
+                "id": "_r_17uj_",
+                "type": "cell",
+                "children": []
+              },
+              {
+                "absoluteX": 24,
+                "absoluteY": 361.78125,
+                "width": 312,
+                "height": 44,
+                "x": 0,
+                "y": 0,
+                "id": "_r_17uk_",
+                "type": "flex",
+                "children": [
+                  {
+                    "absoluteX": 29,
+                    "absoluteY": 383.78125,
+                    "width": 231,
+                    "height": 0,
+                    "x": 5,
+                    "y": 22,
+                    "id": "_r_17un_",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 267,
+                    "absoluteY": 379.28125,
+                    "width": 64,
+                    "height": 9,
+                    "x": 243,
+                    "y": 17.5,
+                    "id": "_r_17uo_",
+                    "type": "cell-text",
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          "mainStable": true,
+          "stats": {
+            "mode": "optimized",
+            "arrangement": "free",
+            "cards": 1000,
+            "primitives": 34999,
+            "renderedCards": 1000,
+            "measurement": {
+              "scope": "local",
+              "measuredNodes": 38,
+              "measuredRoots": ["free-node-0168-actions", "free-node-0168"],
+              "templateHits": 0,
+              "templateMisses": 1,
+              "durationMs": 2,
+              "revision": 7
+            },
+            "rendering": {
+              "visibleRoots": 1000,
+              "totalRoots": 1000,
+              "lod": true,
+              "lodLevel": "cell",
+              "lodCells": 3000,
+              "groups": 27000,
+              "shapes": 25000,
+              "cachedRoots": 1000,
+              "cacheBytes": 6000000
+            },
+            "idleHtmlNodes": 0,
+            "attachedMeasurementRoots": 0,
+            "viewportWidth": 1400,
+            "viewportHeight": 760,
+            "devicePixelRatio": 2,
+            "canvasPixelRatio": 2,
+            "worldBounds": {
+              "x": -325,
+              "y": -1565.3713544923812,
+              "width": 13399.67335854657,
+              "height": 22177.228434924036
+            },
+            "worldWidth": 13399.67335854657,
+            "worldHeight": 22177.228434924036,
+            "complete": true
+          },
+          "settledMs": 90.70000004768372
+        },
+        {
+          "label": "restore 0→2",
+          "items": [
+            {
+              "id": "run",
+              "kind": "run"
+            },
+            {
+              "id": "settings",
+              "kind": "settings"
+            }
+          ],
+          "metrics": {
+            "scope": "local",
+            "measuredNodes": 7,
+            "measuredRoots": ["free-node-0168-actions"],
+            "templateHits": 0,
+            "templateMisses": 0,
+            "durationMs": 1.0999999046325684,
+            "revision": 8
+          },
+          "bcr": 7,
+          "reads": [
+            "free-node-0168-actions",
+            "cell",
+            "flex",
+            "free-node-0168-run",
+            "free-node-0168-settings",
+            "cell",
+            "cell-text"
+          ],
+          "attached": 1,
+          "otherModelsStable": 999,
+          "otherGroupsStable": 999,
+          "otherCachesStable": 999,
+          "positionsUnchanged": true,
+          "orderUnchanged": true,
+          "viewUnchanged": true,
+          "nodeHeight": 429.78125,
+          "actionsBox": {
+            "absoluteX": 24,
+            "absoluteY": 361.78125,
+            "width": 312,
+            "height": 44,
+            "x": 24,
+            "y": 361.78125,
+            "id": "free-node-0168-actions",
+            "type": "cell",
+            "children": [
+              {
+                "absoluteX": 24,
+                "absoluteY": 361.78125,
+                "width": 312,
+                "height": 44,
+                "x": 0,
+                "y": 0,
+                "id": "_r_17uj_",
+                "type": "cell",
+                "children": []
+              },
+              {
+                "absoluteX": 24,
+                "absoluteY": 361.78125,
+                "width": 312,
+                "height": 44,
+                "x": 0,
+                "y": 0,
+                "id": "_r_17uk_",
+                "type": "flex",
+                "children": [
+                  {
+                    "absoluteX": 29,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 5,
+                    "y": 5,
+                    "id": "free-node-0168-run",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 70,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 46,
+                    "y": 5,
+                    "id": "free-node-0168-settings",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 111,
+                    "absoluteY": 383.78125,
+                    "width": 149,
+                    "height": 0,
+                    "x": 87,
+                    "y": 22,
+                    "id": "_r_17un_",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 267,
+                    "absoluteY": 379.28125,
+                    "width": 64,
+                    "height": 9,
+                    "x": 243,
+                    "y": 17.5,
+                    "id": "_r_17uo_",
+                    "type": "cell-text",
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          "mainStable": true,
+          "stats": {
+            "mode": "optimized",
+            "arrangement": "free",
+            "cards": 1000,
+            "primitives": 35001,
+            "renderedCards": 1000,
+            "measurement": {
+              "scope": "local",
+              "measuredNodes": 7,
+              "measuredRoots": ["free-node-0168-actions"],
+              "templateHits": 0,
+              "templateMisses": 0,
+              "durationMs": 1.0999999046325684,
+              "revision": 8
+            },
+            "rendering": {
+              "visibleRoots": 1000,
+              "totalRoots": 1000,
+              "lod": true,
+              "lodLevel": "cell",
+              "lodCells": 3000,
+              "groups": 27000,
+              "shapes": 25000,
+              "cachedRoots": 1000,
+              "cacheBytes": 6000000
+            },
+            "idleHtmlNodes": 0,
+            "attachedMeasurementRoots": 0,
+            "viewportWidth": 1400,
+            "viewportHeight": 760,
+            "devicePixelRatio": 2,
+            "canvasPixelRatio": 2,
+            "worldBounds": {
+              "x": -325,
+              "y": -1565.3713544923812,
+              "width": 13399.67335854657,
+              "height": 22177.228434924036
+            },
+            "worldWidth": 13399.67335854657,
+            "worldHeight": 22177.228434924036,
+            "complete": true
+          },
+          "settledMs": 88.89999985694885
+        },
+        {
+          "label": "reserved suffix safe",
+          "items": [
+            {
+              "id": "run",
+              "kind": "run"
+            },
+            {
+              "id": "settings",
+              "kind": "settings"
+            },
+            {
+              "id": "actions",
+              "kind": "run"
+            }
+          ],
+          "metrics": {
+            "scope": "local",
+            "measuredNodes": 8,
+            "measuredRoots": ["free-node-0168-actions"],
+            "templateHits": 0,
+            "templateMisses": 0,
+            "durationMs": 1.0999999046325684,
+            "revision": 9
+          },
+          "bcr": 8,
+          "reads": [
+            "free-node-0168-actions",
+            "cell",
+            "flex",
+            "free-node-0168-run",
+            "free-node-0168-settings",
+            "free-node-0168-action-actions",
+            "cell",
+            "cell-text"
+          ],
+          "attached": 1,
+          "otherModelsStable": 999,
+          "otherGroupsStable": 999,
+          "otherCachesStable": 999,
+          "positionsUnchanged": true,
+          "orderUnchanged": true,
+          "viewUnchanged": true,
+          "nodeHeight": 429.78125,
+          "actionsBox": {
+            "absoluteX": 24,
+            "absoluteY": 361.78125,
+            "width": 312,
+            "height": 44,
+            "x": 24,
+            "y": 361.78125,
+            "id": "free-node-0168-actions",
+            "type": "cell",
+            "children": [
+              {
+                "absoluteX": 24,
+                "absoluteY": 361.78125,
+                "width": 312,
+                "height": 44,
+                "x": 0,
+                "y": 0,
+                "id": "_r_17uj_",
+                "type": "cell",
+                "children": []
+              },
+              {
+                "absoluteX": 24,
+                "absoluteY": 361.78125,
+                "width": 312,
+                "height": 44,
+                "x": 0,
+                "y": 0,
+                "id": "_r_17uk_",
+                "type": "flex",
+                "children": [
+                  {
+                    "absoluteX": 29,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 5,
+                    "y": 5,
+                    "id": "free-node-0168-run",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 70,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 46,
+                    "y": 5,
+                    "id": "free-node-0168-settings",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 111,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 87,
+                    "y": 5,
+                    "id": "free-node-0168-action-actions",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 152,
+                    "absoluteY": 383.78125,
+                    "width": 108,
+                    "height": 0,
+                    "x": 128,
+                    "y": 22,
+                    "id": "_r_17un_",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 267,
+                    "absoluteY": 379.28125,
+                    "width": 64,
+                    "height": 9,
+                    "x": 243,
+                    "y": 17.5,
+                    "id": "_r_17uo_",
+                    "type": "cell-text",
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          "mainStable": true,
+          "stats": {
+            "mode": "optimized",
+            "arrangement": "free",
+            "cards": 1000,
+            "primitives": 35002,
+            "renderedCards": 1000,
+            "measurement": {
+              "scope": "local",
+              "measuredNodes": 8,
+              "measuredRoots": ["free-node-0168-actions"],
+              "templateHits": 0,
+              "templateMisses": 0,
+              "durationMs": 1.0999999046325684,
+              "revision": 9
+            },
+            "rendering": {
+              "visibleRoots": 1000,
+              "totalRoots": 1000,
+              "lod": true,
+              "lodLevel": "cell",
+              "lodCells": 3000,
+              "groups": 27000,
+              "shapes": 25000,
+              "cachedRoots": 1000,
+              "cacheBytes": 6000000
+            },
+            "idleHtmlNodes": 0,
+            "attachedMeasurementRoots": 0,
+            "viewportWidth": 1400,
+            "viewportHeight": 760,
+            "devicePixelRatio": 2,
+            "canvasPixelRatio": 2,
+            "worldBounds": {
+              "x": -325,
+              "y": -1565.3713544923812,
+              "width": 13399.67335854657,
+              "height": 22177.228434924036
+            },
+            "worldWidth": 13399.67335854657,
+            "worldHeight": 22177.228434924036,
+            "complete": true
+          },
+          "settledMs": 92.5
+        }
+      ]
+    },
+    {
+      "runtime": "react16-production",
+      "cases": [
+        {
+          "label": "add 2→3 same height",
+          "items": [
+            {
+              "id": "run",
+              "kind": "run"
+            },
+            {
+              "id": "settings",
+              "kind": "settings"
+            },
+            {
+              "id": "third",
+              "kind": "run"
+            }
+          ],
+          "metrics": {
+            "scope": "local",
+            "measuredNodes": 8,
+            "measuredRoots": ["free-node-0168-actions"],
+            "templateHits": 0,
+            "templateMisses": 0,
+            "durationMs": 1.6999998092651367,
+            "revision": 2
+          },
+          "bcr": 8,
+          "reads": [
+            "free-node-0168-actions",
+            "cell",
+            "flex",
+            "free-node-0168-run",
+            "free-node-0168-settings",
+            "free-node-0168-action-third",
+            "cell",
+            "cell-text"
+          ],
+          "attached": 1,
+          "otherModelsStable": 999,
+          "otherGroupsStable": 999,
+          "otherCachesStable": 999,
+          "positionsUnchanged": true,
+          "orderUnchanged": true,
+          "viewUnchanged": true,
+          "nodeHeight": 429.78125,
+          "actionsBox": {
+            "absoluteX": 24,
+            "absoluteY": 361.78125,
+            "width": 312,
+            "height": 44,
+            "x": 24,
+            "y": 361.78125,
+            "id": "free-node-0168-actions",
+            "type": "cell",
+            "children": [
+              {
+                "absoluteX": 24,
+                "absoluteY": 361.78125,
+                "width": 312,
+                "height": 44,
+                "x": 0,
+                "y": 0,
+                "id": "layout16-5911",
+                "type": "cell",
+                "children": []
+              },
+              {
+                "absoluteX": 24,
+                "absoluteY": 361.78125,
+                "width": 312,
+                "height": 44,
+                "x": 0,
+                "y": 0,
+                "id": "layout16-5912",
+                "type": "flex",
+                "children": [
+                  {
+                    "absoluteX": 29,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 5,
+                    "y": 5,
+                    "id": "free-node-0168-run",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 70,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 46,
+                    "y": 5,
+                    "id": "free-node-0168-settings",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 111,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 87,
+                    "y": 5,
+                    "id": "free-node-0168-action-third",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 152,
+                    "absoluteY": 383.78125,
+                    "width": 108,
+                    "height": 0,
+                    "x": 128,
+                    "y": 22,
+                    "id": "layout16-5915",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 267,
+                    "absoluteY": 379.28125,
+                    "width": 64,
+                    "height": 9,
+                    "x": 243,
+                    "y": 17.5,
+                    "id": "layout16-5916",
+                    "type": "cell-text",
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          "mainStable": true,
+          "stats": {
+            "mode": "optimized",
+            "arrangement": "free",
+            "cards": 1000,
+            "primitives": 35002,
+            "renderedCards": 1000,
+            "measurement": {
+              "scope": "local",
+              "measuredNodes": 8,
+              "measuredRoots": ["free-node-0168-actions"],
+              "templateHits": 0,
+              "templateMisses": 0,
+              "durationMs": 1.6999998092651367,
+              "revision": 2
+            },
+            "rendering": {
+              "visibleRoots": 1000,
+              "totalRoots": 1000,
+              "lod": true,
+              "lodLevel": "cell",
+              "lodCells": 3000,
+              "groups": 27000,
+              "shapes": 25000,
+              "cachedRoots": 1000,
+              "cacheBytes": 6365250
+            },
+            "idleHtmlNodes": 0,
+            "attachedMeasurementRoots": 0,
+            "viewportWidth": 1400,
+            "viewportHeight": 760,
+            "devicePixelRatio": 2,
+            "canvasPixelRatio": 2,
+            "worldBounds": {
+              "x": -325,
+              "y": -1565.3713544923812,
+              "width": 13399.67335854657,
+              "height": 22177.228434924036
+            },
+            "worldWidth": 13399.67335854657,
+            "worldHeight": 22177.228434924036,
+            "complete": true
+          },
+          "settledMs": 77.5
+        },
+        {
+          "label": "reorder 3 stable keys",
+          "items": [
+            {
+              "id": "third",
+              "kind": "run"
+            },
+            {
+              "id": "settings",
+              "kind": "settings"
+            },
+            {
+              "id": "run",
+              "kind": "run"
+            }
+          ],
+          "metrics": {
+            "scope": "local",
+            "measuredNodes": 8,
+            "measuredRoots": ["free-node-0168-actions"],
+            "templateHits": 0,
+            "templateMisses": 0,
+            "durationMs": 0.8999998569488525,
+            "revision": 3
+          },
+          "bcr": 8,
+          "reads": [
+            "free-node-0168-actions",
+            "cell",
+            "flex",
+            "free-node-0168-action-third",
+            "free-node-0168-settings",
+            "free-node-0168-run",
+            "cell",
+            "cell-text"
+          ],
+          "attached": 1,
+          "otherModelsStable": 999,
+          "otherGroupsStable": 999,
+          "otherCachesStable": 999,
+          "positionsUnchanged": true,
+          "orderUnchanged": true,
+          "viewUnchanged": true,
+          "nodeHeight": 429.78125,
+          "actionsBox": {
+            "absoluteX": 24,
+            "absoluteY": 361.78125,
+            "width": 312,
+            "height": 44,
+            "x": 24,
+            "y": 361.78125,
+            "id": "free-node-0168-actions",
+            "type": "cell",
+            "children": [
+              {
+                "absoluteX": 24,
+                "absoluteY": 361.78125,
+                "width": 312,
+                "height": 44,
+                "x": 0,
+                "y": 0,
+                "id": "layout16-5911",
+                "type": "cell",
+                "children": []
+              },
+              {
+                "absoluteX": 24,
+                "absoluteY": 361.78125,
+                "width": 312,
+                "height": 44,
+                "x": 0,
+                "y": 0,
+                "id": "layout16-5912",
+                "type": "flex",
+                "children": [
+                  {
+                    "absoluteX": 29,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 5,
+                    "y": 5,
+                    "id": "free-node-0168-action-third",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 70,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 46,
+                    "y": 5,
+                    "id": "free-node-0168-settings",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 111,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 87,
+                    "y": 5,
+                    "id": "free-node-0168-run",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 152,
+                    "absoluteY": 383.78125,
+                    "width": 108,
+                    "height": 0,
+                    "x": 128,
+                    "y": 22,
+                    "id": "layout16-5915",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 267,
+                    "absoluteY": 379.28125,
+                    "width": 64,
+                    "height": 9,
+                    "x": 243,
+                    "y": 17.5,
+                    "id": "layout16-5916",
+                    "type": "cell-text",
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          "mainStable": true,
+          "stats": {
+            "mode": "optimized",
+            "arrangement": "free",
+            "cards": 1000,
+            "primitives": 35002,
+            "renderedCards": 1000,
+            "measurement": {
+              "scope": "local",
+              "measuredNodes": 8,
+              "measuredRoots": ["free-node-0168-actions"],
+              "templateHits": 0,
+              "templateMisses": 0,
+              "durationMs": 0.8999998569488525,
+              "revision": 3
+            },
+            "rendering": {
+              "visibleRoots": 1000,
+              "totalRoots": 1000,
+              "lod": true,
+              "lodLevel": "cell",
+              "lodCells": 3000,
+              "groups": 27000,
+              "shapes": 25000,
+              "cachedRoots": 1000,
+              "cacheBytes": 6365250
+            },
+            "idleHtmlNodes": 0,
+            "attachedMeasurementRoots": 0,
+            "viewportWidth": 1400,
+            "viewportHeight": 760,
+            "devicePixelRatio": 2,
+            "canvasPixelRatio": 2,
+            "worldBounds": {
+              "x": -325,
+              "y": -1565.3713544923812,
+              "width": 13399.67335854657,
+              "height": 22177.228434924036
+            },
+            "worldWidth": 13399.67335854657,
+            "worldHeight": 22177.228434924036,
+            "complete": true
+          },
+          "settledMs": 73.09999990463257
+        },
+        {
+          "label": "remove 3→2",
+          "items": [
+            {
+              "id": "run",
+              "kind": "run"
+            },
+            {
+              "id": "settings",
+              "kind": "settings"
+            }
+          ],
+          "metrics": {
+            "scope": "local",
+            "measuredNodes": 7,
+            "measuredRoots": ["free-node-0168-actions"],
+            "templateHits": 0,
+            "templateMisses": 0,
+            "durationMs": 1.0999999046325684,
+            "revision": 4
+          },
+          "bcr": 7,
+          "reads": [
+            "free-node-0168-actions",
+            "cell",
+            "flex",
+            "free-node-0168-run",
+            "free-node-0168-settings",
+            "cell",
+            "cell-text"
+          ],
+          "attached": 1,
+          "otherModelsStable": 999,
+          "otherGroupsStable": 999,
+          "otherCachesStable": 999,
+          "positionsUnchanged": true,
+          "orderUnchanged": true,
+          "viewUnchanged": true,
+          "nodeHeight": 429.78125,
+          "actionsBox": {
+            "absoluteX": 24,
+            "absoluteY": 361.78125,
+            "width": 312,
+            "height": 44,
+            "x": 24,
+            "y": 361.78125,
+            "id": "free-node-0168-actions",
+            "type": "cell",
+            "children": [
+              {
+                "absoluteX": 24,
+                "absoluteY": 361.78125,
+                "width": 312,
+                "height": 44,
+                "x": 0,
+                "y": 0,
+                "id": "layout16-5911",
+                "type": "cell",
+                "children": []
+              },
+              {
+                "absoluteX": 24,
+                "absoluteY": 361.78125,
+                "width": 312,
+                "height": 44,
+                "x": 0,
+                "y": 0,
+                "id": "layout16-5912",
+                "type": "flex",
+                "children": [
+                  {
+                    "absoluteX": 29,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 5,
+                    "y": 5,
+                    "id": "free-node-0168-run",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 70,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 46,
+                    "y": 5,
+                    "id": "free-node-0168-settings",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 111,
+                    "absoluteY": 383.78125,
+                    "width": 149,
+                    "height": 0,
+                    "x": 87,
+                    "y": 22,
+                    "id": "layout16-5915",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 267,
+                    "absoluteY": 379.28125,
+                    "width": 64,
+                    "height": 9,
+                    "x": 243,
+                    "y": 17.5,
+                    "id": "layout16-5916",
+                    "type": "cell-text",
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          "mainStable": true,
+          "stats": {
+            "mode": "optimized",
+            "arrangement": "free",
+            "cards": 1000,
+            "primitives": 35001,
+            "renderedCards": 1000,
+            "measurement": {
+              "scope": "local",
+              "measuredNodes": 7,
+              "measuredRoots": ["free-node-0168-actions"],
+              "templateHits": 0,
+              "templateMisses": 0,
+              "durationMs": 1.0999999046325684,
+              "revision": 4
+            },
+            "rendering": {
+              "visibleRoots": 1000,
+              "totalRoots": 1000,
+              "lod": true,
+              "lodLevel": "cell",
+              "lodCells": 3000,
+              "groups": 27000,
+              "shapes": 25000,
+              "cachedRoots": 1000,
+              "cacheBytes": 6365250
+            },
+            "idleHtmlNodes": 0,
+            "attachedMeasurementRoots": 0,
+            "viewportWidth": 1400,
+            "viewportHeight": 760,
+            "devicePixelRatio": 2,
+            "canvasPixelRatio": 2,
+            "worldBounds": {
+              "x": -325,
+              "y": -1565.3713544923812,
+              "width": 13399.67335854657,
+              "height": 22177.228434924036
+            },
+            "worldWidth": 13399.67335854657,
+            "worldHeight": 22177.228434924036,
+            "complete": true
+          },
+          "settledMs": 75.09999990463257
+        },
+        {
+          "label": "grow 2→8 wrap",
+          "items": [
+            {
+              "id": "a0",
+              "kind": "run"
+            },
+            {
+              "id": "a1",
+              "kind": "settings"
+            },
+            {
+              "id": "a2",
+              "kind": "run"
+            },
+            {
+              "id": "a3",
+              "kind": "settings"
+            },
+            {
+              "id": "a4",
+              "kind": "run"
+            },
+            {
+              "id": "a5",
+              "kind": "settings"
+            },
+            {
+              "id": "a6",
+              "kind": "run"
+            },
+            {
+              "id": "a7",
+              "kind": "settings"
+            }
+          ],
+          "metrics": {
+            "scope": "local",
+            "measuredNodes": 54,
+            "measuredRoots": ["free-node-0168-actions", "free-node-0168"],
+            "templateHits": 0,
+            "templateMisses": 1,
+            "durationMs": 2.1000001430511475,
+            "revision": 5
+          },
+          "bcr": 54,
+          "reads": [
+            "free-node-0168-actions",
+            "cell",
+            "flex",
+            "free-node-0168-action-a0",
+            "free-node-0168-action-a1",
+            "free-node-0168-action-a2",
+            "free-node-0168-action-a3",
+            "free-node-0168-action-a4",
+            "free-node-0168-action-a5",
+            "free-node-0168-action-a6",
+            "free-node-0168-action-a7",
+            "cell",
+            "cell-text",
+            "free-node-0168",
+            "cell",
+            "free-node-0168-main",
+            "flex",
+            "cell",
+            "free-node-0168-content",
+            "free-node-0168-label",
+            "flex",
+            "cell",
+            "cell-text",
+            "free-node-0168-title",
+            "free-node-0168-subtitle",
+            "free-node-0168-media",
+            "flex",
+            "cell",
+            "free-node-0168-input-ports",
+            "free-node-0168-input-0",
+            "free-node-0168-input-1",
+            "free-node-0168-input-2",
+            "free-node-0168-preview",
+            "cell",
+            "cell-text",
+            "cell",
+            "free-node-0168-output-ports",
+            "free-node-0168-output-0",
+            "free-node-0168-output-1",
+            "free-node-0168-output-2",
+            "free-node-0168-description-text",
+            "free-node-0168-actions",
+            "cell",
+            "flex",
+            "free-node-0168-action-a0",
+            "free-node-0168-action-a1",
+            "free-node-0168-action-a2",
+            "free-node-0168-action-a3",
+            "free-node-0168-action-a4",
+            "free-node-0168-action-a5",
+            "free-node-0168-action-a6",
+            "free-node-0168-action-a7",
+            "cell",
+            "cell-text"
+          ],
+          "attached": 2,
+          "otherModelsStable": 999,
+          "otherGroupsStable": 999,
+          "otherCachesStable": 999,
+          "positionsUnchanged": true,
+          "orderUnchanged": true,
+          "viewUnchanged": true,
+          "nodeHeight": 470.78125,
+          "actionsBox": {
+            "absoluteX": 24,
+            "absoluteY": 361.78125,
+            "width": 312,
+            "height": 85,
+            "x": 24,
+            "y": 361.78125,
+            "id": "free-node-0168-actions",
+            "type": "cell",
+            "children": [
+              {
+                "absoluteX": 24,
+                "absoluteY": 361.78125,
+                "width": 312,
+                "height": 85,
+                "x": 0,
+                "y": 0,
+                "id": "layout16-5911",
+                "type": "cell",
+                "children": []
+              },
+              {
+                "absoluteX": 24,
+                "absoluteY": 361.78125,
+                "width": 312,
+                "height": 85,
+                "x": 0,
+                "y": 0,
+                "id": "layout16-5912",
+                "type": "flex",
+                "children": [
+                  {
+                    "absoluteX": 29,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 5,
+                    "y": 5,
+                    "id": "free-node-0168-action-a0",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 70,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 46,
+                    "y": 5,
+                    "id": "free-node-0168-action-a1",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 111,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 87,
+                    "y": 5,
+                    "id": "free-node-0168-action-a2",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 152,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 128,
+                    "y": 5,
+                    "id": "free-node-0168-action-a3",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 193,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 169,
+                    "y": 5,
+                    "id": "free-node-0168-action-a4",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 234,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 210,
+                    "y": 5,
+                    "id": "free-node-0168-action-a5",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 275,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 251,
+                    "y": 5,
+                    "id": "free-node-0168-action-a6",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 29,
+                    "absoluteY": 407.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 5,
+                    "y": 46,
+                    "id": "free-node-0168-action-a7",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 70,
+                    "absoluteY": 424.78125,
+                    "width": 190,
+                    "height": 0,
+                    "x": 46,
+                    "y": 63,
+                    "id": "layout16-5915",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 267,
+                    "absoluteY": 420.28125,
+                    "width": 64,
+                    "height": 9,
+                    "x": 243,
+                    "y": 58.5,
+                    "id": "layout16-5916",
+                    "type": "cell-text",
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          "mainStable": true,
+          "stats": {
+            "mode": "optimized",
+            "arrangement": "free",
+            "cards": 1000,
+            "primitives": 35007,
+            "renderedCards": 1000,
+            "measurement": {
+              "scope": "local",
+              "measuredNodes": 54,
+              "measuredRoots": ["free-node-0168-actions", "free-node-0168"],
+              "templateHits": 0,
+              "templateMisses": 1,
+              "durationMs": 2.1000001430511475,
+              "revision": 5
+            },
+            "rendering": {
+              "visibleRoots": 1000,
+              "totalRoots": 1000,
+              "lod": true,
+              "lodLevel": "cell",
+              "lodCells": 3000,
+              "groups": 27000,
+              "shapes": 25000,
+              "cachedRoots": 1000,
+              "cacheBytes": 6365780.4375
+            },
+            "idleHtmlNodes": 0,
+            "attachedMeasurementRoots": 0,
+            "viewportWidth": 1400,
+            "viewportHeight": 760,
+            "devicePixelRatio": 2,
+            "canvasPixelRatio": 2,
+            "worldBounds": {
+              "x": -325,
+              "y": -1565.3713544923812,
+              "width": 13399.67335854657,
+              "height": 22177.228434924036
+            },
+            "worldWidth": 13399.67335854657,
+            "worldHeight": 22177.228434924036,
+            "complete": true
+          },
+          "settledMs": 77.29999995231628
+        },
+        {
+          "label": "reorder 8 stable keys",
+          "items": [
+            {
+              "id": "a7",
+              "kind": "settings"
+            },
+            {
+              "id": "a6",
+              "kind": "run"
+            },
+            {
+              "id": "a5",
+              "kind": "settings"
+            },
+            {
+              "id": "a4",
+              "kind": "run"
+            },
+            {
+              "id": "a3",
+              "kind": "settings"
+            },
+            {
+              "id": "a2",
+              "kind": "run"
+            },
+            {
+              "id": "a1",
+              "kind": "settings"
+            },
+            {
+              "id": "a0",
+              "kind": "run"
+            }
+          ],
+          "metrics": {
+            "scope": "local",
+            "measuredNodes": 13,
+            "measuredRoots": ["free-node-0168-actions"],
+            "templateHits": 0,
+            "templateMisses": 0,
+            "durationMs": 1,
+            "revision": 6
+          },
+          "bcr": 13,
+          "reads": [
+            "free-node-0168-actions",
+            "cell",
+            "flex",
+            "free-node-0168-action-a7",
+            "free-node-0168-action-a6",
+            "free-node-0168-action-a5",
+            "free-node-0168-action-a4",
+            "free-node-0168-action-a3",
+            "free-node-0168-action-a2",
+            "free-node-0168-action-a1",
+            "free-node-0168-action-a0",
+            "cell",
+            "cell-text"
+          ],
+          "attached": 1,
+          "otherModelsStable": 999,
+          "otherGroupsStable": 999,
+          "otherCachesStable": 999,
+          "positionsUnchanged": true,
+          "orderUnchanged": true,
+          "viewUnchanged": true,
+          "nodeHeight": 470.78125,
+          "actionsBox": {
+            "absoluteX": 24,
+            "absoluteY": 361.78125,
+            "width": 312,
+            "height": 85,
+            "x": 24,
+            "y": 361.78125,
+            "id": "free-node-0168-actions",
+            "type": "cell",
+            "children": [
+              {
+                "absoluteX": 24,
+                "absoluteY": 361.78125,
+                "width": 312,
+                "height": 85,
+                "x": 0,
+                "y": 0,
+                "id": "layout16-5911",
+                "type": "cell",
+                "children": []
+              },
+              {
+                "absoluteX": 24,
+                "absoluteY": 361.78125,
+                "width": 312,
+                "height": 85,
+                "x": 0,
+                "y": 0,
+                "id": "layout16-5912",
+                "type": "flex",
+                "children": [
+                  {
+                    "absoluteX": 29,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 5,
+                    "y": 5,
+                    "id": "free-node-0168-action-a7",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 70,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 46,
+                    "y": 5,
+                    "id": "free-node-0168-action-a6",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 111,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 87,
+                    "y": 5,
+                    "id": "free-node-0168-action-a5",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 152,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 128,
+                    "y": 5,
+                    "id": "free-node-0168-action-a4",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 193,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 169,
+                    "y": 5,
+                    "id": "free-node-0168-action-a3",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 234,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 210,
+                    "y": 5,
+                    "id": "free-node-0168-action-a2",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 275,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 251,
+                    "y": 5,
+                    "id": "free-node-0168-action-a1",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 29,
+                    "absoluteY": 407.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 5,
+                    "y": 46,
+                    "id": "free-node-0168-action-a0",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 70,
+                    "absoluteY": 424.78125,
+                    "width": 190,
+                    "height": 0,
+                    "x": 46,
+                    "y": 63,
+                    "id": "layout16-5915",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 267,
+                    "absoluteY": 420.28125,
+                    "width": 64,
+                    "height": 9,
+                    "x": 243,
+                    "y": 58.5,
+                    "id": "layout16-5916",
+                    "type": "cell-text",
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          "mainStable": true,
+          "stats": {
+            "mode": "optimized",
+            "arrangement": "free",
+            "cards": 1000,
+            "primitives": 35007,
+            "renderedCards": 1000,
+            "measurement": {
+              "scope": "local",
+              "measuredNodes": 13,
+              "measuredRoots": ["free-node-0168-actions"],
+              "templateHits": 0,
+              "templateMisses": 0,
+              "durationMs": 1,
+              "revision": 6
+            },
+            "rendering": {
+              "visibleRoots": 1000,
+              "totalRoots": 1000,
+              "lod": true,
+              "lodLevel": "cell",
+              "lodCells": 3000,
+              "groups": 27000,
+              "shapes": 25000,
+              "cachedRoots": 1000,
+              "cacheBytes": 6365780.4375
+            },
+            "idleHtmlNodes": 0,
+            "attachedMeasurementRoots": 0,
+            "viewportWidth": 1400,
+            "viewportHeight": 760,
+            "devicePixelRatio": 2,
+            "canvasPixelRatio": 2,
+            "worldBounds": {
+              "x": -325,
+              "y": -1565.3713544923812,
+              "width": 13399.67335854657,
+              "height": 22177.228434924036
+            },
+            "worldWidth": 13399.67335854657,
+            "worldHeight": 22177.228434924036,
+            "complete": true
+          },
+          "settledMs": 75.60000014305115
+        },
+        {
+          "label": "remove all 8→0 shrink",
+          "items": [],
+          "metrics": {
+            "scope": "local",
+            "measuredNodes": 38,
+            "measuredRoots": ["free-node-0168-actions", "free-node-0168"],
+            "templateHits": 0,
+            "templateMisses": 1,
+            "durationMs": 1.7999999523162842,
+            "revision": 7
+          },
+          "bcr": 38,
+          "reads": [
+            "free-node-0168-actions",
+            "cell",
+            "flex",
+            "cell",
+            "cell-text",
+            "free-node-0168",
+            "cell",
+            "free-node-0168-main",
+            "flex",
+            "cell",
+            "free-node-0168-content",
+            "free-node-0168-label",
+            "flex",
+            "cell",
+            "cell-text",
+            "free-node-0168-title",
+            "free-node-0168-subtitle",
+            "free-node-0168-media",
+            "flex",
+            "cell",
+            "free-node-0168-input-ports",
+            "free-node-0168-input-0",
+            "free-node-0168-input-1",
+            "free-node-0168-input-2",
+            "free-node-0168-preview",
+            "cell",
+            "cell-text",
+            "cell",
+            "free-node-0168-output-ports",
+            "free-node-0168-output-0",
+            "free-node-0168-output-1",
+            "free-node-0168-output-2",
+            "free-node-0168-description-text",
+            "free-node-0168-actions",
+            "cell",
+            "flex",
+            "cell",
+            "cell-text"
+          ],
+          "attached": 2,
+          "otherModelsStable": 999,
+          "otherGroupsStable": 999,
+          "otherCachesStable": 999,
+          "positionsUnchanged": true,
+          "orderUnchanged": true,
+          "viewUnchanged": true,
+          "nodeHeight": 429.78125,
+          "actionsBox": {
+            "absoluteX": 24,
+            "absoluteY": 361.78125,
+            "width": 312,
+            "height": 44,
+            "x": 24,
+            "y": 361.78125,
+            "id": "free-node-0168-actions",
+            "type": "cell",
+            "children": [
+              {
+                "absoluteX": 24,
+                "absoluteY": 361.78125,
+                "width": 312,
+                "height": 44,
+                "x": 0,
+                "y": 0,
+                "id": "layout16-5911",
+                "type": "cell",
+                "children": []
+              },
+              {
+                "absoluteX": 24,
+                "absoluteY": 361.78125,
+                "width": 312,
+                "height": 44,
+                "x": 0,
+                "y": 0,
+                "id": "layout16-5912",
+                "type": "flex",
+                "children": [
+                  {
+                    "absoluteX": 29,
+                    "absoluteY": 383.78125,
+                    "width": 231,
+                    "height": 0,
+                    "x": 5,
+                    "y": 22,
+                    "id": "layout16-5915",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 267,
+                    "absoluteY": 379.28125,
+                    "width": 64,
+                    "height": 9,
+                    "x": 243,
+                    "y": 17.5,
+                    "id": "layout16-5916",
+                    "type": "cell-text",
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          "mainStable": true,
+          "stats": {
+            "mode": "optimized",
+            "arrangement": "free",
+            "cards": 1000,
+            "primitives": 34999,
+            "renderedCards": 1000,
+            "measurement": {
+              "scope": "local",
+              "measuredNodes": 38,
+              "measuredRoots": ["free-node-0168-actions", "free-node-0168"],
+              "templateHits": 0,
+              "templateMisses": 1,
+              "durationMs": 1.7999999523162842,
+              "revision": 7
+            },
+            "rendering": {
+              "visibleRoots": 1000,
+              "totalRoots": 1000,
+              "lod": true,
+              "lodLevel": "cell",
+              "lodCells": 3000,
+              "groups": 27000,
+              "shapes": 25000,
+              "cachedRoots": 1000,
+              "cacheBytes": 6365250
+            },
+            "idleHtmlNodes": 0,
+            "attachedMeasurementRoots": 0,
+            "viewportWidth": 1400,
+            "viewportHeight": 760,
+            "devicePixelRatio": 2,
+            "canvasPixelRatio": 2,
+            "worldBounds": {
+              "x": -325,
+              "y": -1565.3713544923812,
+              "width": 13399.67335854657,
+              "height": 22177.228434924036
+            },
+            "worldWidth": 13399.67335854657,
+            "worldHeight": 22177.228434924036,
+            "complete": true
+          },
+          "settledMs": 75.20000004768372
+        },
+        {
+          "label": "restore 0→2",
+          "items": [
+            {
+              "id": "run",
+              "kind": "run"
+            },
+            {
+              "id": "settings",
+              "kind": "settings"
+            }
+          ],
+          "metrics": {
+            "scope": "local",
+            "measuredNodes": 7,
+            "measuredRoots": ["free-node-0168-actions"],
+            "templateHits": 0,
+            "templateMisses": 0,
+            "durationMs": 1.1000001430511475,
+            "revision": 8
+          },
+          "bcr": 7,
+          "reads": [
+            "free-node-0168-actions",
+            "cell",
+            "flex",
+            "free-node-0168-run",
+            "free-node-0168-settings",
+            "cell",
+            "cell-text"
+          ],
+          "attached": 1,
+          "otherModelsStable": 999,
+          "otherGroupsStable": 999,
+          "otherCachesStable": 999,
+          "positionsUnchanged": true,
+          "orderUnchanged": true,
+          "viewUnchanged": true,
+          "nodeHeight": 429.78125,
+          "actionsBox": {
+            "absoluteX": 24,
+            "absoluteY": 361.78125,
+            "width": 312,
+            "height": 44,
+            "x": 24,
+            "y": 361.78125,
+            "id": "free-node-0168-actions",
+            "type": "cell",
+            "children": [
+              {
+                "absoluteX": 24,
+                "absoluteY": 361.78125,
+                "width": 312,
+                "height": 44,
+                "x": 0,
+                "y": 0,
+                "id": "layout16-5911",
+                "type": "cell",
+                "children": []
+              },
+              {
+                "absoluteX": 24,
+                "absoluteY": 361.78125,
+                "width": 312,
+                "height": 44,
+                "x": 0,
+                "y": 0,
+                "id": "layout16-5912",
+                "type": "flex",
+                "children": [
+                  {
+                    "absoluteX": 29,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 5,
+                    "y": 5,
+                    "id": "free-node-0168-run",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 70,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 46,
+                    "y": 5,
+                    "id": "free-node-0168-settings",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 111,
+                    "absoluteY": 383.78125,
+                    "width": 149,
+                    "height": 0,
+                    "x": 87,
+                    "y": 22,
+                    "id": "layout16-5915",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 267,
+                    "absoluteY": 379.28125,
+                    "width": 64,
+                    "height": 9,
+                    "x": 243,
+                    "y": 17.5,
+                    "id": "layout16-5916",
+                    "type": "cell-text",
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          "mainStable": true,
+          "stats": {
+            "mode": "optimized",
+            "arrangement": "free",
+            "cards": 1000,
+            "primitives": 35001,
+            "renderedCards": 1000,
+            "measurement": {
+              "scope": "local",
+              "measuredNodes": 7,
+              "measuredRoots": ["free-node-0168-actions"],
+              "templateHits": 0,
+              "templateMisses": 0,
+              "durationMs": 1.1000001430511475,
+              "revision": 8
+            },
+            "rendering": {
+              "visibleRoots": 1000,
+              "totalRoots": 1000,
+              "lod": true,
+              "lodLevel": "cell",
+              "lodCells": 3000,
+              "groups": 27000,
+              "shapes": 25000,
+              "cachedRoots": 1000,
+              "cacheBytes": 6365250
+            },
+            "idleHtmlNodes": 0,
+            "attachedMeasurementRoots": 0,
+            "viewportWidth": 1400,
+            "viewportHeight": 760,
+            "devicePixelRatio": 2,
+            "canvasPixelRatio": 2,
+            "worldBounds": {
+              "x": -325,
+              "y": -1565.3713544923812,
+              "width": 13399.67335854657,
+              "height": 22177.228434924036
+            },
+            "worldWidth": 13399.67335854657,
+            "worldHeight": 22177.228434924036,
+            "complete": true
+          },
+          "settledMs": 78.09999990463257
+        },
+        {
+          "label": "reserved suffix safe",
+          "items": [
+            {
+              "id": "run",
+              "kind": "run"
+            },
+            {
+              "id": "settings",
+              "kind": "settings"
+            },
+            {
+              "id": "actions",
+              "kind": "run"
+            }
+          ],
+          "metrics": {
+            "scope": "local",
+            "measuredNodes": 8,
+            "measuredRoots": ["free-node-0168-actions"],
+            "templateHits": 0,
+            "templateMisses": 0,
+            "durationMs": 1,
+            "revision": 9
+          },
+          "bcr": 8,
+          "reads": [
+            "free-node-0168-actions",
+            "cell",
+            "flex",
+            "free-node-0168-run",
+            "free-node-0168-settings",
+            "free-node-0168-action-actions",
+            "cell",
+            "cell-text"
+          ],
+          "attached": 1,
+          "otherModelsStable": 999,
+          "otherGroupsStable": 999,
+          "otherCachesStable": 999,
+          "positionsUnchanged": true,
+          "orderUnchanged": true,
+          "viewUnchanged": true,
+          "nodeHeight": 429.78125,
+          "actionsBox": {
+            "absoluteX": 24,
+            "absoluteY": 361.78125,
+            "width": 312,
+            "height": 44,
+            "x": 24,
+            "y": 361.78125,
+            "id": "free-node-0168-actions",
+            "type": "cell",
+            "children": [
+              {
+                "absoluteX": 24,
+                "absoluteY": 361.78125,
+                "width": 312,
+                "height": 44,
+                "x": 0,
+                "y": 0,
+                "id": "layout16-5911",
+                "type": "cell",
+                "children": []
+              },
+              {
+                "absoluteX": 24,
+                "absoluteY": 361.78125,
+                "width": 312,
+                "height": 44,
+                "x": 0,
+                "y": 0,
+                "id": "layout16-5912",
+                "type": "flex",
+                "children": [
+                  {
+                    "absoluteX": 29,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 5,
+                    "y": 5,
+                    "id": "free-node-0168-run",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 70,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 46,
+                    "y": 5,
+                    "id": "free-node-0168-settings",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 111,
+                    "absoluteY": 366.78125,
+                    "width": 34,
+                    "height": 34,
+                    "x": 87,
+                    "y": 5,
+                    "id": "free-node-0168-action-actions",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 152,
+                    "absoluteY": 383.78125,
+                    "width": 108,
+                    "height": 0,
+                    "x": 128,
+                    "y": 22,
+                    "id": "layout16-5915",
+                    "type": "cell",
+                    "children": []
+                  },
+                  {
+                    "absoluteX": 267,
+                    "absoluteY": 379.28125,
+                    "width": 64,
+                    "height": 9,
+                    "x": 243,
+                    "y": 17.5,
+                    "id": "layout16-5916",
+                    "type": "cell-text",
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          "mainStable": true,
+          "stats": {
+            "mode": "optimized",
+            "arrangement": "free",
+            "cards": 1000,
+            "primitives": 35002,
+            "renderedCards": 1000,
+            "measurement": {
+              "scope": "local",
+              "measuredNodes": 8,
+              "measuredRoots": ["free-node-0168-actions"],
+              "templateHits": 0,
+              "templateMisses": 0,
+              "durationMs": 1,
+              "revision": 9
+            },
+            "rendering": {
+              "visibleRoots": 1000,
+              "totalRoots": 1000,
+              "lod": true,
+              "lodLevel": "cell",
+              "lodCells": 3000,
+              "groups": 27000,
+              "shapes": 25000,
+              "cachedRoots": 1000,
+              "cacheBytes": 6365250
+            },
+            "idleHtmlNodes": 0,
+            "attachedMeasurementRoots": 0,
+            "viewportWidth": 1400,
+            "viewportHeight": 760,
+            "devicePixelRatio": 2,
+            "canvasPixelRatio": 2,
+            "worldBounds": {
+              "x": -325,
+              "y": -1565.3713544923812,
+              "width": 13399.67335854657,
+              "height": 22177.228434924036
+            },
+            "worldWidth": 13399.67335854657,
+            "worldHeight": 22177.228434924036,
+            "complete": true
+          },
+          "settledMs": 74.80000019073486
+        }
+      ]
+    }
+  ],
+  "concurrent16": {
+    "metrics": {
+      "scope": "local",
+      "measuredNodes": 28,
+      "measuredRoots": [
+        "free-node-0168-actions",
+        "free-node-0168",
+        "free-node-0999-actions",
+        "free-node-0999"
+      ],
+      "templateHits": 2,
+      "templateMisses": 0,
+      "durationMs": 7.300000190734863,
+      "revision": 12
+    },
+    "otherModelsStable": 998,
+    "positionsUnchanged": true,
+    "viewUnchanged": true,
+    "orderUnchanged": true,
+    "nodes": [
+      {
+        "id": "free-node-0168",
+        "height": 470.78125,
+        "backgroundHeight": 470.78125,
+        "actionsHeight": 85
+      },
+      {
+        "id": "free-node-0999",
+        "height": 470.78125,
+        "backgroundHeight": 470.78125,
+        "actionsHeight": 85
+      }
+    ],
+    "stats": {
+      "mode": "optimized",
+      "arrangement": "free",
+      "cards": 1000,
+      "primitives": 35013,
+      "renderedCards": 1000,
+      "measurement": {
+        "scope": "local",
+        "measuredNodes": 28,
+        "measuredRoots": [
+          "free-node-0168-actions",
+          "free-node-0168",
+          "free-node-0999-actions",
+          "free-node-0999"
+        ],
+        "templateHits": 2,
+        "templateMisses": 0,
+        "durationMs": 7.300000190734863,
+        "revision": 12
+      },
+      "rendering": {
+        "visibleRoots": 1000,
+        "totalRoots": 1000,
+        "lod": true,
+        "lodLevel": "cell",
+        "lodCells": 3000,
+        "groups": 27000,
+        "shapes": 25000,
+        "cachedRoots": 1000,
+        "cacheBytes": 6366310.875
+      },
+      "idleHtmlNodes": 0,
+      "attachedMeasurementRoots": 0,
+      "viewportWidth": 1400,
+      "viewportHeight": 760,
+      "devicePixelRatio": 2,
+      "canvasPixelRatio": 2,
+      "worldBounds": {
+        "x": -325,
+        "y": -1565.3713544923812,
+        "width": 13399.67335854657,
+        "height": 22177.228434924036
+      },
+      "worldWidth": 13399.67335854657,
+      "worldHeight": 22177.228434924036,
+      "complete": true
+    }
+  },
+  "sourceFilesSha256": {
+    "src/lib/measurement/MeasurementCache.ts": "f959c2d62c581377f82104e61ce6c01ec1e021a23596f99be6fd8de3bb2cbb9c",
+    "src/lib/measurement/MeasurementEngine.ts": "fcc917009bf52fdc3fa127d8fe948b4d5783534efef2202242f845fecf1851c3",
+    "src/lib/measurement/MeasurementReader.ts": "ad712afd9b89c432b0e696792388179412efa5481a21f8d738b9461b9353e88b",
+    "src/lib/types.ts": "473aa602433c565e200a596d432dcea708680a7a44b3f25d3d9e2863026cbd0c",
+    "src/examples/ReferenceNode.tsx": "51c3c47ce462964604df1cb002b222ab0226a45c7eb2915ff63f33d2fa6c5464",
+    "src/examples/FreeNodesExample.tsx": "a4ffba39d6fd79ea763456dc2f2eb6a3ca03220b3e3ed7c78ad97679e623eedf",
+    "src/examples/free-nodes.css": "e9ec6808331f7a7fbc5aeba692fad8e45993e633246559b64ef6dee1e25763f7"
+  },
+  "libraryBuildSha256": {
+    "dist-lib/react-konva-layout.js": "1d3fd429a68f24d835a3d15961b7954680da6b9c7799fde2cb3193758f78f678",
+    "packages/react16/dist-lib/react-konva-layout.js": "3b4a8bbd08b141d5fcf0495f5f6dea96d289311b9645c8ade0ffd694bc582343"
+  },
+  "stacks": {
+    "react19": {
+      "react": "19.3.1",
+      "react-dom": "19.3.1",
+      "react-konva": "19.3.2",
+      "konva": "10.9.0"
+    },
+    "react16": {
+      "react": "16.14.0",
+      "react-dom": "16.14.0",
+      "react-konva": "16.13.0-6",
+      "konva": "8.4.3"
+    }
+  },
+  "checkedAt": "2026-10-17 21:46:59 UTC",
+  "visualReact16": {
+    "zoom": 1,
+    "nativeButtons": 8,
+    "stableButtonGroupsAfterReorder": 8,
+    "nodeHeight": 470.78125,
+    "backgroundRectHeight": 470.78125,
+    "toolbar": {
+      "before": 8,
+      "added": 9,
+      "removed": 8
+    },
+    "measurementHtmlAfter": 0,
+    "screenshot": "screenshots/dynamic-actions.png"
+  }
+}

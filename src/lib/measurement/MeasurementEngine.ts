@@ -202,7 +202,7 @@ export class MeasurementEngine {
     this.observers.observe(record);
     if (!sameGeometry) {
       // A boundary's own constraints depend on its parent layout context.
-      if (previous?.props.layoutRoot) this.schedule();
+      if (previous?.props.layoutRoot) this.schedule(record.parent ?? undefined);
       else this.schedule(record.key);
     } else if (!sameVisualProps(previous.props, record.props)) {
       this.visualDirty.add(record.key);
@@ -228,14 +228,19 @@ export class MeasurementEngine {
 
   private schedule = (id?: string): void => {
     const key = id && (this.registrations.has(id) ? id : this.keysById.get(id));
-    let record = key ? this.registrations.get(key) : undefined;
-    while (record && !record.props.layoutRoot) {
-      record = record.parent ? this.registrations.get(record.parent) : undefined;
-    }
+    const record = key ? this.closestBoundary(key) : undefined;
     if (record) this.dirty.add(record.key);
     else this.fullDirty = true;
     this.enqueue();
   };
+
+  private closestBoundary(key: string): Registration | undefined {
+    let record = this.registrations.get(key);
+    while (record && !record.props.layoutRoot) {
+      record = record.parent ? this.registrations.get(record.parent) : undefined;
+    }
+    return record;
+  }
 
   private enqueue(): void {
     const dirty = this.fullDirty || this.dirty.size > 0 || this.visualDirty.size > 0;
@@ -299,26 +304,35 @@ export class MeasurementEngine {
     if (!needsFullPass && dirtyRoots.length) {
       metrics.scope = 'local';
       const replacements = new Map<string, SceneNode>();
-      for (const key of this.independentRoots(dirtyRoots)) {
+      let pending = this.independentRoots(dirtyRoots);
+      while (pending.length) {
+        const key = pending.shift()!;
         const record = this.registrations.get(key);
         if (!record) {
           needsFullPass = true;
           break;
         }
         const result = this.pass.local(record, host, debug, true);
-        if (!result) {
-          needsFullPass = true;
-          break;
+        if (result) {
+          metrics.measuredNodes += result.nodes;
+          metrics.templateHits += result.hits;
+          metrics.templateMisses += result.misses;
+          metrics.measuredRoots.push(record.props.id ?? key);
         }
-        metrics.measuredNodes += result.nodes;
-        metrics.templateHits += result.hits;
-        metrics.templateMisses += result.misses;
-        metrics.measuredRoots.push(record.props.id ?? key);
-        if (result.fallback) {
-          needsFullPass = true;
-          break;
+        if (!result || result.fallback) {
+          const parent = record.parent ? this.closestBoundary(record.parent) : undefined;
+          if (!parent) {
+            needsFullPass = true;
+            break;
+          }
+          // The enclosing read includes all changed descendants, including earlier successes.
+          for (const replacement of replacements.keys()) {
+            if (this.isDescendant(replacement, parent.key)) replacements.delete(replacement);
+          }
+          pending = this.independentRoots([...new Set([parent.key, ...pending])]);
+        } else {
+          replacements.set(key, result.roots[0]);
         }
-        replacements.set(key, result.roots[0]);
       }
       if (!needsFullPass)
         scene = this.store.replaceSubtrees(scene, replacements, this.registrations);
@@ -335,6 +349,15 @@ export class MeasurementEngine {
       ];
     }
     return { scene, metrics };
+  }
+
+  private isDescendant(key: string, ancestor: string): boolean {
+    let parent = this.registrations.get(key)?.parent;
+    while (parent) {
+      if (parent === ancestor) return true;
+      parent = this.registrations.get(parent)?.parent;
+    }
+    return false;
   }
 
   private updateVisuals(scene: SceneNode[], keys: string[]): SceneNode[] {

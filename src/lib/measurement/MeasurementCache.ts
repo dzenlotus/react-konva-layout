@@ -5,6 +5,7 @@ import { layoutKeys, typographyKeys } from './comparison';
 export interface TemplateEntry {
   geometry: Geometry[];
   styles: Array<TextStyle | undefined>;
+  boundaries: Array<BoundaryContext | undefined>;
 }
 
 const inheritedProperties = [
@@ -137,7 +138,7 @@ export class MeasurementCache {
     const field = omitOuterPosition ? 'outer' : 'inner';
     const previous = record.signature?.[field];
     if (previous !== undefined) return previous;
-    let value = `${record.type};`;
+    let value = `${record.type};layoutRoot=${Boolean(record.props.layoutRoot)};`;
     if (record.props.direction !== undefined) value += `direction=${token(record.props.direction)}`;
     for (const key of geometryPropKeys) {
       if (record.props[key] !== undefined) value += `${key}=${token(record.props[key])}`;

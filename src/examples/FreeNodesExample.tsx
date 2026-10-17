@@ -1,4 +1,5 @@
 import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 import { flushSync, unstable_batchedUpdates } from 'react-dom';
 import type Konva from 'konva';
 import { Layer, Rect, Stage } from 'react-konva';
@@ -11,7 +12,8 @@ import type {
   RenderMetrics,
   ViewTransform,
 } from '../lib';
-import { ReferenceNode } from './ReferenceNode';
+import { DEFAULT_NODE_ACTIONS, ReferenceNode } from './ReferenceNode';
+import type { ReferenceNodeAction } from './ReferenceNode';
 import { DESCRIPTION } from './DesignedStressScene';
 import { normalizeView, readSavedView, zoomAtPoint } from './camera';
 import {
@@ -39,6 +41,11 @@ import './free-nodes.css';
 
 type DescriptionSetter = (value: string) => void;
 type RegisterDescription = (id: string, setter: DescriptionSetter | null) => void;
+type NodeActions = {
+  items: readonly ReferenceNodeAction[];
+  set: Dispatch<SetStateAction<readonly ReferenceNodeAction[]>>;
+};
+type RegisterActions = (id: string, actions: NodeActions | null) => void;
 type PlacementEvent = Konva.KonvaEventObject<Event>;
 type NodeDrag = { group: Konva.Group; parent: Konva.Container };
 
@@ -52,9 +59,16 @@ type BenchmarkInteraction = Pick<
   'kind' | 'view' | 'zoomRange' | 'panAmplitude' | 'durationMs' | 'warmupMs'
 > & { targetId?: string };
 
-function countTree(nodes: readonly LayoutNode[]): number {
+function countTree(nodes: readonly LayoutNode[], counts: WeakMap<LayoutNode, number>): number {
   let total = 0;
-  for (const node of nodes) total += 1 + countTree(node.children);
+  for (const node of nodes) {
+    let count = counts.get(node);
+    if (count === undefined) {
+      count = 1 + countTree(node.children, counts);
+      counts.set(node, count);
+    }
+    total += count;
+  }
   return total;
 }
 
@@ -69,6 +83,8 @@ interface FreeNodesApi {
   reorder(ids: readonly string[]): void;
   scatter(): void;
   setDescription(id: string, text: string): void;
+  actions(id: string): ReferenceNodeAction[];
+  setActions(id: string, actions: readonly ReferenceNodeAction[]): void;
   view(): ViewTransform;
   setView(view: Partial<ViewTransform>): void;
   stats(): FreeSceneStats;
@@ -92,6 +108,7 @@ const FreeNodeContent = memo(function FreeNodeContent({
   index,
   previewImage,
   registerDescription,
+  registerActions,
   showPreview,
   showDescription,
   showActions,
@@ -100,12 +117,18 @@ const FreeNodeContent = memo(function FreeNodeContent({
   index: number;
   previewImage: HTMLImageElement;
   registerDescription: RegisterDescription;
+  registerActions: RegisterActions;
 } & ReferenceNodeDetail) {
   const [description, setDescription] = useState(DESCRIPTION);
+  const [actions, setActions] = useState(DEFAULT_NODE_ACTIONS);
   useEffect(() => {
     registerDescription(id, setDescription);
     return () => registerDescription(id, null);
   }, [id, registerDescription]);
+  useLayoutEffect(() => {
+    registerActions(id, { items: actions, set: setActions });
+    return () => registerActions(id, null);
+  }, [id, actions, registerActions]);
   return (
     <ReferenceNode
       id={id}
@@ -115,6 +138,7 @@ const FreeNodeContent = memo(function FreeNodeContent({
       previewImage={previewImage}
       description={description}
       onDescriptionChange={setDescription}
+      actions={actions}
       showPreview={showPreview}
       showDescription={showDescription}
       showActions={showActions}
@@ -172,10 +196,14 @@ export default function FreeNodesExample() {
   const viewRef = useRef(initialView);
   const seed = useRef(INITIAL_SEED);
   const descriptions = useRef(new Map<string, DescriptionSetter>());
+  const nodeActions = useRef(new Map<string, NodeActions>());
+  const actionCountDelta = useRef(0);
+  const nextActionId = useRef(0);
   const measurementRef = useRef<LayoutMetrics | null>(null);
   const measurementAt = useRef<{ at: number; metrics: LayoutMetrics } | null>(null);
   const renderingRef = useRef<RenderMetrics | null>(null);
   const primitiveCount = useRef(0);
+  const primitiveCounts = useRef(new WeakMap<LayoutNode, number>());
   const imageReady = useRef<Promise<HTMLImageElement> | null>(null);
   const mountBusy = useRef(false);
   const arrangementRef = useRef(mountConfig.arrangement);
@@ -326,7 +354,7 @@ export default function FreeNodesExample() {
   }, []);
 
   const onLayout = useCallback((tree: LayoutNode[]) => {
-    if (!primitiveCount.current) primitiveCount.current = countTree(tree);
+    primitiveCount.current = countTree(tree, primitiveCounts.current);
   }, []);
   const onMeasure = useCallback((next: LayoutMetrics) => {
     measurementRef.current = next;
@@ -376,7 +404,7 @@ export default function FreeNodesExample() {
       worldHeight: maxY - minY,
       complete:
         cards === FREE_NODE_COUNT &&
-        primitiveCount.current === EXPECTED_PRIMITIVES &&
+        primitiveCount.current === EXPECTED_PRIMITIVES + actionCountDelta.current &&
         renderedCards > 0 &&
         idleHtmlNodes === 0 &&
         attachedMeasurementRoots === 0,
@@ -473,6 +501,53 @@ export default function FreeNodesExample() {
     if (setter) descriptions.current.set(id, setter);
     else descriptions.current.delete(id);
   }, []);
+
+  const registerActions = useCallback<RegisterActions>((id, actions) => {
+    const previous = nodeActions.current.get(id);
+    actionCountDelta.current +=
+      (actions?.items.length ?? DEFAULT_NODE_ACTIONS.length) -
+      (previous?.items.length ?? DEFAULT_NODE_ACTIONS.length);
+    if (actions) nodeActions.current.set(id, actions);
+    else nodeActions.current.delete(id);
+  }, []);
+
+  const setActions = useCallback(
+    (id: string, actions: readonly ReferenceNodeAction[]) => {
+      const current = nodeActions.current.get(id);
+      if (!current) throw new Error(`Node content is not ready: ${id}`);
+      if (
+        actions.some(
+          (action) => !action.id || (action.kind !== 'run' && action.kind !== 'settings'),
+        ) ||
+        new Set(actions.map((action) => action.id)).size !== actions.length
+      )
+        throw new Error('Actions need unique, nonempty IDs and a run/settings kind.');
+      stopActiveDrag();
+      current.set(actions.map((action) => ({ ...action })));
+    },
+    [stopActiveDrag],
+  );
+
+  const changeSelectedActions = useCallback(
+    (operation: 'add' | 'remove' | 'reverse') => {
+      const id = selectedRef.current;
+      const current = id ? nodeActions.current.get(id) : undefined;
+      if (!current) return;
+      stopActiveDrag();
+      let actionId = '';
+      if (operation === 'add') {
+        do actionId = `action-${++nextActionId.current}`;
+        while (current.items.some((action) => action.id === actionId));
+      }
+      current.set((previous) => {
+        if (operation === 'remove') return previous.slice(0, -1);
+        if (operation === 'reverse') return [...previous].reverse();
+        if (previous.length >= 12) return previous;
+        return [...previous, { id: actionId, kind: previous.length % 2 ? 'settings' : 'run' }];
+      });
+    },
+    [stopActiveDrag],
+  );
 
   const select = useCallback(
     (id: string | null, group?: Konva.Group) => {
@@ -621,6 +696,7 @@ export default function FreeNodesExample() {
               index={index}
               previewImage={previewImage}
               registerDescription={registerDescription}
+              registerActions={registerActions}
               showPreview={showPreview}
               showDescription={showDescription}
               showActions={showActions}
@@ -628,7 +704,7 @@ export default function FreeNodesExample() {
           ))}
         </Flex>
       ) : null,
-    [previewImage, registerDescription, showPreview, showDescription, showActions],
+    [previewImage, registerDescription, registerActions, showPreview, showDescription, showActions],
   );
 
   useEffect(() => {
@@ -648,6 +724,12 @@ export default function FreeNodesExample() {
         stopActiveDrag();
         setter(text);
       },
+      actions: (id) => {
+        const actions = nodeActions.current.get(id);
+        if (!actions) throw new Error(`Node content is not ready: ${id}`);
+        return actions.items.map((action) => ({ ...action }));
+      },
+      setActions,
       view: () => ({ ...viewRef.current }),
       setView: setCamera,
       stats,
@@ -662,6 +744,7 @@ export default function FreeNodesExample() {
     move,
     reorder,
     scatter,
+    setActions,
     setCamera,
     stats,
     benchmarkMount,
@@ -675,6 +758,7 @@ export default function FreeNodesExample() {
       : nodeById.get(selected)
     : undefined;
   const selectedBounds = selected ? layout.current?.getLayout(selected) : undefined;
+  const selectedActions = selected ? nodeActions.current.get(selected)?.items : undefined;
 
   return (
     <main className="free-nodes-example">
@@ -716,6 +800,30 @@ export default function FreeNodesExample() {
           100%
         </button>
         <button onClick={reset}>Сброс</button>
+        <span className="free-nodes-actions-label">
+          Действия{selectedActions ? `: ${selectedActions.length}` : ' выбранной ноды'}
+        </span>
+        <button
+          data-testid="free-node-action-add"
+          disabled={!selectedActions || selectedActions.length >= 12}
+          onClick={() => changeSelectedActions('add')}
+        >
+          + Действие
+        </button>
+        <button
+          data-testid="free-node-action-remove"
+          disabled={!selectedActions?.length}
+          onClick={() => changeSelectedActions('remove')}
+        >
+          − Действие
+        </button>
+        <button
+          data-testid="free-node-action-reverse"
+          disabled={!selectedActions || selectedActions.length < 2}
+          onClick={() => changeSelectedActions('reverse')}
+        >
+          Развернуть действия
+        </button>
       </div>
       <div
         ref={container}
@@ -786,8 +894,9 @@ export default function FreeNodesExample() {
       {imageError && <p role="alert">Не удалось загрузить превью нод.</p>}
       <p className="free-nodes-caption">
         Координаты и порядок хранятся в state приложения. Все ноды используют один Layout: drag не
-        запускает HTML-измерение, изменение текста пересчитывает только его ноду. LOD меняет
-        отдельные ячейки, сохраняя их размеры.
+        запускает HTML-измерение. Добавляйте и переставляйте действия выбранной ноды: сначала
+        пересчитывается их блок, при изменении его высоты — родительская нода. LOD меняет отдельные
+        ячейки, сохраняя их размеры.
       </p>
     </main>
   );
