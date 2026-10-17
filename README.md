@@ -167,6 +167,6 @@ Playground и `?stress=1` наследуют разрешение устройс
 
 Полная модель остаётся доступна через `getLayout`, даже если canvas-объекты вне viewport не смонтированы. Для произвольных фигур, выходящих далеко за границы ячейки, задайте достаточный `overscan` или отключите culling.
 
-Актуальные замеры оформленных нод: [docs/designed-stress.md](docs/designed-stress.md). Исторические замеры первого прототипа с карточками шириной 230 px и DPR1: [docs/performance-optimized.md](docs/performance-optimized.md); их нельзя напрямую сравнивать с новой сценой. Изменения архитектуры и проверка встраивания: [docs/embedded-layout.md](docs/embedded-layout.md).
+Замеры оформленных нод: [первоначальный отчёт](docs/designed-stress.md), [сравнение после рефакторинга](docs/designed-stress-comparison.md). Исторические замеры первого прототипа с карточками шириной 230 px и DPR1: [docs/performance-optimized.md](docs/performance-optimized.md); их нельзя напрямую сравнивать с новой сценой. Изменения архитектуры и проверка встраивания: [docs/embedded-layout.md](docs/embedded-layout.md).
 
 MIT. Прототип для дальнейшей интеграции.

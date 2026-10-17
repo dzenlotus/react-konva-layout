@@ -1,0 +1,31 @@
+{
+  "codeCommit": "72dfda8",
+  "checkedAfterMainMatrix": true,
+  "quality": {
+    "at1": {
+      "canvasDpr": 2,
+      "cacheRatios": [2, 2, 2, 2],
+      "cacheBytes": 16222640,
+      "visible": 10,
+      "model": 1000,
+      "primitives": 35001,
+      "html": 0,
+      "sharedImageObjects": 1
+    },
+    "at1_6": {
+      "canvasDpr": 2,
+      "cacheRatios": [4],
+      "cacheBytes": 13789244,
+      "visible": 6,
+      "model": 1000,
+      "primitives": 35001,
+      "html": 0,
+      "sharedImageObjects": 1
+    }
+  },
+  "console": {
+    "errors": [],
+    "warnings": [],
+    "source": "Chrome DevTools list_console_messages after full matrix and quality check"
+  }
+}
