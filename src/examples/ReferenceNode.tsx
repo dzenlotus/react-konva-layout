@@ -2,7 +2,8 @@ import { forwardRef, memo, useState } from 'react';
 import type Konva from 'konva';
 import { Circle, Image as CanvasImage, Line, Rect, Text } from 'react-konva';
 import { Cell, CellText, Flex } from '../lib';
-import type { LayoutHandle, LayoutMetrics } from '../lib';
+import type { CellBounds, LayoutHandle, LayoutMetrics } from '../lib';
+import type { ReferenceNodeDetail } from './referenceNodeDetail';
 import { EditableText } from './text-editor/EditableText';
 
 const FONT = 'Helvetica Neue, Arial, sans-serif';
@@ -87,7 +88,19 @@ function PreviewPhoto({
   );
 }
 
-export interface ReferenceNodeProps {
+function PreviewPlaceholder(bounds: CellBounds) {
+  return (
+    <Rect
+      {...bounds}
+      name="preview-placeholder"
+      fill="#e2eadb"
+      cornerRadius={9}
+      listening={false}
+    />
+  );
+}
+
+export interface ReferenceNodeProps extends Partial<ReferenceNodeDetail> {
   id?: string;
   width?: number;
   x?: number;
@@ -124,6 +137,9 @@ export const ReferenceNode = memo(
       onMeasure,
       onAction,
       onPortSelect,
+      showPreview = true,
+      showDescription = true,
+      showActions = true,
     },
     ref,
   ) {
@@ -142,7 +158,6 @@ export const ReferenceNode = memo(
         gap={18}
         debug={debug}
         onMeasure={onMeasure}
-        lodLabel={title}
         style={{ position: 'absolute', left: x, top: y }}
       >
         <Cell width="100%" height="100%" style={{ position: 'absolute', left: 0, top: 0 }}>
@@ -211,7 +226,14 @@ export const ReferenceNode = memo(
                 <Cell id={`${id}-media`} width="100%" height={156} flexShrink={0}>
                   <Flex width="100%" height="100%" gap={12} alignItems="center">
                     <Ports side="input" prefix={id} onSelect={onPortSelect} />
-                    <Cell id={`${id}-preview`} flexGrow={1} minWidth={0} height="100%">
+                    <Cell
+                      id={`${id}-preview`}
+                      flexGrow={1}
+                      minWidth={0}
+                      height="100%"
+                      renderWhen={showPreview}
+                      fallback={PreviewPlaceholder}
+                    >
                       <Cell width="100%" height="100%">
                         {(bounds) => <PreviewPhoto {...bounds} image={previewImage} />}
                       </Cell>
@@ -234,6 +256,7 @@ export const ReferenceNode = memo(
                 </Cell>
                 <CellText
                   id={`${id}-description-text`}
+                  renderWhen={showDescription || editing}
                   text={description}
                   width="100%"
                   fontSize={13}
@@ -254,7 +277,7 @@ export const ReferenceNode = memo(
             </Cell>
           </Flex>
         </Cell>
-        <Cell id={`${id}-actions`} width="100%" height={44} flexShrink={0}>
+        <Cell id={`${id}-actions`} width="100%" height={44} flexShrink={0} renderWhen={showActions}>
           <Cell width="100%" height="100%" style={{ position: 'absolute', left: 0, top: 0 }}>
             {(bounds) => <Rect {...bounds} fill="#f1f5ec" cornerRadius={8} listening={false} />}
           </Cell>

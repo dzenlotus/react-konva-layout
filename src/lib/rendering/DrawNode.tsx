@@ -3,7 +3,7 @@ import type Konva from 'konva';
 import { Group, Rect, Text } from 'react-konva';
 import type { SceneNode } from '../model';
 import { textAttributes } from './text';
-import { dispatchEvents, emptyEvents, hasEvents, type Events } from './scene';
+import { dispatchEvents, emptyEvents, hasEvents, isReplacedCell, type Events } from './scene';
 import { useCustomContent } from './customContent';
 
 interface DrawProps {
@@ -42,6 +42,8 @@ export const DrawNode = memo(function DrawNode({
     if (textStyle?.fontRevision) text.current?.fire('fontFamilyChange');
   }, [textStyle?.fontRevision]);
   const { width, height } = layout;
+  const replaced = isReplacedCell(item);
+  const normalVisible = ownVisible && !replaced;
   const interactive = Boolean(props.onClick || props.onDblClick || props.onDblTap);
   const bubbling = inheritedInteraction || interactive || hasEvents(ancestors);
   const active = listening && props.listening !== false;
@@ -66,7 +68,7 @@ export const DrawNode = memo(function DrawNode({
   });
   const content = (
     <>
-      {ownVisible && (props.fill || props.stroke || (!optimized && props.onClick)) && (
+      {normalVisible && (props.fill || props.stroke || (!optimized && props.onClick)) && (
         <Rect
           x={contentX}
           y={contentY}
@@ -79,7 +81,7 @@ export const DrawNode = memo(function DrawNode({
           listening={active && (props.listening ?? !optimized)}
         />
       )}
-      {ownVisible && optimized && interactive && (
+      {normalVisible && optimized && interactive && (
         <Rect
           x={contentX}
           y={contentY}
@@ -89,7 +91,7 @@ export const DrawNode = memo(function DrawNode({
           listening={active}
         />
       )}
-      {ownVisible && textStyle && layout.type !== 'cell-text' && (
+      {normalVisible && textStyle && layout.type !== 'cell-text' && (
         <Text
           ref={text}
           key="layout-text"
@@ -103,19 +105,20 @@ export const DrawNode = memo(function DrawNode({
         />
       )}
       {custom}
-      {children ??
-        item.children.map((child) => (
-          <DrawNode
-            key={child.key}
-            item={child}
-            compact={compact}
-            optimized={optimized}
-            x={contentX + child.layout.x}
-            y={contentY + child.layout.y}
-            listening={active}
-            inheritedInteraction={bubbling}
-          />
-        ))}
+      {!replaced &&
+        (children ??
+          item.children.map((child) => (
+            <DrawNode
+              key={child.key}
+              item={child}
+              compact={compact}
+              optimized={optimized}
+              x={contentX + child.layout.x}
+              y={contentY + child.layout.y}
+              listening={active}
+              inheritedInteraction={bubbling}
+            />
+          )))}
     </>
   );
   return grouped ? (

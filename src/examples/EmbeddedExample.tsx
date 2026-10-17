@@ -4,7 +4,8 @@ import { Group, Layer, Rect, Shape, Stage } from 'react-konva';
 import type { LayoutHandle, LayoutMetrics, ViewTransform } from '../lib';
 import { ReferenceNode } from './ReferenceNode';
 import { useDemoGestures } from './useDemoGestures';
-import { zoomAtPoint } from './camera';
+import { readSavedView, zoomAtPoint } from './camera';
+import { referenceNodeDetail } from './referenceNodeDetail';
 import './embedded.css';
 
 const CANVAS_WIDTH = 960;
@@ -39,7 +40,7 @@ export default function EmbeddedExample() {
   const [metrics, setMetrics] = useState<LayoutMetrics | null>(null);
   const [action, setAction] = useState<'run' | 'settings' | null>(null);
   const [selectedPort, setSelectedPort] = useState('');
-  const [view, setView] = useState<ViewTransform>({ x: 0, y: 0, scale: 1 });
+  const [view, setView] = useState<ViewTransform>(() => readSavedView(window.location.search));
   const viewRef = useRef(view);
   const setCamera = useCallback((next: Partial<ViewTransform>) => {
     const current = { ...viewRef.current, ...next };
@@ -184,6 +185,7 @@ export default function EmbeddedExample() {
                 onMeasure={setMetrics}
                 onAction={setAction}
                 onPortSelect={selectPort}
+                {...referenceNodeDetail(view.scale)}
               />
               {selected && nodeBounds && (
                 <Rect
@@ -214,7 +216,8 @@ export default function EmbeddedExample() {
       {previewError && <p role="alert">Не удалось загрузить превью.</p>}
       <p className="embedded-caption">
         Один существующий Stage/Layer. Внутри — Flex, Cell и CellText. HTML отсутствует после
-        измерения.
+        измерения. Приложение заменяет превью ниже 40%, скрывает описание ниже 25% и кнопки ниже
+        15%; размеры ячеек сохраняются.
       </p>
       <p className="embedded-caption">
         Позиция Group: {Math.round(position.x)}, {Math.round(position.y)}. Внутренняя раскладка

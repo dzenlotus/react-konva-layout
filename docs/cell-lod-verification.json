@@ -1,0 +1,485 @@
+{
+  "version": "0.5.0",
+  "environment": {
+    "browser": "Headless Chrome 155",
+    "viewport": [1600, 1000],
+    "canvas": [1400, 760],
+    "dpr": 2,
+    "cards": 1000,
+    "logicalElements": 35001
+  },
+  "method": "Production runtime checks. Layer.draw instrumentation recorded initial scales; Element.getBoundingClientRect counted only measured [data-layout-key] nodes during zoom. MutationObserver counted measurement-root attachments. Geometry hash excludes generated IDs. No new test suite.",
+  "geometryHash": "24911f2f253c56ce37d7c9d7d3747908c92d1d57ef2aa6c3f1098fa8760ed661",
+  "cold5": {
+    "result": {
+      "mode": "optimized",
+      "cards": 1000,
+      "renderedCards": 950,
+      "primitives": 35001,
+      "groups": 25652,
+      "shapes": 22800,
+      "idleHtmlNodes": 0,
+      "attachedMeasurementRoots": 0,
+      "viewportWidth": 1400,
+      "viewportHeight": 760,
+      "worldWidth": 9616,
+      "worldHeight": 18176,
+      "devicePixelRatio": 2,
+      "canvasPixelRatio": 2,
+      "assetReadyMs": 6.8,
+      "measurement": {
+        "scope": "full",
+        "measuredNodes": 1035,
+        "measuredRoots": ["stress-world"],
+        "templateHits": 999,
+        "templateMisses": 1,
+        "durationMs": 178.29999995231628,
+        "revision": 1
+      },
+      "rendering": {
+        "visibleRoots": 950,
+        "totalRoots": 1000,
+        "cachedRoots": 36,
+        "cacheBytes": 1809504,
+        "lod": true,
+        "lodLevel": "cell",
+        "lodCells": 2850,
+        "groups": 25651,
+        "shapes": 22800
+      },
+      "complete": true,
+      "operation": "mount",
+      "mountToLayoutMs": 421.4,
+      "canvasDrawMs": 91.6,
+      "totalToCanvasFrameMs": 952.6,
+      "forcedRedraw": false,
+      "layoutPasses": 1,
+      "timestamp": "2026-10-17T17:05:51.655Z"
+    },
+    "draws": [
+      {
+        "scale": 0.05,
+        "ready": false
+      },
+      {
+        "scale": 0.05,
+        "ready": true
+      }
+    ],
+    "geometryCount": 35001,
+    "nodeSize": [360, 429.78125]
+  },
+  "cold10": {
+    "result": {
+      "mode": "optimized",
+      "cards": 1000,
+      "renderedCards": 500,
+      "primitives": 35001,
+      "groups": 13502,
+      "shapes": 12000,
+      "idleHtmlNodes": 0,
+      "attachedMeasurementRoots": 0,
+      "viewportWidth": 1400,
+      "viewportHeight": 760,
+      "worldWidth": 9616,
+      "worldHeight": 18176,
+      "devicePixelRatio": 2,
+      "canvasPixelRatio": 2,
+      "assetReadyMs": 11.2,
+      "measurement": {
+        "scope": "full",
+        "measuredNodes": 1035,
+        "measuredRoots": ["stress-world"],
+        "templateHits": 999,
+        "templateMisses": 1,
+        "durationMs": 178,
+        "revision": 1
+      },
+      "rendering": {
+        "visibleRoots": 500,
+        "totalRoots": 1000,
+        "cachedRoots": 36,
+        "cacheBytes": 1809504,
+        "lod": true,
+        "lodLevel": "cell",
+        "lodCells": 1500,
+        "groups": 13501,
+        "shapes": 12000
+      },
+      "complete": true,
+      "operation": "mount",
+      "mountToLayoutMs": 434.3,
+      "canvasDrawMs": 60,
+      "totalToCanvasFrameMs": 668.9,
+      "forcedRedraw": false,
+      "layoutPasses": 1,
+      "timestamp": "2026-10-17T17:08:22.028Z"
+    },
+    "draws": [
+      {
+        "scale": 0.1,
+        "x": -50,
+        "y": -20,
+        "ready": false
+      },
+      {
+        "scale": 0.1,
+        "x": -50,
+        "y": -20,
+        "ready": true
+      }
+    ],
+    "hash": "24911f2f253c56ce37d7c9d7d3747908c92d1d57ef2aa6c3f1098fa8760ed661",
+    "nodeSize": [360, 429.78125],
+    "images": 0,
+    "placeholders": 500,
+    "view": {
+      "x": -50,
+      "y": -20,
+      "scale": 0.1
+    }
+  },
+  "zoom": [
+    {
+      "scale": 0.1,
+      "geometrySame": true,
+      "treeReferenceSame": true,
+      "cardReferenceSame": true,
+      "cardGroupSame": true,
+      "scope": "full",
+      "modelReads": 1035,
+      "rectReads": 0,
+      "attachments": 0,
+      "rootSize": [360, 429.78125],
+      "descriptionChildren": 0,
+      "images": 0,
+      "fallbackRects": [
+        {
+          "name": "preview-placeholder",
+          "width": 256,
+          "height": 156
+        }
+      ],
+      "dpr": 2,
+      "render": {
+        "visibleRoots": 500,
+        "totalRoots": 1000,
+        "cachedRoots": 36,
+        "cacheBytes": 31010256,
+        "lod": true,
+        "lodLevel": "cell",
+        "lodCells": 1500,
+        "groups": 13501,
+        "shapes": 12000
+      }
+    },
+    {
+      "scale": 0.2,
+      "geometrySame": true,
+      "treeReferenceSame": true,
+      "cardReferenceSame": true,
+      "cardGroupSame": true,
+      "scope": "visual",
+      "modelReads": 0,
+      "rectReads": 0,
+      "attachments": 0,
+      "rootSize": [360, 429.78125],
+      "descriptionChildren": 0,
+      "images": 0,
+      "fallbackRects": [
+        {
+          "name": "preview-placeholder",
+          "width": 256,
+          "height": 156
+        }
+      ],
+      "dpr": 2,
+      "render": {
+        "visibleRoots": 200,
+        "totalRoots": 1000,
+        "cachedRoots": 27,
+        "cacheBytes": 5450760,
+        "lod": true,
+        "lodLevel": "cell",
+        "lodCells": 400,
+        "groups": 6601,
+        "shapes": 7000
+      }
+    },
+    {
+      "scale": 0.3,
+      "geometrySame": true,
+      "treeReferenceSame": true,
+      "cardReferenceSame": true,
+      "cardGroupSame": true,
+      "scope": "visual",
+      "modelReads": 0,
+      "rectReads": 0,
+      "attachments": 0,
+      "rootSize": [360, 429.78125],
+      "descriptionChildren": 1,
+      "images": 0,
+      "fallbackRects": [
+        {
+          "name": "preview-placeholder",
+          "width": 256,
+          "height": 156
+        }
+      ],
+      "dpr": 2,
+      "render": {
+        "visibleRoots": 98,
+        "totalRoots": 1000,
+        "cachedRoots": 13,
+        "cacheBytes": 10544716,
+        "lod": true,
+        "lodLevel": "cell",
+        "lodCells": 98,
+        "groups": 3235,
+        "shapes": 3528
+      }
+    },
+    {
+      "scale": 0.5,
+      "geometrySame": true,
+      "treeReferenceSame": true,
+      "cardReferenceSame": true,
+      "cardGroupSame": true,
+      "scope": "visual",
+      "modelReads": 0,
+      "rectReads": 0,
+      "attachments": 0,
+      "rootSize": [360, 429.78125],
+      "descriptionChildren": 1,
+      "images": 1,
+      "fallbackRects": [
+        {
+          "name": "",
+          "width": 256,
+          "height": 156
+        }
+      ],
+      "dpr": 2,
+      "render": {
+        "visibleRoots": 32,
+        "totalRoots": 1000,
+        "cachedRoots": 13,
+        "cacheBytes": 10544716,
+        "lod": false,
+        "lodLevel": "full",
+        "lodCells": 0,
+        "groups": 1121,
+        "shapes": 1216
+      }
+    },
+    {
+      "scale": 1,
+      "geometrySame": true,
+      "treeReferenceSame": true,
+      "cardReferenceSame": true,
+      "cardGroupSame": true,
+      "scope": "visual",
+      "modelReads": 0,
+      "rectReads": 0,
+      "attachments": 0,
+      "rootSize": [360, 429.78125],
+      "descriptionChildren": 1,
+      "images": 1,
+      "fallbackRects": [
+        {
+          "name": "",
+          "width": 256,
+          "height": 156
+        }
+      ],
+      "dpr": 2,
+      "render": {
+        "visibleRoots": 10,
+        "totalRoots": 1000,
+        "cachedRoots": 4,
+        "cacheBytes": 16222640,
+        "lod": false,
+        "lodLevel": "full",
+        "lodCells": 0,
+        "groups": 351,
+        "shapes": 380
+      }
+    },
+    {
+      "scale": 1.6,
+      "geometrySame": true,
+      "treeReferenceSame": true,
+      "cardReferenceSame": true,
+      "cardGroupSame": true,
+      "scope": "visual",
+      "modelReads": 0,
+      "rectReads": 0,
+      "attachments": 0,
+      "rootSize": [360, 429.78125],
+      "descriptionChildren": 1,
+      "images": 1,
+      "fallbackRects": [
+        {
+          "name": "",
+          "width": 256,
+          "height": 156
+        }
+      ],
+      "dpr": 2,
+      "render": {
+        "visibleRoots": 6,
+        "totalRoots": 1000,
+        "cachedRoots": 1,
+        "cacheBytes": 13789244,
+        "lod": false,
+        "lodLevel": "full",
+        "lodCells": 0,
+        "groups": 211,
+        "shapes": 228
+      }
+    },
+    {
+      "scale": 0.05,
+      "geometrySame": true,
+      "treeReferenceSame": true,
+      "cardReferenceSame": true,
+      "cardGroupSame": true,
+      "scope": "visual",
+      "modelReads": 0,
+      "rectReads": 0,
+      "attachments": 0,
+      "rootSize": [360, 429.78125],
+      "descriptionChildren": 0,
+      "images": 0,
+      "fallbackRects": [
+        {
+          "name": "preview-placeholder",
+          "width": 256,
+          "height": 156
+        }
+      ],
+      "dpr": 2,
+      "render": {
+        "visibleRoots": 950,
+        "totalRoots": 1000,
+        "cachedRoots": 36,
+        "cacheBytes": 1809504,
+        "lod": true,
+        "lodLevel": "cell",
+        "lodCells": 2850,
+        "groups": 25651,
+        "shapes": 22800
+      }
+    }
+  ],
+  "baseline": {
+    "mount": {
+      "complete": true,
+      "reads": 35001,
+      "templateHits": 0,
+      "cards": 1000,
+      "primitives": 35001,
+      "dpr": 2,
+      "html": 0
+    },
+    "hash": "24911f2f253c56ce37d7c9d7d3747908c92d1d57ef2aa6c3f1098fa8760ed661",
+    "results": [
+      {
+        "scale": 0.3,
+        "scope": "visual",
+        "measuredNodes": 0,
+        "modelReferenceSame": true,
+        "reads": 0,
+        "attachments": 0,
+        "images": 0,
+        "render": {
+          "visibleRoots": 1000,
+          "totalRoots": 1000,
+          "cachedRoots": 0,
+          "cacheBytes": 0,
+          "lod": true,
+          "lodLevel": "cell",
+          "lodCells": 1000,
+          "groups": 33001,
+          "shapes": 36000
+        }
+      },
+      {
+        "scale": 0.5,
+        "scope": "visual",
+        "measuredNodes": 0,
+        "modelReferenceSame": true,
+        "reads": 0,
+        "attachments": 0,
+        "images": 1000,
+        "render": {
+          "visibleRoots": 1000,
+          "totalRoots": 1000,
+          "cachedRoots": 0,
+          "cacheBytes": 0,
+          "lod": false,
+          "lodLevel": "full",
+          "lodCells": 0,
+          "groups": 35001,
+          "shapes": 38000
+        }
+      },
+      {
+        "scale": 0.05,
+        "scope": "visual",
+        "measuredNodes": 0,
+        "modelReferenceSame": true,
+        "reads": 0,
+        "attachments": 0,
+        "images": 0,
+        "render": {
+          "visibleRoots": 1000,
+          "totalRoots": 1000,
+          "cachedRoots": 0,
+          "cacheBytes": 0,
+          "lod": true,
+          "lodLevel": "cell",
+          "lodCells": 3000,
+          "groups": 27001,
+          "shapes": 24000
+        }
+      }
+    ]
+  },
+  "hiddenTextAndEditor": {
+    "hidden": {
+      "scale": 0.05000000000000001,
+      "children": 0,
+      "width": 312,
+      "height": 58.5
+    },
+    "changed": {
+      "scope": "local",
+      "reads": 35,
+      "children": 0,
+      "height": 253.5,
+      "html": 0
+    },
+    "revealed": {
+      "scale": 1,
+      "text": "Текст из внешнего состояния изменён, пока ячейка скрыта. Текст из внешнего состояния изменён, пока ячейка скрыта. Текст из внешнего состояния изменён, пока ячейка скрыта. Текст из внешнего состояния изменён, пока ячейка скрыта. Текст из внешнего состояния изменён, пока ячейка скрыта. Текст из внешнего состояния изменён, пока ячейка скрыта. Текст из внешнего состояния изменён, пока ячейка скрыта. Текст из внешнего состояния изменён, пока ячейка скрыта. Текст из внешнего состояния изменён, пока ячейка скрыта. Текст из внешнего состояния изменён, пока ячейка скрыта. ",
+      "height": 253.5,
+      "modelReferenceSame": true
+    },
+    "during": {
+      "scale": 0.05000000000000001,
+      "sameEditor": true,
+      "draft": "Черновик живёт во внешнем редакторе при zoom 5%.",
+      "hiddenPreview": true,
+      "descriptionRetained": true
+    },
+    "saved": {
+      "editorGone": true,
+      "scope": "local",
+      "reads": 35,
+      "descriptionHiddenAgain": true,
+      "html": 0,
+      "textAfterReveal": "Черновик живёт во внешнем редакторе при zoom 5%."
+    }
+  }
+}

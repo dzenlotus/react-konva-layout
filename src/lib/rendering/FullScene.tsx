@@ -2,14 +2,12 @@ import { memo, useMemo, type ReactNode } from 'react';
 import type { SceneNode } from '../model';
 import { DrawNode } from './DrawNode';
 import { SceneIsland, type IslandRenderOptions } from './SceneIsland';
-import type { Island } from './scene';
+import { isReplacedCell, type Island } from './scene';
 
 interface FullSceneProps extends IslandRenderOptions {
   scene: SceneNode[];
   allIslands: Island[];
   islands: Island[];
-  lod: boolean;
-  minimal: boolean;
 }
 
 /** Prune invisible islands while retaining the consumer's Flex/Cell group hierarchy. */
@@ -17,8 +15,6 @@ export const FullScene = memo(function FullScene({
   scene,
   allIslands,
   islands,
-  lod,
-  minimal,
   ...props
 }: FullSceneProps) {
   const forest = useMemo(() => {
@@ -29,18 +25,9 @@ export const FullScene = memo(function FullScene({
     const visit = (item: SceneNode): ReactNode => {
       if (boundaries.has(item.key)) {
         const island = selected.get(item.key);
-        return island ? (
-          <SceneIsland
-            key={item.key}
-            island={island}
-            {...props}
-            local
-            lod={lod}
-            minimal={minimal}
-          />
-        ) : null;
+        return island ? <SceneIsland key={item.key} island={island} {...props} local /> : null;
       }
-      const children = item.children.map(visit).filter(Boolean);
+      const children = isReplacedCell(item) ? [] : item.children.map(visit).filter(Boolean);
       const shellVisible = selected.has(`${item.key}:shell`);
       if (!children.length && !shellVisible) return null;
       return (
@@ -57,6 +44,6 @@ export const FullScene = memo(function FullScene({
       );
     };
     return scene.map(visit);
-  }, [scene, allIslands, islands, lod, minimal, props.config, props.requestFocus, props.register]);
+  }, [scene, allIslands, islands, props.config, props.register]);
   return <>{forest}</>;
 });

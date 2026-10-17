@@ -2,7 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 import { flushSync } from 'react-dom';
 import Konva from 'konva';
 import type { DemoCanvasHandle } from '../examples/DemoCanvas';
-import { clampZoom, zoomAtPoint } from '../examples/camera';
+import { clampZoom, normalizeView, readSavedView, zoomAtPoint } from '../examples/camera';
 import type { LayoutNode, LayoutMetrics, RenderMetrics, ViewTransform } from '../lib';
 import {
   COUNT,
@@ -32,6 +32,7 @@ function countTree(nodes: LayoutNode[]): number {
 const nextFrame = () => new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 
 export function useStressBenchmark() {
+  const [savedView] = useState(() => readSavedView(window.location.search));
   const [previewImage, setPreviewImage] = useState<HTMLImageElement>();
   const [cameraResults, setCameraResults] = useState<CameraResult[]>([]);
   const imagePromise = useRef<Promise<HTMLImageElement> | null>(null);
@@ -66,13 +67,14 @@ export function useStressBenchmark() {
     worldWidth: WORLD_WIDTH,
     mounted: false,
     mode: 'optimized' as Mode,
+    initialView: savedView,
   });
   const [selectedMode, setSelectedMode] = useState<Mode>('optimized');
   const [busy, setBusy] = useState(false);
   const [results, setResults] = useState<StressResult[]>([]);
   const [error, setError] = useState('');
   const [overview, setOverview] = useState(false);
-  const [view, setView] = useState<ViewTransform>({ x: 0, y: 0, scale: 1 });
+  const [view, setView] = useState<ViewTransform>(savedView);
   const [lastMeasure, setLastMeasure] = useState<LayoutMetrics | null>(null);
   const holder = useRef<HTMLDivElement>(null);
   const layout = useRef<DemoCanvasHandle>(null);
@@ -216,7 +218,11 @@ export function useStressBenchmark() {
   );
 
   const start = useCallback(
-    async (operation: 'mount' | 'resize' | 'remeasure', mode?: Mode): Promise<StressResult> => {
+    async (
+      operation: 'mount' | 'resize' | 'remeasure',
+      mode?: Mode,
+      initialView?: Partial<ViewTransform>,
+    ): Promise<StressResult> => {
       if (pending.current || preparing.current) throw new Error('Замер уже выполняется.');
       if (operation !== 'mount' && !configRef.current.mounted)
         throw new Error('Сначала запустите сцену.');
@@ -225,6 +231,7 @@ export function useStressBenchmark() {
       setError('');
       setOverview(false);
       try {
+        const mountView = normalizeView(initialView ?? savedView);
         if (operation === 'mount') {
           await Promise.all([prepareImage(), document.fonts.ready]);
           flushSync(() => setConfig((previous) => ({ ...previous, mounted: false })));
@@ -232,13 +239,15 @@ export function useStressBenchmark() {
           await nextFrame();
           primitiveCount.current = 0;
           renderStats.current = null;
-          setView({ x: 0, y: 0, scale: 1 });
+          setView(mountView);
         } else {
           layout.current?.setView({ x: 0, y: 0, scale: 1 });
           await nextFrame();
           await nextFrame();
         }
-        const result = makeJob(operation);
+        const result = makeJob(operation, {
+          expectedView: operation === 'mount' ? mountView : { x: 0, y: 0, scale: 1 },
+        });
         if (operation === 'mount')
           setConfig((previous) => ({
             generation: previous.generation + 1,
@@ -246,6 +255,7 @@ export function useStressBenchmark() {
             worldWidth: WORLD_WIDTH,
             mounted: true,
             mode: mode ?? selectedMode,
+            initialView: mountView,
           }));
         else if (operation === 'resize')
           setConfig((previous) => ({
@@ -262,7 +272,7 @@ export function useStressBenchmark() {
         throw reason;
       }
     },
-    [makeJob, selectedMode, prepareImage],
+    [makeJob, selectedMode, prepareImage, savedView],
   );
 
   const moveView = useCallback(
@@ -430,7 +440,7 @@ export function useStressBenchmark() {
 
   useEffect(() => {
     const api: StressApi = {
-      run: (mode) => start('mount', mode),
+      run: (mode, initialView) => start('mount', mode, initialView),
       resize: () => start('resize'),
       remeasure: () => start('remeasure'),
       stats,

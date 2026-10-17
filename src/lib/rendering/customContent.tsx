@@ -13,6 +13,7 @@ import type Konva from 'konva';
 import { Text } from 'react-konva';
 import type { SceneNode } from '../model';
 import { textAttributes } from './text';
+import { isReplacedCell } from './scene';
 
 const eventHandlerName = /^on[A-Z]/;
 
@@ -87,16 +88,25 @@ export function useCustomContent({
   const { width, height } = layout;
   return useMemo(() => {
     if (!ownVisible) return null;
+    const replaced = isReplacedCell(item);
+    const bounds = { x: 0, y: 0, width, height };
+    const textProps = textStyle && {
+      x: textStyle.paddingLeft,
+      y: textStyle.paddingTop,
+      width: Math.max(0, width - textStyle.paddingLeft - textStyle.paddingRight),
+      height: Math.max(0, height - textStyle.paddingTop - textStyle.paddingBottom),
+      ...textAttributes(props.text ?? '', textStyle),
+    };
+    const renderText = replaced ? props.renderTextFallback : props.renderText;
+    const render = replaced ? props.renderFallback : props.render;
     const content =
-      props.renderText && textStyle
-        ? props.renderText({
-            x: textStyle.paddingLeft,
-            y: textStyle.paddingTop,
-            width: Math.max(0, width - textStyle.paddingLeft - textStyle.paddingRight),
-            height: Math.max(0, height - textStyle.paddingTop - textStyle.paddingBottom),
-            ...textAttributes(props.text ?? '', textStyle),
-          })
-        : props.render?.({ x: 0, y: 0, width, height });
+      renderText && textProps
+        ? renderText(textProps)
+        : render
+          ? render(bounds)
+          : replaced
+            ? props.fallback
+            : undefined;
     const decorative = optimized ? decorateCustomContent(content, bubbling) : content;
     if (layout.type !== 'cell-text') return decorative;
     let bound = false;
@@ -122,6 +132,10 @@ export function useCustomContent({
   }, [
     props.render,
     props.renderText,
+    props.renderWhen,
+    props.fallback,
+    props.renderFallback,
+    props.renderTextFallback,
     props.text,
     props.wrap,
     width,

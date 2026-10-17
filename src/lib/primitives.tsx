@@ -90,16 +90,13 @@ export function Box(props: BoxProps) {
 export function LayoutText(props: LayoutTextProps) {
   return <Primitive type="text" props={props} />;
 }
-export function Cell({ children, ...props }: CellProps) {
-  return (
-    <Primitive
-      type="cell"
-      props={
-        typeof children === 'function' ? { ...props, render: children } : { ...props, children }
-      }
-    />
-  );
+export function Cell({ children, fallback, ...props }: CellProps) {
+  const content = typeof children === 'function' ? { render: children } : { children };
+  const replacement = typeof fallback === 'function' ? { renderFallback: fallback } : { fallback };
+  return <Primitive type="cell" props={{ ...props, ...content, ...replacement }} />;
 }
-export function CellText({ children, ...props }: CellTextProps) {
-  return <Primitive type="cell-text" props={{ ...props, renderText: children }} />;
+export function CellText({ children, fallback, ...props }: CellTextProps) {
+  const replacement =
+    typeof fallback === 'function' ? { renderTextFallback: fallback } : { fallback };
+  return <Primitive type="cell-text" props={{ ...props, renderText: children, ...replacement }} />;
 }

@@ -30,7 +30,6 @@ export const Layout = forwardRef<LayoutHandle, LayoutComponentProps>(function La
     onLayout,
     onMeasure,
     onRenderStats,
-    onFocusRequest,
   },
   forwardedRef,
 ) {
@@ -124,7 +123,6 @@ export const Layout = forwardRef<LayoutHandle, LayoutComponentProps>(function La
           root={root}
           performance={performance}
           onRenderStats={onRenderStats}
-          onFocusRequest={onFocusRequest}
         />
       </Group>
     </LayoutContext.Provider>

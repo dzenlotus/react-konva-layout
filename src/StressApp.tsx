@@ -4,6 +4,7 @@ import { DesignedStressScene, EXPECTED_PRIMITIVES } from './examples/DesignedStr
 import { useStressBenchmark } from './stress/useStressBenchmark';
 import { StressResults } from './stress/StressResults';
 import type { Mode } from './stress/types';
+import { referenceNodeDetail } from './examples/referenceNodeDetail';
 import './stress.css';
 
 export type { StressStats, StressResult } from './stress/types';
@@ -15,7 +16,6 @@ const OPTIMIZED: PerformanceOptions = {
   cache: true,
   cacheBudgetMB: 32,
   cachePixelRatio: 'auto',
-  lodScale: 0.3,
   overscan: 100,
 };
 const BASELINE: PerformanceOptions = { enabled: false };
@@ -114,7 +114,7 @@ export default function StressApp() {
                 −
               </button>
               <button disabled={busy || !config.mounted} onClick={() => setWorldView(!overview)}>
-                {overview ? '1:1' : 'Все 1000 / LOD'}
+                {overview ? '1:1' : 'Все 1000 / Cell LOD'}
               </button>
               <button disabled={busy || !config.mounted} onClick={() => setWorldView(false)}>
                 Сброс камеры
@@ -135,6 +135,7 @@ export default function StressApp() {
                   ref={layout}
                   width={config.width}
                   height={760}
+                  initialView={config.initialView}
                   panZoom={!busy}
                   performance={config.mode === 'optimized' ? OPTIMIZED : BASELINE}
                   onLayout={onLayout}
@@ -142,7 +143,11 @@ export default function StressApp() {
                   onRenderStats={onRenderStats}
                   onViewChange={setView}
                 >
-                  <DesignedStressScene worldWidth={config.worldWidth} previewImage={previewImage} />
+                  <DesignedStressScene
+                    worldWidth={config.worldWidth}
+                    previewImage={previewImage}
+                    {...referenceNodeDetail(view.scale)}
+                  />
                 </DemoCanvas>
               ) : (
                 <div className="stress-empty">
@@ -171,7 +176,7 @@ export default function StressApp() {
             Ноды расположены независимо; Flex внутри рассчитывает браузер. Размер описания может
             менять высоту только своей ноды.
           </span>
-          <span>Кеш ≤32 MB · DPR устройства · одна общая декодированная фотография</span>
+          <span>Кеш ≤32 MB · DPR устройства · выборочный Cell LOD задаёт приложение</span>
         </footer>
       </main>
     </div>

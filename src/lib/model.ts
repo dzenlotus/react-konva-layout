@@ -37,6 +37,10 @@ export type PrimitiveProps = Omit<BoxProps, 'render'> &
   Partial<LayoutTextProps> & {
     render?: (bounds: CellBounds) => ReactNode;
     renderText?: (props: CellTextRenderProps) => ReactNode;
+    renderWhen?: boolean;
+    fallback?: ReactNode;
+    renderFallback?: (bounds: CellBounds) => ReactNode;
+    renderTextFallback?: (props: CellTextRenderProps) => ReactNode;
   };
 
 export interface SceneNode {

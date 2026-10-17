@@ -11,7 +11,7 @@ import {
 import Konva from 'konva';
 import { Layer, Stage } from 'react-konva';
 import { Layout } from '../lib';
-import type { LayoutComponentProps, LayoutHandle, LayoutNode, ViewTransform } from '../lib';
+import type { LayoutComponentProps, LayoutHandle, ViewTransform } from '../lib';
 import { useDemoGestures } from './useDemoGestures';
 import { clampZoom, finiteOr } from './camera';
 
@@ -25,6 +25,7 @@ interface DemoCanvasProps extends Omit<LayoutComponentProps, 'x' | 'y' | 'id'> {
   height: number;
   panZoom?: boolean;
   pixelRatio?: number;
+  initialView?: ViewTransform;
   onViewChange?: (view: ViewTransform) => void;
   style?: CSSProperties;
   className?: string;
@@ -33,14 +34,28 @@ interface DemoCanvasProps extends Omit<LayoutComponentProps, 'x' | 'y' | 'id'> {
 
 /** Application-owned Stage, Layer and camera. This file is excluded from the package. */
 export const DemoCanvas = forwardRef<DemoCanvasHandle, DemoCanvasProps>(function DemoCanvas(
-  { width, height, panZoom = false, pixelRatio, onViewChange, style, className, ...layoutProps },
+  {
+    width,
+    height,
+    panZoom = false,
+    pixelRatio,
+    initialView = { x: 0, y: 0, scale: 1 },
+    onViewChange,
+    style,
+    className,
+    ...layoutProps
+  },
   forwardedRef,
 ) {
   const stage = useRef<Konva.Stage | null>(null);
   const layer = useRef<Konva.Layer | null>(null);
   const layout = useRef<LayoutHandle | null>(null);
   const nativeRatio = useRef<number | null>(null);
-  const view = useRef<ViewTransform>({ x: 0, y: 0, scale: 1 });
+  const view = useRef<ViewTransform>({
+    x: finiteOr(initialView.x, 0),
+    y: finiteOr(initialView.y, 0),
+    scale: clampZoom(finiteOr(initialView.scale, 1)),
+  });
   const [camera, setCamera] = useState(view.current);
   const onChange = useRef(onViewChange);
   onChange.current = onViewChange;
@@ -90,19 +105,6 @@ export const DemoCanvas = forwardRef<DemoCanvasHandle, DemoCanvasProps>(function
     [setView],
   );
 
-  const focusNode = useCallback(
-    (node: LayoutNode) => {
-      const scale = 0.8;
-      setView({
-        scale,
-        x: width / 2 - (node.absoluteX + node.width / 2) * scale,
-        y: height / 2 - (node.absoluteY + node.height / 2) * scale,
-      });
-      layoutProps.onFocusRequest?.(node);
-    },
-    [width, height, setView, layoutProps.onFocusRequest],
-  );
-
   return (
     <div className={className} style={{ ...style, position: 'relative', width, height }}>
       <Stage
@@ -115,13 +117,7 @@ export const DemoCanvas = forwardRef<DemoCanvasHandle, DemoCanvasProps>(function
         scaleY={camera.scale}
       >
         <Layer ref={layer}>
-          <Layout
-            {...layoutProps}
-            ref={layout}
-            width={width}
-            height={height}
-            onFocusRequest={focusNode}
-          />
+          <Layout {...layoutProps} ref={layout} width={width} height={height} />
         </Layer>
       </Stage>
     </div>

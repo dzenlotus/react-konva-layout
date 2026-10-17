@@ -32,7 +32,6 @@ export interface PerformanceOptions {
   cacheBudgetMB?: number;
   /** Automatic host density by default; a positive number fixes the cache density. */
   cachePixelRatio?: number | 'auto';
-  lodScale?: number;
 }
 
 export interface LayoutMetrics {
@@ -53,7 +52,9 @@ export interface RenderMetrics {
   lod: boolean;
   groups: number;
   shapes: number;
-  lodLevel?: 'full' | 'labels' | 'minimal';
+  lodLevel?: 'full' | 'cell';
+  /** Visible cells whose normal contents were explicitly replaced or hidden. */
+  lodCells?: number;
 }
 
 type LayoutStyles = Pick<
@@ -96,7 +97,6 @@ export interface LayoutProps extends LayoutStyles {
   layoutRoot?: boolean;
   /** Template namespace. Contents and geometry constraints form the cache key. */
   layoutTemplate?: string;
-  lodLabel?: string;
   cache?: boolean;
 }
 
@@ -117,6 +117,9 @@ export interface CellBounds {
 
 export interface CellProps extends Omit<LayoutProps, 'children'> {
   children?: ReactNode | ((bounds: CellBounds) => ReactNode);
+  /** Changes only canvas contents; measurement and group bounds stay intact. */
+  renderWhen?: boolean;
+  fallback?: ReactNode | ((bounds: CellBounds) => ReactNode);
 }
 
 export interface LayoutTextProps extends LayoutProps {
@@ -146,6 +149,9 @@ export interface CellTextRenderProps extends CellBounds {
 
 export interface CellTextProps extends Omit<LayoutTextProps, 'children'> {
   children: (props: CellTextRenderProps) => ReactNode;
+  /** Changes only canvas contents; the original text always determines layout. */
+  renderWhen?: boolean;
+  fallback?: ReactNode | ((props: CellTextRenderProps) => ReactNode);
 }
 
 export interface LayoutContextValue {
@@ -166,7 +172,6 @@ export interface LayoutComponentProps {
   onLayout?: (tree: LayoutNode[]) => void;
   onMeasure?: (metrics: LayoutMetrics) => void;
   onRenderStats?: (metrics: RenderMetrics) => void;
-  onFocusRequest?: (node: LayoutNode) => void;
 }
 
 export interface LayoutHandle extends LayoutContextValue {

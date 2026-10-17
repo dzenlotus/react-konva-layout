@@ -1,6 +1,7 @@
 import Konva from 'konva';
 import type { LayoutNode, ViewTransform } from '../lib';
 import { COUNT, COLUMNS, GAP } from '../examples/DesignedStressScene';
+import { referenceNodeDetail } from '../examples/referenceNodeDetail';
 import type { Mode, PendingMeasurement } from './types';
 
 export function findCanvasText(target: Konva.Node | undefined): Konva.Text | undefined {
@@ -68,16 +69,47 @@ export function isCompletedDraw({
             y + node.height * camera.scale > 0
           );
         });
-  const detailed = config.mode === 'baseline' || camera.scale >= 0.3;
+  const detail = referenceNodeDetail(camera.scale);
+  const editingCells = new Set(
+    Array.from(
+      holder.querySelectorAll<HTMLTextAreaElement>(
+        '[data-testid="layout-text-editor"][data-layout-cell-id]',
+      ),
+      (editor) => editor.dataset.layoutCellId,
+    ),
+  );
   const requiredRatio = layer.getCanvas().getPixelRatio() * camera.scale;
   if (
     !required.length ||
     required.some((node) => {
       const drawn = roots.get(node.id);
       if (!drawn) return true;
-      const photo = drawn instanceof Konva.Container ? drawn.findOne('Image') : undefined;
+      if (!(drawn instanceof Konva.Container)) return true;
+      const preview = drawn.findOne(`#${node.id}-preview`);
+      const photo = preview instanceof Konva.Container ? preview.findOne('Image') : undefined;
       const image = photo instanceof Konva.Image ? photo.image() : undefined;
-      if (detailed && (!(image instanceof HTMLImageElement) || !image.complete)) return true;
+      if (detail.showPreview) {
+        if (!(image instanceof HTMLImageElement) || !image.complete) return true;
+      } else if (
+        photo ||
+        !(preview instanceof Konva.Container) ||
+        !(preview.findOne('.preview-placeholder') instanceof Konva.Rect)
+      )
+        return true;
+      const descriptionId = `${node.id}-description-text`;
+      const description = findCanvasText(drawn.findOne(`#${descriptionId}`));
+      const showDescription = detail.showDescription || editingCells.has(descriptionId);
+      if (showDescription !== Boolean(description)) return true;
+      const actions = drawn.findOne(`#${node.id}-actions`);
+      if (
+        !(actions instanceof Konva.Container) ||
+        detail.showActions !== Boolean(actions.findOne(`#${node.id}-run`))
+      )
+        return true;
+      if (!findCanvasText(drawn.findOne(`#${node.id}-title`))) return true;
+      for (const side of ['input', 'output'])
+        for (let index = 0; index < 3; index++)
+          if (!drawn.findOne(`#${node.id}-${side}-${index}`)) return true;
       const cache = drawn._getCanvasCache();
       if (drawn.isCached() && (!cache || cache.scene.getPixelRatio() + 0.001 < requiredRatio))
         return true;

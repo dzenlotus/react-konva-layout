@@ -82,6 +82,7 @@ export function openTextEditor({
   const listeners = new AbortController();
   const { signal } = listeners;
   const { root, textarea } = createEditorElements(stage.content.ownerDocument, target.text());
+  textarea.dataset.layoutCellId = initialNode.id;
   stage.content.appendChild(root);
 
   const originalValue = textarea.value;
@@ -214,6 +215,7 @@ export function openTextEditor({
   return Object.assign(() => finish(false), {
     update(nextNode: LayoutNode, nextBounds: CellTextRenderProps) {
       node = nextNode;
+      textarea.dataset.layoutCellId = nextNode.id;
       bounds = nextBounds;
       update();
     },

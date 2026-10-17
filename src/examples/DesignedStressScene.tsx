@@ -1,6 +1,7 @@
 import { memo, useState } from 'react';
 import { Flex } from '../lib';
 import { ReferenceNode } from './ReferenceNode';
+import type { ReferenceNodeDetail } from './referenceNodeDetail';
 
 export const COUNT = 1000;
 export const COLUMNS = 25;
@@ -18,11 +19,14 @@ const DesignedStressNode = memo(function DesignedStressNode({
   index,
   width,
   previewImage,
+  showPreview,
+  showDescription,
+  showActions,
 }: {
   index: number;
   width: number;
   previewImage: HTMLImageElement;
-}) {
+} & ReferenceNodeDetail) {
   const [description, setDescription] = useState(DESCRIPTION);
   return (
     <ReferenceNode
@@ -35,6 +39,9 @@ const DesignedStressNode = memo(function DesignedStressNode({
       previewImage={previewImage}
       description={description}
       onDescriptionChange={setDescription}
+      showPreview={showPreview}
+      showDescription={showDescription}
+      showActions={showActions}
     />
   );
 });
@@ -42,15 +49,26 @@ const DesignedStressNode = memo(function DesignedStressNode({
 export const DesignedStressScene = memo(function DesignedStressScene({
   worldWidth,
   previewImage,
+  showPreview,
+  showDescription,
+  showActions,
 }: {
   worldWidth: number;
   previewImage: HTMLImageElement;
-}) {
+} & ReferenceNodeDetail) {
   const width = (worldWidth - 40 - (COLUMNS - 1) * GAP) / COLUMNS;
   return (
     <Flex id="stress-world" data-testid="stress-world" width={worldWidth} height={WORLD_HEIGHT}>
       {Array.from({ length: COUNT }, (_, index) => (
-        <DesignedStressNode key={index} index={index} width={width} previewImage={previewImage} />
+        <DesignedStressNode
+          key={index}
+          index={index}
+          width={width}
+          previewImage={previewImage}
+          showPreview={showPreview}
+          showDescription={showDescription}
+          showActions={showActions}
+        />
       ))}
     </Flex>
   );

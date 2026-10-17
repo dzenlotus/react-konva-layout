@@ -2,9 +2,6 @@ import type { SceneNode, PrimitiveProps } from '../model';
 import type { PerformanceOptions } from '../types';
 import type { Bounds } from '../host';
 
-export const DEFAULT_LOD_FILL = '#e4eadd';
-export const DEFAULT_LOD_STROKE = '#a8b69b';
-
 export interface Events {
   click: Array<() => void>;
   doubleClick: Array<() => void>;
@@ -27,7 +24,6 @@ export interface Settings {
   cache: boolean;
   budget: number;
   cacheRatio: number;
-  lodScale: number;
 }
 export const emptyEvents: Events = { click: [], doubleClick: [], doubleTap: [] };
 
@@ -40,7 +36,13 @@ export function dispatchEvents(own: (() => void) | undefined, ancestors: Array<(
   own?.();
   ancestors.forEach((callback) => callback());
 }
-const information = new WeakMap<SceneNode, { bounds: Bounds; roots: boolean; count: number }>();
+interface SceneInfo {
+  bounds: Bounds;
+  roots: boolean;
+  count: number;
+  lodCells: number;
+}
+const information = new WeakMap<SceneNode, SceneInfo>();
 const descriptorCache = new WeakMap<SceneNode, Island>();
 const shells = new WeakMap<SceneNode, SceneNode>();
 
@@ -59,7 +61,6 @@ export function settings(options?: PerformanceOptions, automaticRatio = 1): Sett
     cache: enabled && options?.cache !== false,
     budget: Math.max(0, options?.cacheBudgetMB ?? 32) * 1024 * 1024,
     cacheRatio: Number.isFinite(ratio) && ratio > 0 ? Math.max(0.25, ratio) : 1,
-    lodScale: enabled ? (options?.lodScale ?? 0.3) : 0,
   };
 }
 
@@ -75,22 +76,37 @@ export function union(a: Bounds, b: Bounds): Bounds {
 }
 
 /** Layout bounds are read once per immutable revision, never from the Konva tree during pan. */
-function info(item: SceneNode): { bounds: Bounds; roots: boolean; count: number } {
+function info(item: SceneNode): SceneInfo {
   const previous = information.get(item);
   if (previous) return previous;
   const { absoluteX: x, absoluteY: y, width, height } = item.layout;
   let bounds: Bounds = { x, y, width, height },
     roots = Boolean(item.props.layoutRoot),
     count = 1;
+  const replaced = isReplacedCell(item);
+  let lodCells = replaced ? 1 : 0;
   for (const child of item.children) {
     const childInfo = info(child);
     bounds = union(bounds, childInfo.bounds);
     roots ||= childInfo.roots;
     count += childInfo.count;
+    if (!replaced) lodCells += childInfo.lodCells;
   }
-  const result = { bounds, roots, count };
+  const result = { bounds, roots, count, lodCells };
   information.set(item, result);
   return result;
+}
+
+export function isReplacedCell(item: SceneNode): boolean {
+  return (
+    (item.layout.type === 'cell' || item.layout.type === 'cell-text') &&
+    item.props.renderWhen === false
+  );
+}
+
+/** Scene metadata is memoized per immutable node; camera frames never walk the layout tree. */
+export function countLodCells(item: SceneNode): number {
+  return info(item).lodCells;
 }
 
 function equalEvents(a: Events, b: Events): boolean {
@@ -112,6 +128,8 @@ function inheritedEvents(props: PrimitiveProps, ancestors: Events): Events {
 
 function hasVisual(props: PrimitiveProps, item: SceneNode): boolean {
   return Boolean(
+    item.layout.type === 'cell' ||
+    item.layout.type === 'cell-text' ||
     props.fill ||
     props.stroke ||
     props.render ||
@@ -162,6 +180,8 @@ export function compileIslands(scene: SceneNode[]): Island[] {
       }
       add(shell, ancestors, active, true);
     }
+    // Keep this cell's group shell while omitting independently culled descendants.
+    if (isReplacedCell(item)) return;
     const events = inheritedEvents(item.props, ancestors);
     item.children.forEach((child) => visit(child, events, active));
   };

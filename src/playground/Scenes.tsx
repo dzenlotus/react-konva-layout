@@ -91,7 +91,6 @@ const NodeExample = memo(function NodeExample({
         data-testid="node"
         layoutRoot
         cache={editing ? false : undefined}
-        lodLabel="Image transform"
         width="100%"
         maxWidth={maxWidth}
         flexShrink={0}

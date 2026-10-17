@@ -251,7 +251,7 @@ export class MeasurementEngine {
     const dirtyRoots = [...this.dirty];
     const visualKeys = [...this.visualDirty];
     const needsFullPass =
-      this.configuration.performance?.enabled === false ||
+      (this.configuration.performance?.enabled === false && dirtyRoots.length > 0) ||
       this.fullDirty ||
       this.store.snapshot.scene.length === 0;
     this.dirty.clear();

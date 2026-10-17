@@ -37,7 +37,7 @@ export interface StressResult extends StressStats {
 }
 
 export interface StressApi {
-  run: (mode?: Mode) => Promise<StressResult>;
+  run: (mode?: Mode, initialView?: Partial<ViewTransform>) => Promise<StressResult>;
   resize: () => Promise<StressResult>;
   remeasure: () => Promise<StressResult>;
   stats: () => StressStats;

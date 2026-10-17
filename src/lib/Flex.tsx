@@ -10,12 +10,11 @@ export interface FlexComponentProps extends FlexProps {
   onLayout?: LayoutComponentProps['onLayout'];
   onMeasure?: LayoutComponentProps['onMeasure'];
   onRenderStats?: LayoutComponentProps['onRenderStats'];
-  onFocusRequest?: LayoutComponentProps['onFocusRequest'];
 }
 
 /** A root Flex starts a layout; nested Flex participates in the same browser pass. */
 export const Flex = forwardRef<LayoutHandle, FlexComponentProps>(function Flex(
-  { debug, performance, onLayout, onMeasure, onRenderStats, onFocusRequest, ...props },
+  { debug, performance, onLayout, onMeasure, onRenderStats, ...props },
   ref,
 ) {
   const registry = useContext(RegistryContext);
@@ -30,7 +29,6 @@ export const Flex = forwardRef<LayoutHandle, FlexComponentProps>(function Flex(
       onLayout={onLayout}
       onMeasure={onMeasure}
       onRenderStats={onRenderStats}
-      onFocusRequest={onFocusRequest}
     >
       <MeasuredFlex {...props} />
     </Layout>
