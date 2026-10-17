@@ -61,24 +61,29 @@ npm run format:check
 
 Основной пример показывает встраивание в существующий `Stage/Layer`. `?stress=1` — 1000 сложных нод; `?playground=1` — дополнительные примеры Flex/Grid. Камера и создание canvas находятся исключительно в приложении демо, за пределами библиотечного entry point.
 
-## Нода по схеме
+## Готовая нода
 
-[ReferenceNode.tsx](src/examples/ReferenceNode.tsx) — готовая композиция через Flex/Cell/CellText. Она размещается внутри существующего Group/Layer и не создаёт Stage или камеру:
+[ReferenceNode.tsx](src/examples/ReferenceNode.tsx) — оформленная нода обработки изображения через Flex/Cell/CellText: заголовки, фотография в превью, три входных и три выходных порта, редактируемое описание, кнопки запуска и настроек. Иерархия взята из примера CodeSandbox; размеры текстовых блоков определяет их содержимое.
+
+Компонент размещается внутри существующего Group/Layer и не создаёт Stage или камеру:
 
 ```tsx
-<Group x={145} y={123}>
+<Group x={300} y={84}>
   <ReferenceNode
     id="node-1"
-    width={300}
+    width={360}
+    previewImage={loadedImage}
     description={description}
     onDescriptionChange={setDescription}
+    onAction={(action) => console.log(action)}
+    onPortSelect={(side, index) => console.log(side, index)}
   />
 </Group>
 ```
 
-По умолчанию показана схема с серыми текстовыми блоками и чёрными фигурами. `schematic={false}` включает текст и значки кнопок. Описание редактируется двойным кликом в обоих режимах. При ширине 300 px нода имеет размер 300×656, превью — 204×200, шесть портов — 32×32, две нижние кнопки — 60×60. Позиции внутри рассчитывает Flex, внешнюю позицию задаёт приложение.
+`previewImage` — загруженный `HTMLImageElement`; компонент вписывает его в область превью с обрезкой по центру. Загрузка изображения находится в приложении: пример использует локальный JPEG. Изменение изображения обновляет отрисовку и растровый кеш. Описание редактируется двойным кликом; при его изменении пересчитывается только эта нода.
 
-[Скриншот схемы](docs/screenshots/reference-node.png) · [Содержимое](docs/screenshots/reference-node-content.png)
+[Скриншот ноды](docs/screenshots/designed-node.png) · [Редактирование описания](docs/screenshots/designed-node-editor.png)
 
 ## API
 

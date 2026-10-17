@@ -1,34 +1,49 @@
 import { forwardRef, memo } from 'react';
-import { Line, Rect, Text } from 'react-konva';
+import type Konva from 'konva';
+import { Circle, Image as CanvasImage, Line, Rect, Text } from 'react-konva';
 import { Cell, CellText, Flex } from '../lib';
-import type { CellTextProps, LayoutHandle, LayoutMetrics } from '../lib';
+import type { LayoutHandle, LayoutMetrics } from '../lib';
 
-const GRAY = '#808080';
+const FONT = 'Helvetica Neue, Arial, sans-serif';
 
-function TextBlock({
-  schematic,
-  id,
-  ...props
-}: Omit<CellTextProps, 'children'> & { schematic: boolean; id: string }) {
-  return (
-    <Cell id={id} width="100%">
-      <Cell width="100%" height="100%" style={{ position: 'absolute', left: 0, top: 0 }}>
-        {(bounds) => <Rect {...bounds} fill={GRAY} />}
-      </Cell>
-      <CellText {...props} id={`${id}-text`} width="100%" padding={8} color="#111">
-        {(textProps) => <Text {...textProps} opacity={schematic ? 0 : 1} />}
-      </CellText>
-    </Cell>
-  );
+function cursor(event: Konva.KonvaEventObject<MouseEvent>, value: string) {
+  const stage = event.target.getStage();
+  if (stage) stage.container().style.cursor = value;
 }
 
-function Ports({ side, prefix }: { side: 'input' | 'output'; prefix: string }) {
+function Ports({
+  side,
+  prefix,
+  onSelect,
+}: {
+  side: 'input' | 'output';
+  prefix: string;
+  onSelect?: (side: 'input' | 'output', index: number) => void;
+}) {
+  const color = side === 'input' ? '#829b68' : '#7d9cab';
   return (
-    <Cell width={32} flexShrink={0}>
-      <Flex id={`${prefix}-${side}-ports`} direction="column" gap={16} width="100%">
+    <Cell width={16} flexShrink={0}>
+      <Flex id={`${prefix}-${side}-ports`} direction="column" gap={14} width="100%">
         {[0, 1, 2].map((index) => (
-          <Cell key={index} id={`${prefix}-${side}-${index}`} width={32} height={32}>
-            {(bounds) => <Rect {...bounds} fill="#000" />}
+          <Cell
+            key={index}
+            id={`${prefix}-${side}-${index}`}
+            width={16}
+            height={16}
+            onClick={() => onSelect?.(side, index)}
+          >
+            {(bounds) => (
+              <>
+                <Rect
+                  {...bounds}
+                  fill={side === 'input' ? '#edf2e7' : '#eaf0f2'}
+                  cornerRadius={5}
+                  onMouseEnter={(event) => cursor(event, 'crosshair')}
+                  onMouseLeave={(event) => cursor(event, '')}
+                />
+                <Circle x={8} y={8} radius={3.3} fill={color} listening={false} />
+              </>
+            )}
           </Cell>
         ))}
       </Flex>
@@ -36,29 +51,70 @@ function Ports({ side, prefix }: { side: 'input' | 'output'; prefix: string }) {
   );
 }
 
+function PreviewPhoto({
+  width,
+  height,
+  image,
+}: {
+  width: number;
+  height: number;
+  image?: HTMLImageElement;
+}) {
+  const scale = image ? Math.max(width / image.naturalWidth, height / image.naturalHeight) : 1;
+  const crop = image
+    ? {
+        x: (image.naturalWidth - width / scale) / 2,
+        y: (image.naturalHeight - height / scale) / 2,
+        width: width / scale,
+        height: height / scale,
+      }
+    : undefined;
+  return (
+    <>
+      <Rect width={width} height={height} fill="#e2eadb" cornerRadius={9} listening={false} />
+      {image && (
+        <CanvasImage
+          image={image}
+          width={width}
+          height={height}
+          crop={crop}
+          cornerRadius={9}
+          listening={false}
+        />
+      )}
+    </>
+  );
+}
+
 export interface ReferenceNodeProps {
   id?: string;
   width?: number;
-  schematic?: boolean;
   debug?: boolean;
+  title?: string;
+  subtitle?: string;
+  previewImage?: HTMLImageElement;
   description: string;
   onDescriptionChange(value: string): void;
   onMeasure?(metrics: LayoutMetrics): void;
   onAction?(action: 'run' | 'settings'): void;
+  onPortSelect?(side: 'input' | 'output', index: number): void;
 }
 
-/** The supplied node schematic, composed entirely through Flex/Cell/CellText. */
+/** A designed node using the CodeSandbox hierarchy and measured Flex/Cell/CellText. */
 export const ReferenceNode = memo(
   forwardRef<LayoutHandle, ReferenceNodeProps>(function ReferenceNode(
     {
       id = 'reference-node',
-      width = 300,
-      schematic = true,
+      width = 360,
       debug = false,
+      title = 'Image transform',
+      subtitle = 'Нормализация входящего изображения',
+      previewImage,
       description,
       onDescriptionChange,
       onMeasure,
       onAction,
+      onPortSelect,
     },
     ref,
   ) {
@@ -70,106 +126,185 @@ export const ReferenceNode = memo(
         direction="column"
         layoutRoot
         width={width}
-        gap={16}
+        padding={24}
+        gap={18}
         debug={debug}
         onMeasure={onMeasure}
-        lodLabel="Image transform"
+        lodLabel={title}
         style={{ position: 'absolute', left: 0, top: 0 }}
       >
-        <TextBlock
-          id={`${id}-label`}
-          text="IMAGE PROCESSING"
-          minHeight={37}
-          fontSize={12}
-          lineHeight={1.4}
-          schematic={schematic}
-        />
-        <TextBlock
-          id={`${id}-title`}
-          text="Image transform"
-          minHeight={74}
-          fontSize={26}
-          fontStyle="bold"
-          lineHeight={1.4}
-          schematic={schematic}
-        />
-        <TextBlock
-          id={`${id}-subtitle`}
-          text="Нормализация изображения"
-          minHeight={37}
-          fontSize={13}
-          lineHeight={1.4}
-          schematic={schematic}
-        />
-        <Cell id={`${id}-media`} width="100%" height={200} flexShrink={0}>
-          <Flex width="100%" height="100%" gap={16} alignItems="center">
-            <Ports side="input" prefix={id} />
-            <Cell id={`${id}-preview`} flexGrow={1} minWidth={0} height="100%">
-              {(bounds) => <Rect {...bounds} fill="#000" />}
+        <Cell width="100%" height="100%" style={{ position: 'absolute', left: 0, top: 0 }}>
+          {(bounds) => (
+            <Rect
+              {...bounds}
+              fill="#fff"
+              stroke="#d9e0d2"
+              strokeWidth={1}
+              cornerRadius={16}
+              shadowColor="#27381a"
+              shadowBlur={24}
+              shadowOffsetY={8}
+              shadowOpacity={0.09}
+              shadowForStrokeEnabled={false}
+              listening={false}
+            />
+          )}
+        </Cell>
+        <Cell id={`${id}-main`} width="100%">
+          <Flex width="100%" gap={8} alignItems="center">
+            <Cell width="100%" minWidth={0}>
+              <Flex id={`${id}-content`} direction="column" gap={12} width="100%">
+                <Cell id={`${id}-label`}>
+                  <Flex gap={6} alignItems="center">
+                    <Cell width={6} height={6}>
+                      {() => <Circle x={3} y={3} radius={3} fill="#91ac74" listening={false} />}
+                    </Cell>
+                    <CellText
+                      text="IMAGE PROCESSING"
+                      fontSize={9}
+                      fontFamily={FONT}
+                      fontStyle="bold"
+                      lineHeight={1.3}
+                      color="#81916f"
+                      style={{ letterSpacing: '1.1px' }}
+                    >
+                      {(textProps) => <Text {...textProps} />}
+                    </CellText>
+                  </Flex>
+                </Cell>
+                <CellText
+                  id={`${id}-title`}
+                  text={title}
+                  fontSize={24}
+                  fontFamily={FONT}
+                  fontStyle="bold"
+                  lineHeight={1.2}
+                  color="#27321f"
+                  width="100%"
+                  style={{ letterSpacing: '-0.4px' }}
+                >
+                  {(textProps) => <Text {...textProps} />}
+                </CellText>
+                <CellText
+                  id={`${id}-subtitle`}
+                  text={subtitle}
+                  fontSize={12}
+                  fontFamily={FONT}
+                  lineHeight={1.4}
+                  color="#929a89"
+                  width="100%"
+                >
+                  {(textProps) => <Text {...textProps} />}
+                </CellText>
+                <Cell id={`${id}-media`} width="100%" height={156} flexShrink={0}>
+                  <Flex width="100%" height="100%" gap={12} alignItems="center">
+                    <Ports side="input" prefix={id} onSelect={onPortSelect} />
+                    <Cell id={`${id}-preview`} flexGrow={1} minWidth={0} height="100%">
+                      <Cell width="100%" height="100%">
+                        {(bounds) => <PreviewPhoto {...bounds} image={previewImage} />}
+                      </Cell>
+                      <CellText
+                        text="PREVIEW / 01"
+                        width="calc(100% - 16px)"
+                        height={12}
+                        fontSize={8}
+                        fontFamily={FONT}
+                        fontStyle="bold"
+                        color="#fff"
+                        wrap="none"
+                        style={{ position: 'absolute', left: 8, bottom: 8 }}
+                      >
+                        {(textProps) => <Text {...textProps} />}
+                      </CellText>
+                    </Cell>
+                    <Ports side="output" prefix={id} onSelect={onPortSelect} />
+                  </Flex>
+                </Cell>
+                <CellText
+                  id={`${id}-description-text`}
+                  text={description}
+                  width="100%"
+                  editable
+                  onTextChange={onDescriptionChange}
+                  fontSize={13}
+                  lineHeight={1.5}
+                  fontFamily={FONT}
+                  color="#78816f"
+                >
+                  {(textProps) => <Text {...textProps} />}
+                </CellText>
+              </Flex>
             </Cell>
-            <Ports side="output" prefix={id} />
           </Flex>
         </Cell>
-        <TextBlock
-          id={`${id}-description`}
-          text={description}
-          minHeight={148}
-          fontSize={14}
-          lineHeight={1.5}
-          schematic={schematic}
-          editable
-          onTextChange={onDescriptionChange}
-        />
-        <Cell id={`${id}-actions`} width="100%" height={80} flexShrink={0}>
+        <Cell id={`${id}-actions`} width="100%" height={44} flexShrink={0}>
           <Cell width="100%" height="100%" style={{ position: 'absolute', left: 0, top: 0 }}>
-            {(bounds) => <Rect {...bounds} fill={GRAY} />}
+            {(bounds) => <Rect {...bounds} fill="#f1f5ec" cornerRadius={8} listening={false} />}
           </Cell>
-          <Flex width="100%" height="100%" padding="10px 16px" gap={16} alignItems="center">
+          <Flex width="100%" height="100%" padding={5} gap={7} alignItems="center">
             <Cell
               id={`${id}-run`}
-              width={60}
-              height={60}
+              width={34}
+              height={34}
               flexShrink={0}
               onClick={() => onAction?.('run')}
             >
               {(bounds) => (
                 <>
-                  <Rect {...bounds} fill="#000" />
-                  {!schematic && (
-                    <Line points={[24, 18, 42, 30, 24, 42]} closed fill="#fff" listening={false} />
-                  )}
+                  <Rect
+                    {...bounds}
+                    fill="#d6e8c1"
+                    cornerRadius={5}
+                    onMouseEnter={(event) => cursor(event, 'pointer')}
+                    onMouseLeave={(event) => cursor(event, '')}
+                  />
+                  <Line points={[13, 10, 23, 17, 13, 24]} closed fill="#5e7b43" listening={false} />
                 </>
               )}
             </Cell>
             <Cell
               id={`${id}-settings`}
-              width={60}
-              height={60}
+              width={34}
+              height={34}
               flexShrink={0}
               onClick={() => onAction?.('settings')}
             >
               {(bounds) => (
                 <>
-                  <Rect {...bounds} fill="#000" />
-                  {!schematic && (
-                    <>
-                      <Line
-                        points={[17, 23, 43, 23]}
-                        stroke="#fff"
-                        strokeWidth={3}
-                        listening={false}
-                      />
-                      <Line
-                        points={[17, 37, 43, 37]}
-                        stroke="#fff"
-                        strokeWidth={3}
-                        listening={false}
-                      />
-                    </>
-                  )}
+                  <Rect
+                    {...bounds}
+                    fill="#e3eadd"
+                    cornerRadius={5}
+                    onMouseEnter={(event) => cursor(event, 'pointer')}
+                    onMouseLeave={(event) => cursor(event, '')}
+                  />
+                  <Line
+                    points={[9, 12, 25, 12]}
+                    stroke="#7c8b6d"
+                    strokeWidth={1.5}
+                    listening={false}
+                  />
+                  <Line
+                    points={[9, 22, 25, 22]}
+                    stroke="#7c8b6d"
+                    strokeWidth={1.5}
+                    listening={false}
+                  />
+                  <Circle x={14} y={12} radius={2.7} fill="#7c8b6d" listening={false} />
+                  <Circle x={21} y={22} radius={2.7} fill="#7c8b6d" listening={false} />
                 </>
               )}
             </Cell>
+            <Cell flexGrow={1} />
+            <CellText
+              text="node_01"
+              fontSize={9}
+              fontFamily="monospace"
+              color="#98a48c"
+              padding="0 7px 0 0"
+            >
+              {(textProps) => <Text {...textProps} />}
+            </CellText>
           </Flex>
         </Cell>
       </Flex>
