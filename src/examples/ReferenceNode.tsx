@@ -89,6 +89,10 @@ function PreviewPhoto({
 export interface ReferenceNodeProps {
   id?: string;
   width?: number;
+  x?: number;
+  y?: number;
+  layoutTemplate?: string;
+  footerLabel?: string;
   debug?: boolean;
   title?: string;
   subtitle?: string;
@@ -106,6 +110,10 @@ export const ReferenceNode = memo(
     {
       id = 'reference-node',
       width = 360,
+      x = 0,
+      y = 0,
+      layoutTemplate,
+      footerLabel = 'node_01',
       debug = false,
       title = 'Image transform',
       subtitle = 'Нормализация входящего изображения',
@@ -125,13 +133,14 @@ export const ReferenceNode = memo(
         data-testid={id}
         direction="column"
         layoutRoot
+        layoutTemplate={layoutTemplate}
         width={width}
         padding={24}
         gap={18}
         debug={debug}
         onMeasure={onMeasure}
         lodLabel={title}
-        style={{ position: 'absolute', left: 0, top: 0 }}
+        style={{ position: 'absolute', left: x, top: y }}
       >
         <Cell width="100%" height="100%" style={{ position: 'absolute', left: 0, top: 0 }}>
           {(bounds) => (
@@ -297,7 +306,11 @@ export const ReferenceNode = memo(
             </Cell>
             <Cell flexGrow={1} />
             <CellText
-              text="node_01"
+              text={footerLabel}
+              width={64}
+              height={9}
+              wrap="none"
+              align="right"
               fontSize={9}
               fontFamily="monospace"
               color="#98a48c"

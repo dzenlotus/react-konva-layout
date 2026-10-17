@@ -42,7 +42,7 @@ export function useDemoGestures(
       const delta =
         event.deltaY *
         (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? stage.current!.height() : 1);
-      const scale = Math.min(8, Math.max(0.05, current.scale * Math.exp(-delta * 0.0015)));
+      const scale = Math.min(8, Math.max(0.02, current.scale * Math.exp(-delta * 0.0015)));
       setView({
         scale,
         x: position.x - ((position.x - current.x) / current.scale) * scale,
@@ -76,7 +76,7 @@ export function useDemoGestures(
         if (lastPinch && next && lastPinch.distance > 0) {
           const scale = Math.min(
             8,
-            Math.max(0.05, (current.scale * next.distance) / lastPinch.distance),
+            Math.max(0.02, (current.scale * next.distance) / lastPinch.distance),
           );
           setView({
             scale,

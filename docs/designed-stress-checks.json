@@ -1,0 +1,115 @@
+{
+  "quality": {
+    "at1": {
+      "canvasPixelRatio": 2,
+      "cacheRatios": [2, 2, 2, 2],
+      "cacheBytes": 16222640,
+      "visibleRoots": 10,
+      "sharedImageObjects": 1
+    },
+    "at1_6": {
+      "canvasPixelRatio": 2,
+      "cacheRatios": [4],
+      "cacheBytes": 13789244,
+      "visibleRoots": 6,
+      "sharedImageObjects": 1
+    }
+  },
+  "html": 0,
+  "devicePixelRatio": 2,
+  "edit": {
+    "result": {
+      "mode": "optimized",
+      "cards": 1000,
+      "renderedCards": 8,
+      "primitives": 35001,
+      "groups": 282,
+      "shapes": 312,
+      "idleHtmlNodes": 0,
+      "attachedMeasurementRoots": 0,
+      "viewportWidth": 1400,
+      "viewportHeight": 760,
+      "worldWidth": 9616,
+      "worldHeight": 18176,
+      "devicePixelRatio": 2,
+      "canvasPixelRatio": 2,
+      "assetReadyMs": 10.4,
+      "measurement": {
+        "scope": "local",
+        "measuredNodes": 35,
+        "measuredRoots": ["stress-node-0000-card"],
+        "durationMs": 2.8999998569488525,
+        "templateHits": 0,
+        "templateMisses": 1,
+        "revision": 2
+      },
+      "rendering": {
+        "visibleRoots": 8,
+        "totalRoots": 1000,
+        "cachedRoots": 4,
+        "cacheBytes": 15411508,
+        "lod": false,
+        "lodLevel": "full",
+        "groups": 281,
+        "shapes": 312
+      },
+      "complete": true,
+      "operation": "edit",
+      "mountToLayoutMs": 21.4,
+      "canvasDrawMs": 1.5,
+      "totalToCanvasFrameMs": 49.6,
+      "forcedRedraw": false,
+      "layoutPasses": 1,
+      "timestamp": "2026-10-17T12:48:25.546Z"
+    },
+    "siblingModelPreserved": true,
+    "siblingGroupPreserved": true,
+    "siblingCached": true,
+    "siblingBitmapPreserved": true,
+    "editorGone": true
+  },
+  "overview": {
+    "view": {
+      "x": 498.9612676056338,
+      "y": 0,
+      "scale": 0.04181338028169014
+    },
+    "stats": {
+      "mode": "optimized",
+      "cards": 1000,
+      "renderedCards": 1000,
+      "primitives": 35001,
+      "groups": 1002,
+      "shapes": 1,
+      "idleHtmlNodes": 0,
+      "attachedMeasurementRoots": 0,
+      "viewportWidth": 1400,
+      "viewportHeight": 760,
+      "worldWidth": 9616,
+      "worldHeight": 18176,
+      "devicePixelRatio": 2,
+      "canvasPixelRatio": 2,
+      "assetReadyMs": 10.4,
+      "measurement": {
+        "scope": "full",
+        "measuredNodes": 1035,
+        "measuredRoots": ["stress-world"],
+        "durationMs": 175.5,
+        "templateHits": 999,
+        "templateMisses": 1,
+        "revision": 1
+      },
+      "rendering": {
+        "visibleRoots": 1000,
+        "totalRoots": 1000,
+        "cachedRoots": 0,
+        "cacheBytes": 0,
+        "lod": true,
+        "lodLevel": "minimal",
+        "groups": 1001,
+        "shapes": 1
+      },
+      "complete": true
+    }
+  }
+}

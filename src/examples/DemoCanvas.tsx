@@ -47,7 +47,7 @@ export const DemoCanvas = forwardRef<DemoCanvasHandle, DemoCanvasProps>(function
   const setView = useCallback((next: Partial<ViewTransform>) => {
     const current = view.current;
     const scale = Number.isFinite(next.scale)
-      ? Math.min(8, Math.max(0.05, next.scale!))
+      ? Math.min(8, Math.max(0.02, next.scale!))
       : current.scale;
     const updated = {
       x: Number.isFinite(next.x) ? next.x! : current.x,

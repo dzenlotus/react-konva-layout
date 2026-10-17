@@ -1,9 +1,7 @@
 import { DemoCanvas, type DemoCanvasHandle } from './examples/DemoCanvas';
-import { memo, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import Konva from 'konva';
-import { Circle, Line, Rect, Text } from 'react-konva';
-import { Cell, CellText, Flex, useLayout } from './lib';
 import type {
   LayoutNode,
   LayoutMetrics,
@@ -13,31 +11,35 @@ import type {
 } from './lib';
 import './stress.css';
 
-const COUNT = 1000;
-const RETINA = new URLSearchParams(window.location.search).has('retina');
-const COLUMNS = 25;
-const CARD_WIDTH = 230;
-const CARD_HEIGHT = 284;
-const WORLD_WIDTH = COLUMNS * CARD_WIDTH + (COLUMNS - 1) * 14 + 40;
-const WORLD_HEIGHT =
-  Math.ceil(COUNT / COLUMNS) * CARD_HEIGHT + (Math.ceil(COUNT / COLUMNS) - 1) * 14 + 40;
-const EXPECTED_PRIMITIVES = COUNT * 25 + 1;
-const FONT = 'Arial';
-const DESCRIPTION =
-  'Этот модуль обрабатывает изображение. Переносы текста и вложенную раскладку рассчитывает браузер.';
+import {
+  DesignedStressScene,
+  COUNT,
+  COLUMNS,
+  GAP,
+  WORLD_WIDTH,
+  WORLD_HEIGHT,
+  EXPECTED_PRIMITIVES,
+  DESCRIPTION,
+} from './examples/DesignedStressScene';
+import {
+  runCameraBenchmark,
+  type CameraKind,
+  type CameraResult,
+  type CameraStats,
+} from './benchmarks/camera';
+
 const OPTIMIZED: PerformanceOptions = {
   enabled: true,
   compact: true,
   cull: true,
   cache: true,
   cacheBudgetMB: 32,
-  cachePixelRatio: RETINA ? 'auto' : 1,
+  cachePixelRatio: 'auto',
   lodScale: 0.3,
   overscan: 100,
 };
 const BASELINE: PerformanceOptions = { enabled: false };
 type Mode = 'optimized' | 'baseline';
-const attrs = (id: string) => ({ id, 'data-testid': id });
 const rounded = (value: number) => Math.round(value * 100) / 100;
 
 export interface StressStats {
@@ -54,6 +56,7 @@ export interface StressStats {
   worldHeight: number;
   devicePixelRatio: number;
   canvasPixelRatio: number;
+  assetReadyMs: number;
   complete: boolean;
   renderedCards: number;
   measurement: LayoutMetrics | null;
@@ -78,6 +81,8 @@ interface StressApi {
   overview: (enabled?: boolean) => void;
   edit: (text?: string) => Promise<StressResult>;
   view: (view: Partial<ViewTransform>) => Promise<StressResult>;
+  camera: (kind: CameraKind, durationMs?: number, warmupMs?: number) => Promise<CameraResult>;
+  inspect: () => { stage: Konva.Stage | null; layout: DemoCanvasHandle | null };
 }
 
 declare global {
@@ -85,205 +90,6 @@ declare global {
     layoutStress?: StressApi;
   }
 }
-
-function Preview({ width, height, index }: { width: number; height: number; index: number }) {
-  const colors = ['#bbcea9', '#b2c8d5', '#ccb9d2', '#d5c9a5'];
-  return (
-    <>
-      <Rect width={width} height={height} fill="#e7ede1" cornerRadius={6} />
-      <Circle x={width * 0.76} y={height * 0.27} radius={11} fill="#fafcf5" />
-      <Line
-        points={[0, height, 0, height * 0.8, width * 0.32, height * 0.3, width * 0.76, height]}
-        fill={colors[index % colors.length]}
-        closed
-      />
-      <Line
-        points={[0, height, width * 0.68, height * 0.42, width, height * 0.8, width, height]}
-        fill="#718667"
-        closed
-      />
-      <Text
-        x={8}
-        y={height - 16}
-        text={`FRAME ${String(index + 1).padStart(4, '0')}`}
-        fontFamily={FONT}
-        fontSize={8}
-        fill="#fff"
-      />
-    </>
-  );
-}
-
-function StressCard({ index, width }: { index: number; width: number }) {
-  const prefix = `stress-node-${String(index).padStart(4, '0')}`;
-  const prop = (suffix: string) => attrs(`${prefix}-${suffix}`);
-  const [description, setDescription] = useState(DESCRIPTION);
-  const { invalidate } = useLayout();
-  const updateDescription = useCallback(
-    (text: string) => {
-      setDescription(text);
-      invalidate(prefix + '-description');
-    },
-    [invalidate, prefix],
-  );
-  return (
-    <Flex
-      direction="column"
-      {...prop('card')}
-      layoutRoot
-      layoutTemplate="processing-card-v2"
-      lodLabel={'Node ' + (index + 1)}
-      width={width}
-      minWidth={0}
-      minHeight={CARD_HEIGHT}
-      padding={12}
-      gap={8}
-      justifyContent="space-between"
-      fill="#fff"
-      stroke="#d5ddcb"
-      strokeWidth={1}
-      cornerRadius={9}
-      style={{
-        position: 'absolute',
-        left: 20 + (index % COLUMNS) * (width + 14),
-        top: 20 + Math.floor(index / COLUMNS) * (CARD_HEIGHT + 14),
-      }}
-    >
-      <Flex {...prop('heading')} width="100%" gap={8} alignItems="center">
-        <Cell {...prop('icon')} width={22} height={22} flexShrink={0}>
-          {() => (
-            <>
-              <Circle x={11} y={11} radius={10} fill="#e7efda" />
-              <Line points={[6, 12, 10, 16, 16, 7]} stroke="#6b874c" strokeWidth={1.6} />
-            </>
-          )}
-        </Cell>
-        <Flex direction="column" {...prop('titles')} flexGrow={1} minWidth={0} gap={3}>
-          <CellText
-            {...prop('label')}
-            text="IMAGE PROCESSING"
-            fontSize={8}
-            fontFamily={FONT}
-            fontStyle="bold"
-            color="#798d69"
-          >
-            {(textProps) => <Text {...textProps} />}
-          </CellText>
-          <CellText
-            {...prop('title')}
-            text={`Image transform ${String(index + 1).padStart(4, '0')}`}
-            width="100%"
-            height={18}
-            wrap="none"
-            fontSize={15}
-            fontFamily={FONT}
-            fontStyle="bold"
-            color="#2b3725"
-          >
-            {(textProps) => <Text {...textProps} />}
-          </CellText>
-        </Flex>
-      </Flex>
-      <CellText
-        {...prop('subtitle')}
-        text="Нормализация входящего изображения"
-        fontSize={9}
-        fontFamily={FONT}
-        color="#8a9481"
-      >
-        {(textProps) => <Text {...textProps} />}
-      </CellText>
-      <Flex {...prop('figure')} width="100%" height={92} gap={8} alignItems="center">
-        <Flex direction="column" {...prop('input-ports')} gap={14} flexShrink={0}>
-          {[0, 1, 2].map((port) => (
-            <Cell key={port} {...prop(`input-${port}`)} width={12} height={12}>
-              {() => (
-                <Circle x={6} y={6} radius={5} fill="#d3dfc5" stroke="#92a580" strokeWidth={1} />
-              )}
-            </Cell>
-          ))}
-        </Flex>
-        <Cell {...prop('preview')} height={92} flexGrow={1} minWidth={0}>
-          {({ width, height }) => <Preview {...{ width, height, index }} />}
-        </Cell>
-        <Flex direction="column" {...prop('output-ports')} gap={14} flexShrink={0}>
-          {[0, 1, 2].map((port) => (
-            <Cell key={port} {...prop(`output-${port}`)} width={12} height={12}>
-              {() => (
-                <Circle x={6} y={6} radius={5} fill="#d3dfc5" stroke="#92a580" strokeWidth={1} />
-              )}
-            </Cell>
-          ))}
-        </Flex>
-      </Flex>
-      <CellText
-        {...prop('description')}
-        text={description}
-        editable
-        onTextChange={updateDescription}
-        width="100%"
-        minHeight={42}
-        fontSize={10}
-        lineHeight={1.4}
-        fontFamily={FONT}
-        color="#7b8771"
-      >
-        {(textProps) => <Text {...textProps} />}
-      </CellText>
-      <Flex
-        {...prop('actions')}
-        height={32}
-        width="100%"
-        padding={4}
-        gap={6}
-        alignItems="center"
-        fill="#f0f4e9"
-        cornerRadius={6}
-      >
-        <Cell {...prop('run')} width={24} height={24} fill="#d2e6ba" cornerRadius={4}>
-          {() => <Line points={[9, 6, 17, 12, 9, 18]} fill="#58733e" closed />}
-        </Cell>
-        <Cell {...prop('settings')} width={24} height={24} fill="#e0e7d8" cornerRadius={4}>
-          {() => (
-            <>
-              <Line points={[5, 8, 19, 8, 5, 16, 19, 16]} stroke="#7d8d6f" strokeWidth={1.2} />
-              <Circle x={10} y={8} radius={2.5} fill="#6c7e5d" />
-            </>
-          )}
-        </Cell>
-        <Cell {...prop('spacer')} flexGrow={1} />
-        <Flex {...prop('status')} gap={4} alignItems="center">
-          <Cell {...prop('status-dot')} width={5} height={5}>
-            {() => <Circle x={2.5} y={2.5} radius={2.5} fill="#86a962" />}
-          </Cell>
-          <CellText
-            {...prop('status-text')}
-            text={`node_${String(index + 1).padStart(4, '0')}`}
-            width={48}
-            height={10}
-            wrap="none"
-            fontSize={8}
-            fontFamily="monospace"
-            color="#8e9c81"
-          >
-            {(textProps) => <Text {...textProps} />}
-          </CellText>
-        </Flex>
-      </Flex>
-    </Flex>
-  );
-}
-
-const StressScene = memo(function StressScene({ worldWidth }: { worldWidth: number }) {
-  const width = (worldWidth - 40 - (COLUMNS - 1) * 14) / COLUMNS;
-  return (
-    <Flex {...attrs('stress-world')} width={worldWidth} height={WORLD_HEIGHT}>
-      {Array.from({ length: COUNT }, (_, index) => (
-        <StressCard key={index} index={index} width={width} />
-      ))}
-    </Flex>
-  );
-});
 
 function countTree(nodes: LayoutNode[]): number {
   let count = 0;
@@ -308,6 +114,34 @@ interface Pending {
 const nextFrame = () => new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 
 export default function StressApp() {
+  const [previewImage, setPreviewImage] = useState<HTMLImageElement>();
+  const [cameraResults, setCameraResults] = useState<CameraResult[]>([]);
+  const imagePromise = useRef<Promise<HTMLImageElement> | null>(null);
+  const assetReadyMs = useRef(0);
+  const activeCamera = useRef<AbortController | null>(null);
+  const prepareImage = useCallback(() => {
+    if (!imagePromise.current) {
+      const startedAt = performance.now();
+      imagePromise.current = new Promise<HTMLImageElement>((resolve, reject) => {
+        const image = new Image();
+        image.onload = async () => {
+          try {
+            await image.decode();
+            image.onload = null;
+            image.onerror = null;
+            assetReadyMs.current = rounded(performance.now() - startedAt);
+            setPreviewImage(image);
+            resolve(image);
+          } catch (error) {
+            reject(error);
+          }
+        };
+        image.onerror = () => reject(new Error('Не удалось загрузить фотографию превью.'));
+        image.src = `${import.meta.env.BASE_URL}node-preview.jpg`;
+      });
+    }
+    return imagePromise.current;
+  }, []);
   const [config, setConfig] = useState({
     generation: 0,
     width: 1400,
@@ -364,6 +198,7 @@ export default function StressApp() {
       worldHeight: WORLD_HEIGHT,
       devicePixelRatio: window.devicePixelRatio,
       canvasPixelRatio: current?.getLayers()[0]?.getCanvas().getPixelRatio() ?? 1,
+      assetReadyMs: assetReadyMs.current,
       measurement: layout.current?.getMetrics() ?? null,
       rendering: renderStats.current,
       complete:
@@ -470,6 +305,7 @@ export default function StressApp() {
       setOverview(false);
       try {
         if (operation === 'mount') {
+          await Promise.all([prepareImage(), document.fonts.ready]);
           flushSync(() => setConfig((previous) => ({ ...previous, mounted: false })));
           await nextFrame();
           await nextFrame();
@@ -505,7 +341,7 @@ export default function StressApp() {
         throw reason;
       }
     },
-    [makeJob, selectedMode],
+    [makeJob, selectedMode, prepareImage],
   );
 
   const moveView = useCallback(
@@ -550,7 +386,7 @@ export default function StressApp() {
         layout.current?.setView({ x: 0, y: 0, scale: 1 });
         await nextFrame();
         await nextFrame();
-        const target = stage()?.findOne('#stress-node-0000-description');
+        const target = stage()?.findOne('#stress-node-0000-card-description-text');
         const canvasText =
           target instanceof Konva.Text
             ? target
@@ -585,6 +421,52 @@ export default function StressApp() {
       }
     },
     [makeJob, stage],
+  );
+
+  const cameraStats = useCallback(
+    (): CameraStats => ({
+      measurement: layout.current?.getMetrics() ?? null,
+      rendering: renderStats.current,
+      idleHtmlNodes: holder.current?.querySelectorAll('[data-layout-key]').length ?? 0,
+      canvasPixelRatio: stage()?.getLayers()[0]?.getCanvas().getPixelRatio() ?? 1,
+      renderedCards: renderStats.current?.visibleRoots ?? 0,
+      worldWidth: configRef.current.worldWidth,
+      worldHeight: WORLD_HEIGHT,
+      mode: configRef.current.mode,
+    }),
+    [stage],
+  );
+
+  const camera = useCallback(
+    async (kind: CameraKind, durationMs = 5000, warmupMs = 1000) => {
+      if (pending.current || preparing.current) throw new Error('Замер уже выполняется.');
+      const currentStage = stage();
+      if (!configRef.current.mounted || !currentStage || !layout.current)
+        throw new Error('Сначала запустите сцену.');
+      preparing.current = true;
+      setBusy(true);
+      setError('');
+      const controller = new AbortController();
+      activeCamera.current = controller;
+      try {
+        const result = await runCameraBenchmark({
+          kind,
+          stage: currentStage,
+          setView: (next) => layout.current?.setView(next),
+          stats: cameraStats,
+          durationMs,
+          warmupMs,
+          signal: controller.signal,
+        });
+        setCameraResults((previous) => [...previous.slice(-29), result]);
+        return result;
+      } finally {
+        preparing.current = false;
+        activeCamera.current = null;
+        setBusy(false);
+      }
+    },
+    [stage, cameraStats],
   );
 
   useLayoutEffect(() => {
@@ -646,6 +528,19 @@ export default function StressApp() {
           required.some((node) => {
             const drawn = roots.get(node.id);
             if (!drawn) return true;
+            const photo = drawn instanceof Konva.Container ? drawn.findOne('Image') : undefined;
+            const detailed = configRef.current.mode === 'baseline' || camera.scale >= 0.3;
+            if (
+              detailed &&
+              (!(photo instanceof Konva.Image) ||
+                !(photo.image() instanceof HTMLImageElement) ||
+                !(photo.image() as HTMLImageElement).complete)
+            )
+              return true;
+            const cache = drawn._getCanvasCache();
+            const requiredRatio = this.getCanvas().getPixelRatio() * camera.scale;
+            if (drawn.isCached() && (!cache || cache.scene.getPixelRatio() + 0.001 < requiredRatio))
+              return true;
             const position = drawn.getAbsolutePosition();
             return (
               Math.abs(drawn.width() - node.width) > 0.1 ||
@@ -656,11 +551,11 @@ export default function StressApp() {
           })
         )
           eligible = false;
-        const expectedWidth = (configRef.current.worldWidth - 40 - (COLUMNS - 1) * 14) / COLUMNS;
+        const expectedWidth = (configRef.current.worldWidth - 40 - (COLUMNS - 1) * GAP) / COLUMNS;
         if (model.children.some((node) => Math.abs(node.width - expectedWidth) > 0.1))
           eligible = false;
         if (job.expectedText !== undefined) {
-          const target = this.findOne('#stress-node-0000-description');
+          const target = this.findOne('#stress-node-0000-card-description-text');
           const text =
             target instanceof Konva.Text
               ? target
@@ -693,10 +588,13 @@ export default function StressApp() {
       overview: setWorldView,
       edit,
       view: moveView,
+      camera,
+      inspect: () => ({ stage: stage(), layout: layout.current }),
     };
     window.layoutStress = api;
     return () => {
       if (window.layoutStress === api) delete window.layoutStress;
+      activeCamera.current?.abort();
       cancelAnimationFrame(frame.current);
       if (pending.current) {
         clearTimeout(pending.current.timeout);
@@ -704,7 +602,7 @@ export default function StressApp() {
         pending.current = null;
       }
     };
-  }, [edit, finish, moveView, setWorldView, stage, start, stats]);
+  }, [edit, finish, moveView, setWorldView, stage, start, stats, camera]);
 
   const invoke = (operation: 'mount' | 'resize' | 'remeasure' | 'edit') => {
     void (operation === 'edit' ? edit() : start(operation)).catch((reason) =>
@@ -714,7 +612,7 @@ export default function StressApp() {
   const zoomCentered = (factor: number) => {
     const current = layout.current?.getView();
     if (!current) return;
-    const scale = Math.min(8, Math.max(0.05, current.scale * factor));
+    const scale = Math.min(8, Math.max(0.02, current.scale * factor));
     layout.current?.setView({
       scale,
       x: config.width / 2 - ((config.width / 2 - current.x) * scale) / current.scale,
@@ -737,7 +635,7 @@ export default function StressApp() {
         <section className="stress-intro">
           <div>
             <p className="stress-eyebrow">BROWSER LAYOUT → VISIBLE CANVAS → LOCAL EDIT</p>
-            <h1>1 000 сложных нод.</h1>
+            <h1>1 000 нод с новым дизайном.</h1>
             <p>
               Колесо — zoom к курсору. Фон — pan. Двойной клик или тап по description —
               редактирование.
@@ -747,7 +645,7 @@ export default function StressApp() {
         </section>
         <div className="stress-controls">
           <div>
-            <strong>25 001</strong>
+            <strong>{EXPECTED_PRIMITIVES.toLocaleString('ru-RU')}</strong>
             <span>элементов в layout tree</span>
           </div>
           <div>
@@ -814,14 +712,16 @@ export default function StressApp() {
                   width={config.width}
                   height={760}
                   panZoom={!busy}
-                  pixelRatio={RETINA ? undefined : 1}
                   performance={config.mode === 'optimized' ? OPTIMIZED : BASELINE}
                   onLayout={onLayout}
                   onMeasure={onMeasure}
                   onRenderStats={onRenderStats}
                   onViewChange={setView}
                 >
-                  <StressScene worldWidth={config.worldWidth} />
+                  <DesignedStressScene
+                    worldWidth={config.worldWidth}
+                    previewImage={previewImage!}
+                  />
                 </DemoCanvas>
               ) : (
                 <div className="stress-empty">
@@ -889,6 +789,55 @@ export default function StressApp() {
             LOD. Измерительный HTML отсутствует в документе в покое. HTML редактора существует
             только во время ввода; Cmd/Ctrl+Enter — сохранить, Escape — отменить.
           </p>
+          <p className="stress-definitions">
+            Фото и шрифты готовы до запуска таймера первого монтажа. FPS измеряется по 5-секундной
+            траектории после 1 секунды прогрева; Layer.draw считается отдельно от RAF.
+          </p>
+          <div className="stress-buttons">
+            {(['pan', 'zoom', 'overview'] as CameraKind[]).map((kind) => (
+              <button
+                key={kind}
+                disabled={busy || !config.mounted}
+                onClick={() =>
+                  void camera(kind).catch((reason) => setError(String(reason.message ?? reason)))
+                }
+              >
+                FPS {kind}
+              </button>
+            ))}
+          </div>
+          {cameraResults.length > 0 && (
+            <div className="stress-table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Камера</th>
+                    <th>RAF FPS</th>
+                    <th>Кадры с draw / s</th>
+                    <th>P95 кадра</th>
+                    <th>Кадры &gt;20 ms</th>
+                    <th>HTML / layout</th>
+                    <th>Кеш пик MB</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {cameraResults.map((result, index) => (
+                    <tr key={index}>
+                      <td>{result.kind}</td>
+                      <td>{result.fps.toFixed(1)}</td>
+                      <td>{result.renderedFps.toFixed(1)}</td>
+                      <td>{result.p95Ms.toFixed(1)} ms</td>
+                      <td>{result.overBudgetPercent.toFixed(1)}%</td>
+                      <td>
+                        {result.maxHtmlNodes} / {result.layoutPasses}
+                      </td>
+                      <td>{(result.maxCacheBytes / 1024 / 1024).toFixed(1)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
           {results.length ? (
             <div className="stress-table-wrap">
               <table>
@@ -933,9 +882,7 @@ export default function StressApp() {
             Ноды расположены независимо; Flex внутри рассчитывает браузер. Размер описания может
             менять высоту только своей ноды.
           </span>
-          <span>
-            Кеш ≤32 MB · {RETINA ? 'DPR устройства' : 'DPR 1'} · CPU slowdown задаётся в DevTools
-          </span>
+          <span>Кеш ≤32 MB · DPR устройства · одна общая декодированная фотография</span>
         </footer>
       </main>
     </div>
