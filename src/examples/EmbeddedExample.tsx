@@ -1,222 +1,132 @@
-import { createContext, memo, useContext, useEffect, useRef, useState } from 'react';
-import Konva from 'konva';
-import { Circle, Group, Layer, Rect, Stage, Text } from 'react-konva';
-import { Cell, CellText, Flex, Layout, useLayout } from '../lib';
+import { useEffect, useRef, useState } from 'react';
+import type Konva from 'konva';
+import { Group, Layer, Rect, Stage } from 'react-konva';
 import type { LayoutHandle, LayoutMetrics, ViewTransform } from '../lib';
+import { ReferenceNode } from './ReferenceNode';
 import './embedded.css';
 
-const Theme = createContext('#56744b');
-
-function StatusMark() {
-  const color = useContext(Theme);
-  return <Circle x={8} y={8} radius={7} fill={color} />;
-}
-
-const Card = memo(function Card({ id, left, title }: { id: string; left: number; title: string }) {
-  const color = useContext(Theme);
-  const [description, setDescription] = useState(
-    'Двойной клик по описанию открывает поле. Изменение пересчитает только эту карточку.',
-  );
-  const layout = useLayout();
-  const updateDescription = (value: string) => {
-    setDescription(value);
-    layout.invalidate(`${id}-description`);
-  };
-  return (
-    <Flex
-      id={id}
-      layoutRoot
-      direction="column"
-      width={260}
-      minHeight={190}
-      padding={20}
-      gap={12}
-      lodLabel={title}
-      style={{ position: 'absolute', left, top: 0 }}
-    >
-      <Cell width="100%" height="100%" style={{ position: 'absolute', left: 0, top: 0 }}>
-        {(bounds) => <Rect {...bounds} fill="#fff" stroke="#cbd8c5" cornerRadius={12} />}
-      </Cell>
-      <Cell>
-        <Flex gap={9} alignItems="center">
-          <Cell width={16} height={16}>
-            {() => <StatusMark />}
-          </Cell>
-          <CellText text="EXISTING STAGE / LAYER" fontSize={9} color={color}>
-            {(textProps) => <Text {...textProps} />}
-          </CellText>
-        </Flex>
-      </Cell>
-      <CellText id={`${id}-title`} text={title} fontSize={20} fontStyle="bold">
-        {(textProps) => <Text {...textProps} />}
-      </CellText>
-      <CellText
-        id={`${id}-description`}
-        text={description}
-        width="100%"
-        minHeight={50}
-        fontSize={13}
-        lineHeight={1.5}
-        color="#697461"
-        editable
-        onTextChange={updateDescription}
-      >
-        {(textProps) => <Text {...textProps} />}
-      </CellText>
-      <CellText text="Flex внутри · canvas снаружи" fontSize={10} color={color}>
-        {(textProps) => <Text {...textProps} />}
-      </CellText>
-    </Flex>
-  );
-});
-
-interface EmbeddedDemoApi {
+interface ReferenceDemoApi {
   stage(): Konva.Stage | null;
-  first(): LayoutHandle | null;
-  second(): LayoutHandle | null;
+  layout(): LayoutHandle | null;
   parent(): Konva.Group | null;
 }
 
 declare global {
   interface Window {
-    embeddedDemo?: EmbeddedDemoApi;
+    referenceDemo?: ReferenceDemoApi;
   }
 }
 
-/** Copy this composition into an application that already owns its Konva scene. */
+/** The application owns its existing Stage, Layer and camera. */
 export default function EmbeddedExample() {
   const stage = useRef<Konva.Stage | null>(null);
   const parent = useRef<Konva.Group | null>(null);
-  const first = useRef<LayoutHandle | null>(null);
-  const second = useRef<LayoutHandle | null>(null);
-  const [view, setView] = useState<ViewTransform>({ x: 0, y: 0, scale: 1 });
-  const [rotation, setRotation] = useState(0);
+  const layout = useRef<LayoutHandle | null>(null);
+  const [width, setWidth] = useState(300);
+  const [schematic, setSchematic] = useState(true);
   const [debug, setDebug] = useState(false);
-  const [mounted, setMounted] = useState(true);
-  const [green, setGreen] = useState(true);
-  const [handlePosition, setHandlePosition] = useState({ x: 70, y: 430 });
+  const [description, setDescription] = useState(
+    'Описание ноды. Двойной клик открывает редактор; изменение текста пересчитывает только эту ноду.',
+  );
   const [metrics, setMetrics] = useState<LayoutMetrics | null>(null);
+  const [action, setAction] = useState<'run' | 'settings' | null>(null);
+  const [view, setView] = useState<ViewTransform>({ x: 0, y: 0, scale: 1 });
 
   useEffect(() => {
-    const api: EmbeddedDemoApi = {
+    const api: ReferenceDemoApi = {
       stage: () => stage.current,
-      first: () => first.current,
-      second: () => second.current,
+      layout: () => layout.current,
       parent: () => parent.current,
     };
-    window.embeddedDemo = api;
+    window.referenceDemo = api;
     return () => {
-      if (window.embeddedDemo === api) delete window.embeddedDemo;
+      if (window.referenceDemo === api) delete window.referenceDemo;
     };
   }, []);
 
   return (
-    <Theme.Provider value={green ? '#56744b' : '#936fba'}>
-      <main className="embedded-example">
-        <a href="?playground=1">← Playground</a>
-        <p className="embedded-eyebrow">REUSABLE COMPONENT</p>
-        <h1>Твоя сцена. Только layout внутри.</h1>
-        <p>Один существующий Stage и Layer, два независимых Layout и обычные Konva-фигуры рядом.</p>
-        <div className="embedded-controls">
-          <button onClick={() => setView((v) => ({ ...v, scale: v.scale === 1 ? 0.7 : 1 }))}>
-            Внешний zoom
-          </button>
-          <button onClick={() => setView((v) => ({ ...v, x: v.x ? 0 : 100, y: v.y ? 0 : 35 }))}>
-            Внешний pan
-          </button>
-          <button onClick={() => setRotation((v) => (v ? 0 : 8))}>Поворот Group</button>
-          <button onClick={() => setGreen((v) => !v)}>Контекст темы</button>
-          <button onClick={() => setDebug((v) => !v)}>HTML overlay</button>
-          <button onClick={() => setMounted((v) => !v)}>
-            {mounted ? 'Убрать Layout' : 'Вернуть Layout'}
-          </button>
-        </div>
-        <div className="embedded-stage">
-          <Stage
-            ref={stage}
-            width={960}
-            height={520}
-            x={view.x}
-            y={view.y}
-            scaleX={view.scale}
-            scaleY={view.scale}
-          >
-            <Layer>
-              <Rect
-                id="application-background"
-                width={960}
-                height={520}
-                fill="#e9eee5"
-                listening={false}
+    <main className="embedded-example">
+      <nav>
+        <a href="?playground=1">Playground</a>
+        <a href="?stress=1">1000 нод</a>
+        <a href="https://github.com/dzenlotus/react-konva-layout">GitHub ↗</a>
+      </nav>
+      <p className="embedded-eyebrow">FLEX / CELL / CELLTEXT</p>
+      <h1>Нода по твоей схеме.</h1>
+      <p>
+        Вся композиция внутри canvas. Нативный редактор появляется по двойному клику на описание.
+      </p>
+      <div className="embedded-controls">
+        <button aria-pressed={!schematic} onClick={() => setSchematic((value) => !value)}>
+          {schematic ? 'Показать содержимое' : 'Показать схему'}
+        </button>
+        <button aria-pressed={debug} onClick={() => setDebug((value) => !value)}>
+          HTML overlay
+        </button>
+        <button
+          onClick={() => setView((value) => ({ ...value, scale: value.scale === 1 ? 0.7 : 1 }))}
+        >
+          Внешний zoom
+        </button>
+        <button
+          onClick={() =>
+            setView((value) => ({ ...value, x: value.x ? 0 : 30, y: value.y ? 0 : 20 }))
+          }
+        >
+          Внешний pan
+        </button>
+        <label>
+          Ширина{' '}
+          <input
+            type="range"
+            aria-label="Ширина ноды"
+            min={260}
+            max={380}
+            step={10}
+            value={width}
+            onChange={(event) => setWidth(Number(event.target.value))}
+          />
+          <output>{width}</output>
+        </label>
+      </div>
+      <div className="embedded-stage">
+        <Stage
+          ref={stage}
+          width={634}
+          height={984}
+          x={view.x}
+          y={view.y}
+          scaleX={view.scale}
+          scaleY={view.scale}
+        >
+          <Layer>
+            <Rect
+              id="application-background"
+              width={634}
+              height={984}
+              fill="#fff"
+              listening={false}
+            />
+            <Group ref={parent} x={145} y={123}>
+              <ReferenceNode
+                ref={layout}
+                width={width}
+                schematic={schematic}
+                debug={debug}
+                description={description}
+                onDescriptionChange={setDescription}
+                onMeasure={setMetrics}
+                onAction={setAction}
               />
-              <Text
-                id="application-title"
-                text="Обычная фигура приложения"
-                x={30}
-                y={24}
-                fontSize={14}
-                fill="#72806a"
-              />
-              <Group ref={parent} x={40} y={70} rotation={rotation}>
-                {mounted && (
-                  <Layout
-                    ref={first}
-                    id="first-layout"
-                    width={560}
-                    height={260}
-                    debug={debug}
-                    onMeasure={setMetrics}
-                  >
-                    <Card id="first-card" left={0} title="Image transform" />
-                    <Card id="second-card" left={280} title="Color adjustment" />
-                  </Layout>
-                )}
-              </Group>
-              {mounted && (
-                <Group x={680} y={120}>
-                  <Flex ref={second} id="second-world" width={260} height={260} debug={debug}>
-                    <Card id="third-card" left={0} title="Корневой Flex" />
-                  </Flex>
-                </Group>
-              )}
-              <Circle
-                id="application-handle"
-                {...handlePosition}
-                radius={16}
-                fill="#789468"
-                draggable
-                onDragEnd={(event) => setHandlePosition(event.target.position())}
-              />
-              <Text
-                text="Существующая draggable-фигура"
-                x={100}
-                y={424}
-                fontSize={12}
-                fill="#72806a"
-              />
-            </Layer>
-          </Stage>
-        </div>
-        <p className="embedded-metrics">
-          Последнее измерение: {metrics?.scope ?? '—'} · {metrics?.measuredNodes ?? 0} элементов ·{' '}
-          {metrics?.durationMs.toFixed(1) ?? '—'} ms. Pan/zoom не запускает HTML layout.
-        </p>
-        <pre>{`<Stage {...yourCamera}>
-  <Layer>
-    <YourExistingShapes />
-    <Layout width={560} height={260}>
-      <Flex gap={12}>
-        <Cell width={120} height={80}>
-          {bounds => <Rect {...bounds} fill="green" />}
-        </Cell>
-        <CellText text="Описание" fontSize={14}>
-          {textProps => <Text {...textProps} />}
-        </CellText>
-      </Flex>
-    </Layout>
-  </Layer>
-</Stage>`}</pre>
-      </main>
-    </Theme.Provider>
+            </Group>
+          </Layer>
+        </Stage>
+      </div>
+      <p className="embedded-metrics">
+        Измерение: {metrics?.scope ?? '—'} · {metrics?.measuredNodes ?? 0} элементов ·{' '}
+        {metrics?.durationMs.toFixed(1) ?? '—'} ms.{action ? ` Нажата кнопка: ${action}.` : ''}
+      </p>
+      <p>При ширине 300 px: gap 16 · превью 204×200 · порты 32×32 · кнопки 60×60.</p>
+    </main>
   );
 }

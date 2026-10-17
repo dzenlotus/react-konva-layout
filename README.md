@@ -61,6 +61,25 @@ npm run format:check
 
 Основной пример показывает встраивание в существующий `Stage/Layer`. `?stress=1` — 1000 сложных нод; `?playground=1` — дополнительные примеры Flex/Grid. Камера и создание canvas находятся исключительно в приложении демо, за пределами библиотечного entry point.
 
+## Нода по схеме
+
+[ReferenceNode.tsx](src/examples/ReferenceNode.tsx) — готовая композиция через Flex/Cell/CellText. Она размещается внутри существующего Group/Layer и не создаёт Stage или камеру:
+
+```tsx
+<Group x={145} y={123}>
+  <ReferenceNode
+    id="node-1"
+    width={300}
+    description={description}
+    onDescriptionChange={setDescription}
+  />
+</Group>
+```
+
+По умолчанию показана схема с серыми текстовыми блоками и чёрными фигурами. `schematic={false}` включает текст и значки кнопок. Описание редактируется двойным кликом в обоих режимах. При ширине 300 px нода имеет размер 300×656, превью — 204×200, шесть портов — 32×32, две нижние кнопки — 60×60. Позиции внутри рассчитывает Flex, внешнюю позицию задаёт приложение.
+
+[Скриншот схемы](docs/screenshots/reference-node.png) · [Содержимое](docs/screenshots/reference-node-content.png)
+
 ## API
 
 | Компонент                                 | Назначение                                                                                                                                                         |

@@ -1,14 +1,19 @@
 .embedded-example {
-  max-width: 1100px;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 40px 32px;
+  padding: 32px;
   color: #26331e;
+}
+.embedded-example nav {
+  display: flex;
+  gap: 24px;
+  font-size: 12px;
 }
 .embedded-example a {
   color: #728166;
 }
 .embedded-eyebrow {
-  margin-top: 40px;
+  margin-top: 36px;
   font: 10px monospace;
   letter-spacing: 2px;
   color: #7c8e6c;
@@ -23,6 +28,7 @@
 }
 .embedded-controls {
   display: flex;
+  align-items: center;
   flex-wrap: wrap;
   gap: 8px;
   margin: 24px 0;
@@ -35,18 +41,29 @@
   color: #45583a;
   cursor: pointer;
 }
+.embedded-controls button[aria-pressed='true'] {
+  background: #e5eddd;
+}
+.embedded-controls label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  margin-left: 8px;
+}
+.embedded-controls input {
+  width: 90px;
+}
+.embedded-controls output {
+  min-width: 24px;
+  font-family: monospace;
+}
 .embedded-stage {
+  width: 636px;
   max-width: 100%;
   overflow: auto;
-  border: 1px solid #cbd4c1;
-  border-radius: 10px;
-}
-.embedded-example pre {
-  padding: 24px;
-  color: #57684a;
-  background: #edf1e8;
-  border-radius: 8px;
-  line-height: 1.6;
+  background: #fff;
+  border: 1px solid #d9dfd2;
 }
 .embedded-metrics {
   font: 12px monospace;
