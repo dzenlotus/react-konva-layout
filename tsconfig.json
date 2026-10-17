@@ -21,7 +21,8 @@
     "vite.config.ts",
     "vite.lib.config.ts",
     "vite.react16.config.ts",
-    "vite.react16-demo.config.ts"
+    "vite.react16-demo.config.ts",
+    "vite.react16-stress.config.ts"
   ],
   "exclude": ["src/react16"]
 }

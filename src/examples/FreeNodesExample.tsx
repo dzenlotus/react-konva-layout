@@ -1,5 +1,5 @@
 import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { flushSync } from 'react-dom';
+import { flushSync, unstable_batchedUpdates } from 'react-dom';
 import type Konva from 'konva';
 import { Layer, Rect, Stage } from 'react-konva';
 import { Flex, Layout } from '../lib';
@@ -211,7 +211,7 @@ export default function FreeNodesExample() {
   useLayoutEffect(() => {
     const drag = activeDrag.current;
     const overlay = dragLayer.current;
-    if (!drag || !overlay || !drag.group.isDragging() || drag.group.getParent() === overlay) return;
+    if (!drag || !overlay || !drag.group.isDragging() || drag.group.getLayer() === overlay) return;
     // Wait for the selection React commit before moving its native Group.
     // Only this app-owned layer is redrawn during drag; the other 999 cards stay still.
     const position = drag.group.getAbsolutePosition();
@@ -558,8 +558,11 @@ export default function FreeNodesExample() {
     const parent = group.getParent();
     if (!parent) return;
     activeDrag.current = { group, parent };
-    setSelected(group.getAttr('layoutRootId') as string);
-    setDragging(true);
+    // React 16 does not batch state updates from Konva's native event handlers.
+    unstable_batchedUpdates(() => {
+      setSelected(group.getAttr('layoutRootId') as string);
+      setDragging(true);
+    });
   }, []);
   const onDragMove = useCallback((event: PlacementEvent) => {
     if (event.target !== event.currentTarget) return;
@@ -579,12 +582,14 @@ export default function FreeNodesExample() {
       drag.group.moveTo(drag.parent);
       drag.group.absolutePosition(position);
       const id = drag.group.getAttr('layoutRootId') as string;
-      move(id, drag.group.position());
-      setOrder((previous) =>
-        previous.at(-1) === id ? previous : [...previous.filter((value) => value !== id), id],
-      );
+      unstable_batchedUpdates(() => {
+        move(id, drag.group.position());
+        setOrder((previous) =>
+          previous.at(-1) === id ? previous : [...previous.filter((value) => value !== id), id],
+        );
+        setDragging(false);
+      });
       dragLayer.current?.batchDraw();
-      setDragging(false);
     },
     [move],
   );

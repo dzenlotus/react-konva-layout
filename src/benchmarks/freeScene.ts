@@ -18,6 +18,10 @@ export interface DragResult {
   startCallMs: number;
   /** Time from entering startDrag to the first completed Layer.draw. */
   firstDrawAfterStartMs: number | null;
+  /** Synchronous release dispatch, including any synchronous application commit. */
+  releaseCallMs: number;
+  /** First completed draw on any Stage layer after entering release dispatch. */
+  firstDrawAfterReleaseMs: number | null;
 }
 
 export interface InteractionResult extends Omit<CameraResult, 'kind'> {
@@ -163,6 +167,7 @@ export async function runInteractionBenchmark({
   let target: Konva.Group | null = null;
   let drag: DragResult | null = null;
   let dragStartedAt: number | undefined;
+  let dragReleasedAt: number | undefined;
   let pointer = { x: 0, y: 0 };
   let lastPointer = pointer;
   let parentInverse: Konva.Transform | undefined;
@@ -225,15 +230,17 @@ export async function runInteractionBenchmark({
       stopped: false,
       startCallMs: 0,
       firstDrawAfterStartMs: null,
+      releaseCallMs: 0,
+      firstDrawAfterReleaseMs: null,
     };
-    target.on('dragstart.freeSceneBenchmark', () => {
-      if (drag) drag.started++;
+    stage.on('dragstart.freeSceneBenchmark', (event) => {
+      if (drag && Object.is(event.target, target)) drag.started++;
     });
-    target.on('dragmove.freeSceneBenchmark', () => {
-      if (drag) drag.moved++;
+    stage.on('dragmove.freeSceneBenchmark', (event) => {
+      if (drag && Object.is(event.target, target)) drag.moved++;
     });
-    target.on('dragend.freeSceneBenchmark', () => {
-      if (drag) drag.ended++;
+    stage.on('dragend.freeSceneBenchmark', (event) => {
+      if (drag && Object.is(event.target, target)) drag.ended++;
     });
     const down = mouseEvent('mousedown', pointer, true);
     stage.setPointersPositions(down);
@@ -244,7 +251,7 @@ export async function runInteractionBenchmark({
     pointer = { ...nativeStart };
     lastPointer = pointer;
     // Explicit start avoids hit-testing a tiny, overlapping 3% card to select a target.
-    // Movement and release still go through Konva's normal window mouse handlers.
+    // Movement uses Konva's window handlers; release bubbles from the canvas content.
     dragStartedAt = performance.now();
     if (!target.isDragging()) target.startDrag({ evt: down });
     drag.startCallMs = performance.now() - dragStartedAt;
@@ -263,8 +270,10 @@ export async function runInteractionBenchmark({
   };
   const releaseDrag = () => {
     if (!target || !drag) return;
-    window.dispatchEvent(mouseEvent('mouseup', lastPointer, false));
+    dragReleasedAt = performance.now();
+    stage.content.dispatchEvent(mouseEvent('mouseup', lastPointer, false));
     if (target.isDragging()) target.stopDrag();
+    drag.releaseCallMs = performance.now() - dragReleasedAt;
     drag.end = { ...target.position() };
     const from = parentInverse!.point(pointer);
     const to = parentInverse!.point(lastPointer);
@@ -308,7 +317,7 @@ export async function runInteractionBenchmark({
       clearTimeout(timeout);
       signal?.removeEventListener('abort', onAbort);
       document.removeEventListener('visibilitychange', onVisibility);
-      target?.off('.freeSceneBenchmark');
+      stage.off('.freeSceneBenchmark');
       if (target?.isDragging()) target.stopDrag();
       countAttachments(observer.takeRecords());
       observer.disconnect();
@@ -343,6 +352,8 @@ export async function runInteractionBenchmark({
             const returned = original.call(this);
             if (drag && dragStartedAt !== undefined && drag.firstDrawAfterStartMs === null)
               drag.firstDrawAfterStartMs = performance.now() - dragStartedAt;
+            if (drag && dragReleasedAt !== undefined && drag.firstDrawAfterReleaseMs === null)
+              drag.firstDrawAfterReleaseMs = performance.now() - dragReleasedAt;
             if (measuring) {
               drawDurationsMs.push(performance.now() - startedAt);
               drawLayerIndices.push(index);

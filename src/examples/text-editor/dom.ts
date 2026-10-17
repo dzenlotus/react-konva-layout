@@ -87,6 +87,7 @@ export function syncEditorStyles(
   const fontStyle = target.fontStyle();
   const fill = target.fill();
   const wrap = target.wrap();
+  const direction = target.getAttr('direction') as string | undefined;
 
   Object.assign(textarea.style, {
     transform: `matrix(${a * scaleX}, ${b * scaleY}, ${c * scaleX}, ${d * scaleY}, ${(e - a * paddingLeft - c * paddingTop) * scaleX}, ${(f - b * paddingLeft - d * paddingTop) * scaleY})`,
@@ -103,8 +104,7 @@ export function syncEditorStyles(
     padding: `${paddingTop + nativePadding}px ${paddingRight + nativePadding}px ${paddingBottom + nativePadding}px ${paddingLeft + nativePadding}px`,
     textAlign: target.align(),
     color: typeof fill === 'string' ? fill : bounds.fill,
-    direction:
-      target.direction() === 'inherit' ? (bounds.direction ?? 'inherit') : target.direction(),
+    direction: direction && direction !== 'inherit' ? direction : (bounds.direction ?? 'inherit'),
     whiteSpace: wrap === 'none' ? 'pre' : 'pre-wrap',
     overflowWrap: wrap === 'char' ? 'anywhere' : 'break-word',
     wordBreak: wrap === 'char' ? 'break-all' : 'normal',

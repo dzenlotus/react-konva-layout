@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.react16.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "emitDeclarationOnly": false,
+    "rootDir": ".",
+    "skipLibCheck": false,
+    "types": ["vite/client"]
+  },
+  "include": ["packages/react16/stress/main.tsx"]
+}

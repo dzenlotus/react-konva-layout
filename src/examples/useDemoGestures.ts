@@ -7,7 +7,7 @@ import { clampZoom, zoomAtPoint } from './camera';
 export function useDemoGestures(
   stage: RefObject<Konva.Stage | null>,
   enabled: boolean,
-  view: RefObject<ViewTransform>,
+  view: { readonly current: ViewTransform },
   setView: (next: Partial<ViewTransform>) => void,
 ): void {
   useEffect(() => {
