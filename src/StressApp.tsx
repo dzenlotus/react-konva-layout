@@ -65,7 +65,7 @@ export default function StressApp() {
               редактирование.
             </p>
           </div>
-          <a href="./">← Playground</a>
+          <a href="?nodes=1">Свободные ноды / drag →</a>
         </section>
         <div className="stress-controls">
           <div>
@@ -173,8 +173,8 @@ export default function StressApp() {
         />
         <footer className="stress-footer">
           <span>
-            Ноды расположены независимо; Flex внутри рассчитывает браузер. Размер описания может
-            менять высоту только своей ноды.
+            Фиксированная сетка для сравнения замеров. Свободное размещение, порядок и drag — в
+            примере «Свободные ноды».
           </span>
           <span>Кеш ≤32 MB · DPR устройства · выборочный Cell LOD задаёт приложение</span>
         </footer>

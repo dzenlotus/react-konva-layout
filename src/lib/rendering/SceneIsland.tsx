@@ -11,6 +11,7 @@ export interface IslandRenderOptions {
 export interface IslandProps extends IslandRenderOptions {
   island: Island;
   local?: boolean;
+  origin?: boolean;
 }
 
 export const SceneIsland = memo(function SceneIsland({
@@ -18,6 +19,7 @@ export const SceneIsland = memo(function SceneIsland({
   config,
   register,
   local = false,
+  origin = false,
 }: IslandProps) {
   const group = useRef<Konva.Group | null>(null);
   const { item } = island;
@@ -33,8 +35,8 @@ export const SceneIsland = memo(function SceneIsland({
       item={item}
       compact={config.compact}
       optimized={config.enabled}
-      x={local ? item.layout.x : item.layout.absoluteX}
-      y={local ? item.layout.y : item.layout.absoluteY}
+      x={origin ? 0 : local ? item.layout.x : item.layout.absoluteX}
+      y={origin ? 0 : local ? item.layout.y : item.layout.absoluteY}
       forceGroup={!island.shell}
       groupRef={setGroup}
       ancestors={ancestors}

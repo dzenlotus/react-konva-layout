@@ -95,6 +95,7 @@ export default function EmbeddedExample() {
     <main className="embedded-example">
       <nav>
         <a href="?playground=1">Playground</a>
+        <a href="?nodes=1">Свободные ноды / drag</a>
         <a href="?stress=1">1000 нод</a>
         <a href="https://github.com/dzenlotus/react-konva-layout">GitHub ↗</a>
       </nav>

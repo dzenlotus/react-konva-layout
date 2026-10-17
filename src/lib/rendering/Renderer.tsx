@@ -1,10 +1,11 @@
 import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Konva from 'konva';
 import type { SceneNode } from '../model';
-import type { PerformanceOptions, RenderMetrics } from '../types';
+import type { LayoutPlacement, PerformanceOptions, RenderMetrics } from '../types';
 import { observeHost, readHost, type Bounds, type HostState } from '../host';
 import { DrawNode } from './DrawNode';
 import { FullScene } from './FullScene';
+import { resolvePlacements } from './placements';
 import { allocatedCacheBytes, cacheDensity, cacheRoot, type CacheEntry } from './cache';
 import {
   compileIslands,
@@ -19,6 +20,7 @@ export interface RendererProps {
   scene: SceneNode[];
   root: Konva.Group | null;
   performance?: PerformanceOptions;
+  placements?: readonly LayoutPlacement[];
   onRenderStats?: (metrics: RenderMetrics) => void;
 }
 
@@ -54,6 +56,8 @@ function selectIslands(
   host: HostState | null,
   config: Settings,
   actualBounds: WeakMap<SceneNode, Bounds>,
+  placements: Map<string, LayoutPlacement>,
+  dragging: Set<string>,
 ): Island[] {
   if (!host?.visible) return [];
   if (!config.cull) return islands;
@@ -63,9 +67,21 @@ function selectIslands(
     width: host.viewport.width + VIEWPORT_PADDING * 2,
     height: host.viewport.height + VIEWPORT_PADDING * 2,
   };
-  return islands.filter((island) =>
-    intersects(actualBounds.get(island.item) ?? island.bounds, viewport),
-  );
+  return islands.filter((island) => {
+    if (dragging.has(island.key)) return true;
+    const bounds = actualBounds.get(island.item) ?? island.bounds;
+    const placement = placements.get(island.key);
+    return intersects(
+      placement
+        ? {
+            ...bounds,
+            x: bounds.x + placement.x - island.item.layout.absoluteX,
+            y: bounds.y + placement.y - island.item.layout.absoluteY,
+          }
+        : bounds,
+      viewport,
+    );
+  });
 }
 
 function sameSelection(previous: Island[], items: Island[]): boolean {
@@ -73,7 +89,13 @@ function sameSelection(previous: Island[], items: Island[]): boolean {
 }
 
 /** Renders Konva children inside a host-owned Group, Stage and Layer. */
-export default memo(function Renderer({ scene, root, performance, onRenderStats }: RendererProps) {
+export default memo(function Renderer({
+  scene,
+  root,
+  performance,
+  placements,
+  onRenderStats,
+}: RendererProps) {
   const [density, setDensity] = useState(1);
   const densityRef = useRef(density);
   const fixedRatio = performance?.cachePixelRatio;
@@ -94,6 +116,11 @@ export default memo(function Renderer({ scene, root, performance, onRenderStats 
     ],
   );
   const islands = useMemo(() => compileIslands(scene), [scene]);
+  const placed = useMemo(() => resolvePlacements(islands, placements), [islands, placements]);
+  const placementsRef = useRef(new Map<string, LayoutPlacement>());
+  placementsRef.current = new Map(placed.map(({ island, placement }) => [island.key, placement]));
+  const dragging = useRef(new Set<string>());
+  const dragFrame = useRef(0);
   const configRef = useRef(config);
   const islandsRef = useRef(islands);
   const sceneRef = useRef(scene);
@@ -152,13 +179,37 @@ export default memo(function Renderer({ scene, root, performance, onRenderStats 
         setDensity(nextDensity);
       }
     }
-    const next = selectIslands(islandsRef.current, host, currentConfig, actualBounds.current);
+    const next = selectIslands(
+      islandsRef.current,
+      host,
+      currentConfig,
+      actualBounds.current,
+      placementsRef.current,
+      dragging.current,
+    );
     const previous = selectionRef.current;
     if (!sameSelection(previous, next)) {
       selectionRef.current = next;
       setSelection(next);
     }
   }, []);
+
+  const onDragState = useCallback(
+    (key: string, active: boolean) => {
+      if (active) {
+        dragging.current.add(key);
+        selectVisible();
+      } else if (dragging.current.delete(key) && mounted.current) {
+        // The application commits final coordinates in onDragEnd's React batch.
+        cancelAnimationFrame(dragFrame.current);
+        dragFrame.current = requestAnimationFrame(() => {
+          dragFrame.current = 0;
+          selectVisible();
+        });
+      }
+    },
+    [selectVisible],
+  );
 
   const register = useCallback(
     (island: Island, group: Konva.Group, allowed: boolean) => {
@@ -190,7 +241,7 @@ export default memo(function Renderer({ scene, root, performance, onRenderStats 
   useLayoutEffect(() => {
     selectVisible();
     report();
-  }, [islands, config, selectVisible, report]);
+  }, [islands, placed, config, selectVisible, report]);
   useLayoutEffect(() => {
     report();
   }, [selection, scene, report]);
@@ -201,22 +252,30 @@ export default memo(function Renderer({ scene, root, performance, onRenderStats 
     return () => {
       mounted.current = false;
       cancelAnimationFrame(statsFrame.current);
+      cancelAnimationFrame(dragFrame.current);
       statsFrame.current = 0;
+      dragFrame.current = 0;
+      dragging.current.clear();
       entries.current.forEach((entry) => entry.group.clearCache());
       entries.current.clear();
     };
   }, [report]);
 
   if (!root) return null;
-  return config.enabled ? (
+  if (!config.enabled && placed.length === 0) {
+    return scene.map((item) => (
+      <DrawNode key={item.key} item={item} compact={false} optimized={false} />
+    ));
+  }
+  return (
     <FullScene
       scene={scene}
       allIslands={islands}
-      islands={selection}
+      islands={config.enabled ? selection : islands}
+      placed={placed}
+      onDragState={onDragState}
       config={config}
       register={register}
     />
-  ) : (
-    scene.map((item) => <DrawNode key={item.key} item={item} compact={false} optimized={false} />)
   );
 });

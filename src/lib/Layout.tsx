@@ -1,11 +1,13 @@
 import {
   forwardRef,
+  memo,
   useCallback,
   useImperativeHandle,
   useLayoutEffect,
   useRef,
   useState,
   useSyncExternalStore,
+  type ReactNode,
 } from 'react';
 import Konva from 'konva';
 import { Group, useContextBridge } from 'react-konva';
@@ -15,6 +17,39 @@ import { MeasurementRoot } from './measurementRoot';
 import { observeHost } from './host/observeHost';
 import Renderer from './rendering/Renderer';
 import type { LayoutComponentProps, LayoutHandle } from './types';
+
+/** Camera and placement updates cannot reconcile the detached measurement tree. */
+const MeasurementContent = memo(function MeasurementContent({
+  engine,
+  children,
+}: {
+  engine: MeasurementEngine;
+  children: ReactNode;
+}) {
+  const measurement = useRef<MeasurementRoot | null>(null);
+  const lifetime = useRef(0);
+  const Bridge = useContextBridge();
+  useLayoutEffect(() => {
+    lifetime.current += 1;
+    measurement.current ??= new MeasurementRoot(engine);
+    return () => {
+      engine.stop();
+      const ended = ++lifetime.current;
+      // Preserve the second renderer's component state during StrictMode replay.
+      queueMicrotask(() => {
+        if (lifetime.current !== ended) return;
+        measurement.current?.dispose();
+        measurement.current = null;
+        engine.dispose();
+      });
+    };
+  }, [engine]);
+  useLayoutEffect(() => {
+    // Context updates still render this component and forward their current values.
+    measurement.current?.render(Bridge, children);
+  });
+  return null;
+});
 
 /** Measures one logical layout and draws it in the caller's existing Konva tree. */
 export const Layout = forwardRef<LayoutHandle, LayoutComponentProps>(function Layout(
@@ -26,6 +61,7 @@ export const Layout = forwardRef<LayoutHandle, LayoutComponentProps>(function La
     id,
     debug = false,
     performance,
+    placements,
     children,
     onLayout,
     onMeasure,
@@ -39,9 +75,6 @@ export const Layout = forwardRef<LayoutHandle, LayoutComponentProps>(function La
   const logicalHeight = height ?? hostSize.height;
   const [root, setRoot] = useState<Konva.Group | null>(null);
   const group = useRef<Konva.Group | null>(null);
-  const measurement = useRef<MeasurementRoot | null>(null);
-  const lifetime = useRef(0);
-  const Bridge = useContextBridge();
   const snapshot = useSyncExternalStore(engine.subscribe, engine.getSnapshot, engine.getSnapshot);
 
   const attachGroup = useCallback((node: Konva.Group | null) => {
@@ -61,23 +94,6 @@ export const Layout = forwardRef<LayoutHandle, LayoutComponentProps>(function La
     }),
     [engine],
   );
-
-  useLayoutEffect(() => {
-    lifetime.current += 1;
-    measurement.current ??= new MeasurementRoot(engine);
-    return () => {
-      engine.stop();
-      const ended = ++lifetime.current;
-      // A second renderer cannot be synchronously unmounted during a Konva commit.
-      // The token also preserves the DOM component state during StrictMode replay.
-      queueMicrotask(() => {
-        if (lifetime.current !== ended) return;
-        measurement.current?.dispose();
-        measurement.current = null;
-        engine.dispose();
-      });
-    };
-  }, [engine]);
 
   useLayoutEffect(() => {
     engine.configure({
@@ -109,19 +125,15 @@ export const Layout = forwardRef<LayoutHandle, LayoutComponentProps>(function La
     };
   }, [engine, root]);
 
-  useLayoutEffect(() => {
-    // ContextBridge forwards application providers into the detached DOM renderer.
-    // The drawing renderer observes camera changes independently of this component.
-    measurement.current?.render(Bridge, children);
-  });
-
   return (
     <LayoutContext.Provider value={engine.context}>
+      <MeasurementContent engine={engine}>{children}</MeasurementContent>
       <Group ref={attachGroup} x={x} y={y} id={id} width={logicalWidth} height={logicalHeight}>
         <Renderer
           scene={snapshot.scene}
           root={root}
           performance={performance}
+          placements={placements}
           onRenderStats={onRenderStats}
         />
       </Group>

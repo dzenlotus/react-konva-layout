@@ -1,0 +1,298 @@
+{
+  "version": "0.6.0",
+  "sourceBase": "e62d69d",
+  "environment": {
+    "build": "production",
+    "devicePixelRatio": 2,
+    "canvasPixelRatio": 2,
+    "viewport": {
+      "width": 1600,
+      "height": 1000
+    },
+    "stage": {
+      "width": 1374,
+      "height": 678
+    }
+  },
+  "scene": {
+    "nodes": 1000,
+    "modelNodes": 35001,
+    "independentRoots": 1000,
+    "initialMeasuredNodes": 1035,
+    "initialTemplateHits": 999,
+    "idleMeasurementHtml": 0
+  },
+  "checks": {
+    "drag": {
+      "id": "free-node-0001",
+      "hit": "free-node-0001",
+      "before": {
+        "x": 365,
+        "y": 35
+      },
+      "after": {
+        "id": "free-node-0001",
+        "x": 512.0588235294117,
+        "y": 108.52941176470587
+      },
+      "nativePosition": {
+        "x": 512.0588235294117,
+        "y": 108.52941176470587
+      },
+      "delta": {
+        "x": 147.0588235294117,
+        "y": 73.52941176470587
+      },
+      "expectedDelta": {
+        "x": 147.05882352941177,
+        "y": 73.52941176470588
+      },
+      "selected": "free-node-0001",
+      "front": "free-node-0001",
+      "wrapperSame": true,
+      "innerSame": true,
+      "modelSame": true,
+      "siblingModelSame": true,
+      "cacheSame": true,
+      "wasCached": true,
+      "revisionDelta": 0,
+      "measurementReads": 0,
+      "measurementAttachments": 0,
+      "idleHtml": 0,
+      "ratio": 2
+    },
+    "presentation": {
+      "hitFront": "free-node-0000",
+      "hitReversed": "free-node-0001",
+      "expectedHit": ["free-node-0000", "free-node-0001"],
+      "orderMatches": true,
+      "all1000ModelRefsStable": true,
+      "zooms": [
+        {
+          "scale": 0.1,
+          "rootSame": true,
+          "size": {
+            "width": 360,
+            "height": 429.78125
+          },
+          "position": {
+            "id": "free-node-0001",
+            "x": 512.0588235294117,
+            "y": 108.52941176470587
+          },
+          "html": 0,
+          "ratio": 2
+        },
+        {
+          "scale": 0.05,
+          "rootSame": true,
+          "size": {
+            "width": 360,
+            "height": 429.78125
+          },
+          "position": {
+            "id": "free-node-0001",
+            "x": 512.0588235294117,
+            "y": 108.52941176470587
+          },
+          "html": 0,
+          "ratio": 2
+        },
+        {
+          "scale": 0.68,
+          "rootSame": true,
+          "size": {
+            "width": 360,
+            "height": 429.78125
+          },
+          "position": {
+            "id": "free-node-0001",
+            "x": 512.0588235294117,
+            "y": 108.52941176470587
+          },
+          "html": 0,
+          "ratio": 2
+        }
+      ],
+      "beforeCull": true,
+      "culled": true,
+      "restored": {
+        "x": 512.0588235294117,
+        "y": 108.52941176470587
+      },
+      "measurementReads": 0,
+      "measurementAttachments": 0,
+      "revisionDelta": 2
+    },
+    "lowZoomDrags": [
+      {
+        "scale": 0.1,
+        "delta": {
+          "x": 319.9999999999999,
+          "y": 160
+        },
+        "expected": {
+          "x": 320,
+          "y": 160
+        },
+        "modelSame": true,
+        "revisionDelta": 0,
+        "measurementReads": 0,
+        "html": 0
+      },
+      {
+        "scale": 0.05,
+        "delta": {
+          "x": 640,
+          "y": 320.0000000000002
+        },
+        "expected": {
+          "x": 640,
+          "y": 320
+        },
+        "modelSame": true,
+        "revisionDelta": 0,
+        "measurementReads": 0,
+        "html": 0
+      }
+    ],
+    "localText": {
+      "scope": "local",
+      "measuredNodes": 35,
+      "roots": ["free-node-0001"],
+      "measurementReads": 35,
+      "beforeHeight": 429.78125,
+      "afterHeight": 683.28125,
+      "worldPositionSame": true,
+      "other999ModelsStable": true,
+      "siblingId": "free-node-0058",
+      "siblingGroupSame": true,
+      "siblingCacheSame": true,
+      "html": 0
+    },
+    "editor": {
+      "editor": true,
+      "editorPosition": {
+        "x": 400.52001953125,
+        "y": 295.791259765625
+      },
+      "expectedTextPosition": {
+        "x": 400.52,
+        "y": 295.79125
+      },
+      "closed": true,
+      "scope": "local",
+      "measuredNodes": 35,
+      "measurementReads": 35,
+      "position": {
+        "id": "free-node-0001",
+        "x": 512.0588235294117,
+        "y": 108.52941176470587
+      },
+      "height": 390.78125,
+      "html": 0
+    },
+    "dragCulling": {
+      "pinnedWhileDragging": true,
+      "nativeDragActive": true,
+      "culledAfterDrop": true,
+      "savedPosition": {
+        "id": "free-node-0001",
+        "x": 3453.2352941176464,
+        "y": 137.94117647058823
+      },
+      "modelSame": true,
+      "revisionDelta": 0,
+      "restoredPosition": {
+        "x": 512.0588235294117,
+        "y": 108.52941176470587
+      },
+      "html": 0
+    }
+  },
+  "notes": [
+    "Browser-dispatched mouse events exercise native Konva drag; no physical touch-device claim.",
+    "Pan/zoom changes Cell LOD visual revisions; zero geometry reads and stable model references verified separately.",
+    "No new FPS or CPU-throttled performance comparison is claimed for the free graph."
+  ],
+  "coldStartAtFivePercent": {
+    "view": {
+      "x": 36,
+      "y": 28,
+      "scale": 0.05
+    },
+    "modelRoots": 1000,
+    "root": {
+      "width": 360,
+      "height": 429.78125
+    },
+    "metrics": {
+      "scope": "full",
+      "measuredNodes": 1035,
+      "measuredRoots": ["free-world"],
+      "templateHits": 999,
+      "templateMisses": 1,
+      "durationMs": 155.70000004768372,
+      "revision": 1
+    },
+    "visibleRoots": 768,
+    "photoCount": 0,
+    "placeholderCount": 768,
+    "canvasPixelRatio": 2,
+    "html": 0
+  },
+  "controls": {
+    "fit": {
+      "id": "free-node-0994",
+      "measuredHeight": 2477.28125,
+      "bottomOnScreen": 638,
+      "stageHeight": 678,
+      "inside": true
+    },
+    "positionsChanged": true,
+    "orderChanged": true,
+    "all1000ModelRefsStable": true,
+    "measurementReads": 0,
+    "html": 0
+  },
+  "pointerAndWheel": {
+    "combinedPointerAndMouseDrag": {
+      "before": {
+        "x": 365,
+        "y": 35
+      },
+      "after": {
+        "id": "free-node-0001",
+        "x": 453.2352941176471,
+        "y": 82.05882352941175
+      },
+      "cameraUnchanged": true
+    },
+    "wheel": {
+      "scaleBefore": 0.68,
+      "scaleAfter": 0.7900472850552326,
+      "expected": 0.7900472850552326
+    },
+    "modelSame": true,
+    "revisionDelta": 0,
+    "measurementReads": 0,
+    "html": 0
+  },
+  "legacyGridSmoke": {
+    "optimized": {
+      "complete": true,
+      "cards": 1000,
+      "primitives": 35001,
+      "measuredNodes": 1035
+    },
+    "baseline": {
+      "complete": true,
+      "cards": 1000,
+      "renderedCards": 1000,
+      "primitives": 35001,
+      "measuredNodes": 35001
+    },
+    "canvasPixelRatio": 2,
+    "idleMeasurementHtml": 0
+  }
+}

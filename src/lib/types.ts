@@ -1,5 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react';
 import type Konva from 'konva';
+import type { KonvaNodeEvents } from 'react-konva';
 
 export type LayoutNodeType =
   'flex' | 'row' | 'col' | 'grid' | 'box' | 'text' | 'cell' | 'cell-text';
@@ -160,6 +161,19 @@ export interface LayoutContextValue {
   getMetrics(): LayoutMetrics | null;
 }
 
+/** Canvas placement of an explicit, independent layoutRoot; array order is back to front. */
+export interface LayoutPlacement extends Pick<
+  KonvaNodeEvents,
+  'onClick' | 'onTap' | 'onMouseDown' | 'onTouchStart' | 'onDragStart' | 'onDragMove' | 'onDragEnd'
+> {
+  id: string;
+  /** Coordinates relative to Layout's Konva group, independent of measured HTML positions. */
+  x: number;
+  y: number;
+  draggable?: boolean;
+  dragBoundFunc?: Konva.NodeConfig['dragBoundFunc'];
+}
+
 export interface LayoutComponentProps {
   width?: number;
   height?: number;
@@ -168,6 +182,7 @@ export interface LayoutComponentProps {
   id?: string;
   debug?: boolean;
   performance?: PerformanceOptions;
+  placements?: readonly LayoutPlacement[];
   children: ReactNode;
   onLayout?: (tree: LayoutNode[]) => void;
   onMeasure?: (metrics: LayoutMetrics) => void;
