@@ -12,6 +12,7 @@ import {
   type CSSProperties,
   type ReactNode,
 } from 'react'
+import { createPortal } from 'react-dom'
 import { Group, Layer, Rect, Stage, Text } from 'react-konva'
 
 export type LayoutNodeType = 'flex' | 'row' | 'col' | 'grid' | 'box' | 'text'
@@ -222,12 +223,23 @@ const debugCss = `
   }
 `
 
-/** A single mounted DOM tree supplies native browser layout to the Konva scene. */
+/** Portal components stay mounted; their DOM is attached only for measurement/debug. */
 export const LayoutCanvas = forwardRef<LayoutCanvasHandle, LayoutCanvasProps>(function LayoutCanvas({
   width, height, debug = false, onLayout, children, style, className,
 }, forwardedRef) {
   const host = useRef<HTMLDivElement>(null)
-  const root = useRef<HTMLDivElement>(null)
+  const [root] = useState(() => {
+    const element = document.createElement('div')
+    element.className = 'konva-layout-measure'
+    element.setAttribute('aria-hidden', 'true')
+    Object.assign(element.style, {
+      position: 'absolute', left: '0', top: '0', opacity: '0',
+      pointerEvents: 'none', zIndex: '1', fontFamily: 'Arial, sans-serif',
+      fontSize: '16px', lineHeight: '1.2',
+    })
+    return element
+  })
+  const mounted = useRef(false)
   const debugRef = useRef(debug)
   const registrations = useRef(new Map<string, Registration>())
   const observer = useRef<ResizeObserver | null>(null)
@@ -242,12 +254,12 @@ export const LayoutCanvas = forwardRef<LayoutCanvasHandle, LayoutCanvasProps>(fu
 
   const measure = useCallback(() => {
     frame.current = 0
-    if (!root.current) return
-    const element = root.current
-    element.style.display = 'block'
+    if (!mounted.current || !host.current?.isConnected) return
+    const element = root
     element.style.opacity = debugRef.current ? '1' : '0'
     element.dataset.layoutState = debugRef.current ? 'debug' : 'measuring'
-    if (host.current) host.current.dataset.layoutState = element.dataset.layoutState
+    host.current.dataset.layoutState = element.dataset.layoutState
+    if (element.parentElement !== host.current) host.current.appendChild(element)
     try {
       const origin = element.getBoundingClientRect()
       const ordered = Array.from(element.querySelectorAll<HTMLDivElement>('[data-layout-key]'))
@@ -299,24 +311,28 @@ export const LayoutCanvas = forwardRef<LayoutCanvasHandle, LayoutCanvasProps>(fu
         onLayoutRef.current?.(tree)
       }
     } finally {
-      // Hidden elements stay mounted for refs/testids but leave browser layout entirely.
-      element.style.display = debugRef.current ? 'block' : 'none'
+      // Detaching the portal removes all measurement HTML without resetting React state.
+      if (!mounted.current || !debugRef.current) element.remove()
       element.style.opacity = debugRef.current ? '1' : '0'
       element.dataset.layoutState = debugRef.current ? 'debug' : 'idle'
       if (host.current) host.current.dataset.layoutState = element.dataset.layoutState
     }
-  }, [])
+  }, [root])
 
   const schedule = useCallback(() => {
-    if (!frame.current) frame.current = requestAnimationFrame(measure)
+    if (mounted.current && !frame.current) frame.current = requestAnimationFrame(measure)
   }, [measure])
 
   useImperativeHandle(forwardedRef, () => ({ remeasure: schedule }), [schedule])
 
   useLayoutEffect(() => {
     debugRef.current = debug
+    root.style.width = `${width}px`
+    root.style.height = `${height}px`
+    root.dataset.debug = String(debug)
+    if (!debug) root.remove()
     schedule()
-  }, [debug, schedule])
+  }, [debug, width, height, root, schedule])
 
   const registry = useMemo<LayoutRegistry>(() => ({
     update(record) {
@@ -333,7 +349,8 @@ export const LayoutCanvas = forwardRef<LayoutCanvasHandle, LayoutCanvasProps>(fu
   }), [schedule])
 
   useLayoutEffect(() => {
-    const element = root.current!
+    mounted.current = true
+    const element = root
     const resizeObserver = new ResizeObserver((entries) => {
       if (entries.some((entry) => entry.target === host.current
         || entry.contentRect.width > 0 || entry.contentRect.height > 0)) schedule()
@@ -360,6 +377,7 @@ export const LayoutCanvas = forwardRef<LayoutCanvasHandle, LayoutCanvasProps>(fu
     schedule()
     return () => {
       active = false
+      mounted.current = false
       cancelAnimationFrame(frame.current)
       frame.current = 0
       resizeObserver.disconnect()
@@ -367,8 +385,9 @@ export const LayoutCanvas = forwardRef<LayoutCanvasHandle, LayoutCanvasProps>(fu
       mutations.disconnect()
       document.fonts.removeEventListener('loadingdone', fontsChanged)
       window.removeEventListener('resize', schedule)
+      element.remove()
     }
-  }, [schedule])
+  }, [root, schedule])
 
   return (
     <div ref={host} className={className} data-layout-state={debug ? 'debug' : 'idle'}
@@ -376,15 +395,10 @@ export const LayoutCanvas = forwardRef<LayoutCanvasHandle, LayoutCanvasProps>(fu
       <Stage width={width} height={height} style={{ position: 'absolute', inset: 0 }}>
         <Layer>{scene.map((item) => <DrawNode key={item.key} item={item} />)}</Layer>
       </Stage>
-      <style>{debugCss}</style>
-      <div ref={root} className="konva-layout-measure" data-debug={debug}
-        data-layout-state={debug ? 'debug' : 'idle'} aria-hidden="true"
-        style={{ position: 'absolute', left: 0, top: 0, width, height,
-          display: debug ? 'block' : 'none',
-          opacity: debug ? 1 : 0, pointerEvents: 'none', zIndex: 1,
-          fontFamily: 'Arial, sans-serif', fontSize: 16, lineHeight: 1.2 }}>
+      {createPortal(<>
+        <style>{debugCss}</style>
         <RegistryContext.Provider value={registry}>{children}</RegistryContext.Provider>
-      </div>
+      </>, root)}
     </div>
   )
 })

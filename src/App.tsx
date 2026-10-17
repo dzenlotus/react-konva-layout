@@ -198,7 +198,7 @@ export default function App() {
             {scene !== 'node' ? <div className="field-spacer"><Label tag="children">Элементы</Label><div className="stepper"><button aria-label="Удалить элемент" disabled={count <= 1} onClick={() => setCount(n => n - 1)}>−</button><output>{count}</output><button aria-label="Добавить элемент" disabled={count >= 9} onClick={() => setCount(n => n + 1)}>+</button></div></div> : null}
           </div>
           <div className="overlay-control"><div><strong>Показать layout</strong><p>Границы HTML поверх canvas</p></div><button className={`switch ${debug ? 'on' : ''}`} role="switch" aria-checked={debug} aria-label="Показать layout" onClick={() => setDebug(v => !v)}><span /></button></div>
-          <div className="testid-note"><code>display: none</code><p>После замера HTML отключается. Пересчёт — при изменениях или по кнопке. Testid остаются в DOM.</p></div>
+          <div className="testid-note"><code>DOM detached</code><p>После замера HTML-дерево удаляется из документа. Testid доступны при измерении и в debug.</p></div>
         </aside>
       </div>
 
