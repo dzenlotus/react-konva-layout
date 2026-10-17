@@ -1,4 +1,4 @@
-import type { MeasurementResult, Registration } from '../model';
+import type { BoundaryContext, MeasurementResult, Registration, SceneNode } from '../model';
 import { CssPolicy } from './CssPolicy';
 import { MeasurementCache } from './MeasurementCache';
 import { MeasurementReader } from './MeasurementReader';
@@ -68,7 +68,9 @@ export class MeasurementPass {
     if (!this.policy.canMeasureLocally(record.element, this.root)) return null;
 
     this.pause();
-    const restore = debug ? this.clearDebugTransform() : this.isolate(record, host);
+    const restore = debug
+      ? this.clearDebugTransform()
+      : this.isolate(record, host, previous, context);
     try {
       const result = this.read(record.element, host, enabled, record);
       const next = result.roots[0];
@@ -123,9 +125,12 @@ export class MeasurementPass {
     };
   }
 
-  private isolate(record: Registration, host: HTMLElement): () => void {
-    const previous = this.store.byKey.get(record.key)!;
-    const context = this.cache.boundaries.get(record.key)!;
+  private isolate(
+    record: Registration,
+    host: HTMLElement,
+    previous: SceneNode,
+    context: BoundaryContext,
+  ): () => void {
     const container = this.root.cloneNode(false) as HTMLDivElement;
     container.dataset.layoutScope = 'local';
     container.dataset.layoutState = 'measuring';

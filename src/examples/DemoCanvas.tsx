@@ -13,6 +13,7 @@ import { Layer, Stage } from 'react-konva';
 import { Layout } from '../lib';
 import type { LayoutComponentProps, LayoutHandle, LayoutNode, ViewTransform } from '../lib';
 import { useDemoGestures } from './useDemoGestures';
+import { clampZoom, finiteOr } from './camera';
 
 export interface DemoCanvasHandle extends LayoutHandle {
   getView(): ViewTransform;
@@ -46,12 +47,10 @@ export const DemoCanvas = forwardRef<DemoCanvasHandle, DemoCanvasProps>(function
 
   const setView = useCallback((next: Partial<ViewTransform>) => {
     const current = view.current;
-    const scale = Number.isFinite(next.scale)
-      ? Math.min(8, Math.max(0.02, next.scale!))
-      : current.scale;
+    const scale = clampZoom(finiteOr(next.scale, current.scale));
     const updated = {
-      x: Number.isFinite(next.x) ? next.x! : current.x,
-      y: Number.isFinite(next.y) ? next.y! : current.y,
+      x: finiteOr(next.x, current.x),
+      y: finiteOr(next.y, current.y),
       scale,
     };
     view.current = updated;

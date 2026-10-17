@@ -1,6 +1,7 @@
 import type Konva from 'konva';
 import type { TextStyle } from '../model';
 import type { LayoutNode } from '../types';
+import { createEditorElements, resizeEditor, syncEditorStyles } from './dom';
 
 export interface TextEditorHandle {
   /** Cancel this edit session and release its DOM and listeners. */
@@ -72,49 +73,16 @@ export function openTextEditor({
   onClose,
 }: OpenTextEditorOptions): TextEditorHandle {
   const stage = target.getStage();
-  const view = stage?.content.ownerDocument.defaultView;
-  if (!stage || !view) {
+  const ownerWindow = stage?.content.ownerDocument.defaultView;
+  if (!stage || !ownerWindow) {
     onClose(false);
     return Object.assign(() => {}, { update() {} });
   }
 
-  const document = stage.content.ownerDocument;
-  const root = document.createElement('div');
-  const textarea = document.createElement('textarea');
-  root.dataset.layoutTextEditor = 'true';
-  Object.assign(root.style, {
-    position: 'absolute',
-    inset: '0',
-    overflow: 'hidden',
-    pointerEvents: 'none',
-    zIndex: '10',
-  });
-  textarea.dataset.testid = 'layout-text-editor';
-  textarea.setAttribute('aria-label', 'Edit text');
-  textarea.rows = 1;
-  textarea.spellcheck = true;
-  textarea.value = target.text();
-  Object.assign(textarea.style, {
-    position: 'absolute',
-    left: '0',
-    top: '0',
-    margin: '0',
-    border: '0',
-    boxSizing: 'border-box',
-    transformOrigin: '0 0',
-    resize: 'none',
-    overflow: 'hidden',
-    background: 'transparent',
-    outline: '2px solid #2563eb',
-    outlineOffset: '2px',
-    borderRadius: '2px',
-    pointerEvents: 'auto',
-    userSelect: 'text',
-    minWidth: '1px',
-    maxWidth: 'none',
-    maxHeight: 'none',
-  });
-  root.appendChild(textarea);
+  const view: Window = ownerWindow;
+  const listeners = new AbortController();
+  const { signal } = listeners;
+  const { root, textarea } = createEditorElements(stage.content.ownerDocument, target.text());
   stage.content.appendChild(root);
 
   const originalValue = textarea.value;
@@ -154,15 +122,7 @@ export function openTextEditor({
       item.on(destroyEvent, cancelDestroyed);
     });
   };
-  const fitHeight = () => {
-    const minimum = Math.max(
-      1,
-      node.height,
-      target.height() + textStyle.paddingTop + textStyle.paddingBottom,
-    );
-    textarea.style.height = '0px';
-    textarea.style.height = `${Math.max(minimum, textarea.scrollHeight)}px`;
-  };
+  const fitHeight = () => resizeEditor(textarea, target, node, textStyle);
   const update = () => {
     if (finished) return;
     if (target.getStage() !== stage) {
@@ -170,46 +130,12 @@ export function openTextEditor({
       return;
     }
     bindNodes();
-    const css = view.getComputedStyle(stage.content);
-    // CSS transforms on the Stage's DOM ancestors are inherited by the editor.
-    // Only a CSS viewport size different from the logical Stage needs conversion.
-    const scaleX = (parseFloat(css.width) || stage.width()) / (stage.width() || 1);
-    const scaleY = (parseFloat(css.height) || stage.height()) / (stage.height() || 1);
-    const [a, b, c, d, e, f] = target.getAbsoluteTransform().getMatrix();
-    const { paddingLeft, paddingTop, paddingRight, paddingBottom } = textStyle;
-    const nativePadding = target.padding();
-    const fontStyle = target.fontStyle();
-    const fill = target.fill();
-    const wrap = target.wrap();
-    Object.assign(textarea.style, {
-      // Text starts at the content inset; the editor covers the entire measured box.
-      transform: `matrix(${a * scaleX}, ${b * scaleY}, ${c * scaleX}, ${d * scaleY}, ${(e - a * paddingLeft - c * paddingTop) * scaleX}, ${(f - b * paddingLeft - d * paddingTop) * scaleY})`,
-      width: `${Math.max(1, target.width() + paddingLeft + paddingRight)}px`,
-      fontFamily: target.fontFamily(),
-      fontSize: `${target.fontSize()}px`,
-      fontStyle: /\b(italic|oblique)\b/.exec(fontStyle)?.[1] ?? 'normal',
-      fontWeight: /\b(bold|bolder|lighter|[1-9]\d{0,2}|1000)\b/.exec(fontStyle)?.[1] ?? 'normal',
-      fontVariant: target.fontVariant(),
-      lineHeight: String(target.lineHeight()),
-      letterSpacing: `${target.letterSpacing()}px`,
-      wordSpacing: textStyle.wordSpacing ?? 'normal',
-      // Konva padding is inside the Text bounds; HTML padding surrounds those bounds.
-      padding: `${paddingTop + nativePadding}px ${paddingRight + nativePadding}px ${paddingBottom + nativePadding}px ${paddingLeft + nativePadding}px`,
-      textAlign: target.align(),
-      color: typeof fill === 'string' ? fill : textStyle.color,
-      direction:
-        target.direction() === 'inherit' ? (textStyle.direction ?? 'inherit') : target.direction(),
-      whiteSpace: wrap === 'none' ? 'pre' : (textStyle.whiteSpace ?? 'pre-wrap'),
-      overflowWrap: wrap === 'char' ? 'anywhere' : (textStyle.overflowWrap ?? 'break-word'),
-      wordBreak: wrap === 'char' ? 'break-all' : (textStyle.wordBreak ?? 'normal'),
-      textTransform: textStyle.textTransform ?? 'none',
-    });
-    textarea.wrap = wrap === 'none' ? 'off' : 'soft';
+    syncEditorStyles(textarea, target, stage, view, textStyle);
     fitHeight();
   };
   function scheduleUpdate() {
     if (finished || frame !== null) return;
-    frame = view!.requestAnimationFrame(() => {
+    frame = view.requestAnimationFrame(() => {
       frame = null;
       update();
     });
@@ -218,19 +144,12 @@ export function openTextEditor({
   function finish(saved: boolean) {
     if (finished) return;
     finished = true;
-    if (frame !== null) view!.cancelAnimationFrame(frame);
-    if (focusFrame !== null) view!.cancelAnimationFrame(focusFrame);
-    if (blurTimer !== null) view!.clearTimeout(blurTimer);
+    if (frame !== null) view.cancelAnimationFrame(frame);
+    if (focusFrame !== null) view.cancelAnimationFrame(focusFrame);
+    if (blurTimer !== null) view.clearTimeout(blurTimer);
     observedNodes.forEach((item) => item.off(`.${namespace}`));
     resizeObserver.disconnect();
-    view!.removeEventListener('resize', scheduleUpdate);
-    view!.removeEventListener('scroll', scheduleUpdate, true);
-    isolatedEvents.forEach((event) => textarea.removeEventListener(event, stopPropagation));
-    textarea.removeEventListener('input', fitHeight);
-    textarea.removeEventListener('keydown', keyDown);
-    textarea.removeEventListener('blur', blur);
-    textarea.removeEventListener('compositionstart', compositionStart);
-    textarea.removeEventListener('compositionend', compositionEnd);
+    listeners.abort();
     root.remove();
     if (!destroyed) {
       target.visible(originalVisibility);
@@ -253,9 +172,9 @@ export function openTextEditor({
     }
   }
   function scheduleBlurCommit() {
-    if (blurTimer !== null) view!.clearTimeout(blurTimer);
+    if (blurTimer !== null) view.clearTimeout(blurTimer);
     // Let the browser flush its final composition/input before reading the value.
-    blurTimer = view!.setTimeout(() => {
+    blurTimer = view.setTimeout(() => {
       blurTimer = null;
       if (!composing) finish(true);
     }, 0);
@@ -272,16 +191,16 @@ export function openTextEditor({
     if (blurred) scheduleBlurCommit();
   }
 
-  isolatedEvents.forEach((event) => textarea.addEventListener(event, stopPropagation));
-  textarea.addEventListener('input', fitHeight);
-  textarea.addEventListener('keydown', keyDown);
-  textarea.addEventListener('blur', blur);
-  textarea.addEventListener('compositionstart', compositionStart);
-  textarea.addEventListener('compositionend', compositionEnd);
+  isolatedEvents.forEach((event) => textarea.addEventListener(event, stopPropagation, { signal }));
+  textarea.addEventListener('input', fitHeight, { signal });
+  textarea.addEventListener('keydown', keyDown, { signal });
+  textarea.addEventListener('blur', blur, { signal });
+  textarea.addEventListener('compositionstart', compositionStart, { signal });
+  textarea.addEventListener('compositionend', compositionEnd, { signal });
   resizeObserver.observe(stage.content);
   resizeObserver.observe(stage.container());
-  view.addEventListener('resize', scheduleUpdate);
-  view.addEventListener('scroll', scheduleUpdate, { capture: true, passive: true });
+  view.addEventListener('resize', scheduleUpdate, { signal });
+  view.addEventListener('scroll', scheduleUpdate, { capture: true, passive: true, signal });
   update();
   target.hide();
   target.getLayer()?.batchDraw();

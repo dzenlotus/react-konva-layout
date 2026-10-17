@@ -16,6 +16,8 @@ export class SceneStore {
     children: SceneNode[],
   ): SceneNode {
     const previous = this.byKey.get(record.key);
+    const visualPropsUnchanged = previous && sameVisualProps(previous.props, record.props);
+    const textStyleUnchanged = previous && sameTextStyle(previous.textStyle, textStyle);
     const childLayouts = children.map((child) => child.layout);
     const sameLayout =
       previous &&
@@ -36,18 +38,16 @@ export class SceneStore {
     if (
       previous &&
       layout === previous.layout &&
-      sameTextStyle(previous.textStyle, textStyle) &&
-      sameVisualProps(previous.props, record.props) &&
+      textStyleUnchanged &&
+      visualPropsUnchanged &&
       sameArray(previous.children, children)
     )
       return previous;
     const item: SceneNode = {
       key: record.key,
       layout,
-      props:
-        previous && sameVisualProps(previous.props, record.props) ? previous.props : record.props,
-      textStyle:
-        previous && sameTextStyle(previous.textStyle, textStyle) ? previous.textStyle : textStyle,
+      props: visualPropsUnchanged ? previous.props : record.props,
+      textStyle: textStyleUnchanged ? previous.textStyle : textStyle,
       children,
       revision: this.revision + 1,
     };
@@ -62,6 +62,7 @@ export class SceneStore {
     replacements: Map<string, SceneNode>,
     registrations: Map<string, Registration>,
   ): SceneNode[] {
+    if (replacements.size === 0) return scene;
     const affected = new Set<string>();
     for (const key of replacements.keys()) {
       let parent = registrations.get(key)?.parent;
@@ -81,16 +82,20 @@ export class SceneStore {
     return scene.map(patch);
   }
 
-  publish(scene: SceneNode[], measured: Omit<LayoutMetrics, 'revision'>): EngineSnapshot {
+  publish(
+    scene: SceneNode[],
+    measured: Omit<LayoutMetrics, 'revision'>,
+  ): EngineSnapshot & { metrics: LayoutMetrics } {
     const previous = this.snapshot;
     const stableScene = sameArray(previous.scene, scene) ? previous.scene : scene;
     const tree = stableScene.map((item) => item.layout);
-    this.snapshot = {
+    const snapshot = {
       scene: stableScene,
       tree: sameArray(previous.tree, tree) ? previous.tree : tree,
       metrics: { ...measured, revision: ++this.revision },
     };
-    return this.snapshot;
+    this.snapshot = snapshot;
+    return snapshot;
   }
 
   remove(key: string): void {

@@ -4,6 +4,7 @@ import { Group, Layer, Rect, Shape, Stage } from 'react-konva';
 import type { LayoutHandle, LayoutMetrics, ViewTransform } from '../lib';
 import { ReferenceNode } from './ReferenceNode';
 import { useDemoGestures } from './useDemoGestures';
+import { zoomAtPoint } from './camera';
 import './embedded.css';
 
 const CANVAS_WIDTH = 960;
@@ -79,13 +80,9 @@ export default function EmbeddedExample() {
     setSelectedPort(`${side === 'input' ? 'Вход' : 'Выход'} ${index + 1}`);
   }, []);
   const zoom = () => {
-    const previous = viewRef.current,
-      scale = previous.scale === 1 ? 0.8 : 1;
-    setCamera({
-      scale,
-      x: CANVAS_WIDTH / 2 - ((CANVAS_WIDTH / 2 - previous.x) * scale) / previous.scale,
-      y: CANVAS_HEIGHT / 2 - ((CANVAS_HEIGHT / 2 - previous.y) * scale) / previous.scale,
-    });
+    const previous = viewRef.current;
+    const scale = previous.scale === 1 ? 0.8 : 1;
+    setCamera(zoomAtPoint(previous, { x: CANVAS_WIDTH / 2, y: CANVAS_HEIGHT / 2 }, scale));
   };
 
   return (

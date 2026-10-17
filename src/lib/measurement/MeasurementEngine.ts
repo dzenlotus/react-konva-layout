@@ -16,6 +16,11 @@ interface EngineConfiguration {
   onMeasure?: (metrics: LayoutMetrics) => void;
 }
 
+interface MeasurementUpdate {
+  scene: SceneNode[];
+  metrics: Omit<LayoutMetrics, 'durationMs' | 'revision'>;
+}
+
 export const measurementCss = `
 .konva-layout-text:empty::before { content: "\\200b"; }
 .konva-layout-measure[data-debug="true"] .konva-layout-node {
@@ -193,6 +198,7 @@ export class MeasurementEngine {
     if (previous?.props.id && previous.props.id !== record.props.id)
       this.keysById.delete(previous.props.id);
     if (record.props.id) this.keysById.set(record.props.id, record.key);
+    if (previous && previous.element !== record.element) this.observers.remove(previous);
     this.observers.observe(record);
     if (!sameGeometry) {
       // A boundary's own constraints depend on its parent layout context.
@@ -242,71 +248,98 @@ export class MeasurementEngine {
     this.frame = 0;
     if (!this.host?.isConnected || !this.committed) return;
     const started = performance.now();
-    const pending = [...this.dirty];
-    const visual = [...this.visualDirty];
-    let fallback =
+    const dirtyRoots = [...this.dirty];
+    const visualKeys = [...this.visualDirty];
+    const needsFullPass =
       this.configuration.performance?.enabled === false ||
       this.fullDirty ||
       this.store.snapshot.scene.length === 0;
     this.dirty.clear();
     this.visualDirty.clear();
     this.fullDirty = false;
-    let next = this.store.snapshot.scene;
-    let scope: LayoutMetrics['scope'] = 'visual';
-    let measuredNodes = 0;
-    let templateHits = 0;
-    let templateMisses = 0;
-    let measuredRoots: string[] = [];
-    if (!fallback && pending.length) {
-      scope = 'local';
-      const pendingKeys = new Set(pending);
-      const selected = pending.filter((key) => {
-        let parent = this.registrations.get(key)?.parent;
-        while (parent) {
-          if (pendingKeys.has(parent)) return false;
-          parent = this.registrations.get(parent)?.parent;
-        }
-        return true;
-      });
+    const { scene, metrics } = this.measure(dirtyRoots, needsFullPass, this.host);
+    const next = this.updateVisuals(scene, visualKeys);
+    const previousTree = this.store.snapshot.tree;
+    const snapshot = this.store.publish(next, {
+      ...metrics,
+      durationMs: performance.now() - started,
+    });
+    for (const listener of this.listeners) listener();
+    if (previousTree !== snapshot.tree) this.configuration.onLayout?.(snapshot.tree);
+    if (metrics.scope !== 'visual') this.configuration.onMeasure?.(snapshot.metrics);
+  };
+
+  /** A dirty ancestor already includes its descendants in the same read. */
+  private independentRoots(keys: string[]): string[] {
+    const pendingKeys = new Set(keys);
+    return keys.filter((key) => {
+      let parent = this.registrations.get(key)?.parent;
+      while (parent) {
+        if (pendingKeys.has(parent)) return false;
+        parent = this.registrations.get(parent)?.parent;
+      }
+      return true;
+    });
+  }
+
+  private measure(
+    dirtyRoots: string[],
+    needsFullPass: boolean,
+    host: HTMLElement,
+  ): MeasurementUpdate {
+    let scene = this.store.snapshot.scene;
+    const metrics: MeasurementUpdate['metrics'] = {
+      scope: 'visual',
+      measuredNodes: 0,
+      measuredRoots: [],
+      templateHits: 0,
+      templateMisses: 0,
+    };
+    const debug = Boolean(this.configuration.debug);
+    if (!needsFullPass && dirtyRoots.length) {
+      metrics.scope = 'local';
       const replacements = new Map<string, SceneNode>();
-      for (const key of selected) {
+      for (const key of this.independentRoots(dirtyRoots)) {
         const record = this.registrations.get(key);
-        const result = record
-          ? this.pass.local(record, this.host, Boolean(this.configuration.debug), true)
-          : null;
-        if (!result) {
-          fallback = true;
+        if (!record) {
+          needsFullPass = true;
           break;
         }
-        measuredNodes += result.nodes;
-        templateHits += result.hits;
-        templateMisses += result.misses;
-        measuredRoots.push(record!.props.id ?? key);
+        const result = this.pass.local(record, host, debug, true);
+        if (!result) {
+          needsFullPass = true;
+          break;
+        }
+        metrics.measuredNodes += result.nodes;
+        metrics.templateHits += result.hits;
+        metrics.templateMisses += result.misses;
+        metrics.measuredRoots.push(record.props.id ?? key);
         if (result.fallback) {
-          fallback = true;
+          needsFullPass = true;
           break;
         }
         replacements.set(key, result.roots[0]);
       }
-      if (!fallback) next = this.store.replaceSubtrees(next, replacements, this.registrations);
+      if (!needsFullPass)
+        scene = this.store.replaceSubtrees(scene, replacements, this.registrations);
     }
-    if (fallback) {
-      const result = this.pass.full(
-        this.host,
-        Boolean(this.configuration.debug),
-        this.configuration.performance?.enabled !== false,
-      );
-      scope = 'full';
-      next = result.roots;
-      measuredNodes += result.nodes;
-      templateHits += result.hits;
-      templateMisses += result.misses;
-      measuredRoots = [
-        ...new Set([...measuredRoots, ...result.roots.map((item) => item.layout.id)]),
+    if (needsFullPass) {
+      const result = this.pass.full(host, debug, this.configuration.performance?.enabled !== false);
+      metrics.scope = 'full';
+      scene = result.roots;
+      metrics.measuredNodes += result.nodes;
+      metrics.templateHits += result.hits;
+      metrics.templateMisses += result.misses;
+      metrics.measuredRoots = [
+        ...new Set([...metrics.measuredRoots, ...result.roots.map((item) => item.layout.id)]),
       ];
     }
+    return { scene, metrics };
+  }
+
+  private updateVisuals(scene: SceneNode[], keys: string[]): SceneNode[] {
     const replacements = new Map<string, SceneNode>();
-    for (const key of visual) {
+    for (const key of keys) {
       const record = this.registrations.get(key);
       const previous = this.store.byKey.get(key);
       if (record && previous)
@@ -315,19 +348,6 @@ export class MeasurementEngine {
           this.store.reconcile(record, previous.layout, previous.textStyle, previous.children),
         );
     }
-    if (replacements.size)
-      next = this.store.replaceSubtrees(next, replacements, this.registrations);
-    const previousTree = this.store.snapshot.tree;
-    const snapshot = this.store.publish(next, {
-      scope,
-      measuredNodes,
-      measuredRoots,
-      durationMs: performance.now() - started,
-      templateHits,
-      templateMisses,
-    });
-    for (const listener of this.listeners) listener();
-    if (previousTree !== snapshot.tree) this.configuration.onLayout?.(snapshot.tree);
-    if (scope !== 'visual') this.configuration.onMeasure?.(snapshot.metrics!);
-  };
+    return this.store.replaceSubtrees(scene, replacements, this.registrations);
+  }
 }

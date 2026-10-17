@@ -1,6 +1,12 @@
 import type { SceneNode, PrimitiveProps } from '../model';
 import type { PerformanceOptions } from '../types';
 import type { Bounds } from '../host';
+import type Konva from 'konva';
+
+export type BeginEdit = (item: SceneNode, target: Konva.Text, islandKey: string) => void;
+
+export const DEFAULT_LOD_FILL = '#e4eadd';
+export const DEFAULT_LOD_STROKE = '#a8b69b';
 
 export interface Events {
   click: Array<() => void>;
@@ -27,6 +33,16 @@ export interface Settings {
   lodScale: number;
 }
 export const emptyEvents: Events = { click: [], doubleClick: [], doubleTap: [] };
+
+export function hasEvents(events: Events): boolean {
+  return events.click.length > 0 || events.doubleClick.length > 0 || events.doubleTap.length > 0;
+}
+
+/** Logical ancestors were flattened during scene compilation; preserve their bubbling order. */
+export function dispatchEvents(own: (() => void) | undefined, ancestors: Array<() => void>): void {
+  own?.();
+  ancestors.forEach((callback) => callback());
+}
 const information = new WeakMap<SceneNode, { bounds: Bounds; roots: boolean; count: number }>();
 const descriptorCache = new WeakMap<SceneNode, Island>();
 const shells = new WeakMap<SceneNode, SceneNode>();

@@ -31,6 +31,11 @@ const inheritedProperties = [
   'font-kerning',
 ];
 const outerPositionKeys = new Set(['left', 'top', 'right', 'bottom', 'inset', 'translate']);
+const geometryPropKeys = [...layoutKeys, ...typographyKeys];
+const SIGNATURE_LIMIT = 8192;
+const TEXT_STYLE_LIMIT = 512;
+const BOUNDARY_STYLE_LIMIT = 128;
+const TEMPLATE_LIMIT = 128;
 
 export function token(value: unknown): string {
   const string = String(value ?? '');
@@ -58,7 +63,12 @@ function hasFixedSize(value: unknown): boolean {
   );
 }
 
-function lruSet<Key, Value>(cache: Map<Key, Value>, key: Key, value: Value, limit: number): void {
+function storeBounded<Key, Value>(
+  cache: Map<Key, Value>,
+  key: Key,
+  value: Value,
+  limit: number,
+): void {
   cache.delete(key);
   cache.set(key, value);
   if (cache.size > limit) cache.delete(cache.keys().next().value!);
@@ -105,7 +115,7 @@ export class MeasurementCache {
     const previous = this.signatures.get(value);
     if (previous !== undefined) return previous;
     const id = this.nextSignatureId++;
-    lruSet(this.signatures, value, id, 8192);
+    storeBounded(this.signatures, value, id, SIGNATURE_LIMIT);
     return id;
   };
 
@@ -129,7 +139,7 @@ export class MeasurementCache {
     if (previous !== undefined) return previous;
     let value = `${record.type};`;
     if (record.props.direction !== undefined) value += `direction=${token(record.props.direction)}`;
-    for (const key of [...layoutKeys, ...typographyKeys]) {
+    for (const key of geometryPropKeys) {
       if (record.props[key] !== undefined) value += `${key}=${token(record.props[key])}`;
     }
     value += styleSignature(record.props.style, omitOuterPosition);
@@ -151,7 +161,7 @@ export class MeasurementCache {
     const previous = enabled ? this.textStyles.get(key) : undefined;
     if (previous) return previous;
     const value = readTextStyle(record.element, this.fontRevision);
-    lruSet(this.textStyles, key, value, 512);
+    storeBounded(this.textStyles, key, value, TEXT_STYLE_LIMIT);
     return value;
   }
 
@@ -182,7 +192,7 @@ export class MeasurementCache {
         boxSizing: css.boxSizing,
         transformed: css.transform !== 'none',
       };
-      lruSet(this.boundaryStyles, key, value, 128);
+      storeBounded(this.boundaryStyles, key, value, BOUNDARY_STYLE_LIMIT);
     }
     this.boundaries.set(record.key, { ...value, width: geometry.width });
     return value;
@@ -190,11 +200,11 @@ export class MeasurementCache {
 
   getTemplate(key: string): TemplateEntry | undefined {
     const value = this.templates.get(key);
-    if (value) lruSet(this.templates, key, value, 128);
+    if (value) storeBounded(this.templates, key, value, TEMPLATE_LIMIT);
     return value;
   }
 
   setTemplate(key: string, value: TemplateEntry): void {
-    lruSet(this.templates, key, value, 128);
+    storeBounded(this.templates, key, value, TEMPLATE_LIMIT);
   }
 }

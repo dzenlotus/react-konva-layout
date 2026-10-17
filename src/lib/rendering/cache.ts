@@ -8,12 +8,18 @@ export interface CacheEntry {
   reserved: number;
 }
 
+const MIN_CACHE_DENSITY = 0.25;
+const DENSITY_DOWNSIZE_THRESHOLD = 0.45;
+const CACHE_PADDING = 2;
+const BYTES_PER_PIXEL = 4;
+
 /** Powers of two avoid rebuilding caches on every zoom step; downsizing has hysteresis. */
 export function cacheDensity(scale: number, pixelRatio: number, previous = 1): number {
   const product = scale * pixelRatio;
-  const required = Math.max(0.25, Number.isNaN(product) ? 1 : product);
-  const current = Number.isFinite(previous) && previous > 0 ? Math.max(0.25, previous) : 1;
-  if (required <= current && required > current * 0.45) return current;
+  const required = Math.max(MIN_CACHE_DENSITY, Number.isNaN(product) ? 1 : product);
+  const current =
+    Number.isFinite(previous) && previous > 0 ? Math.max(MIN_CACHE_DENSITY, previous) : 1;
+  if (required <= current && required > current * DENSITY_DOWNSIZE_THRESHOLD) return current;
   const next = 2 ** Math.ceil(Math.log2(required));
   return Number.isFinite(next) ? next : Number.MAX_VALUE;
 }
@@ -22,7 +28,7 @@ export function allocatedCacheBytes(group: Konva.Group): number {
   const cache = group._getCanvasCache();
   if (!cache) return 0;
   return [cache.scene, cache.filter, cache.hit].reduce(
-    (bytes, canvas) => bytes + (canvas ? canvas.width * canvas.height * 4 : 0),
+    (bytes, canvas) => bytes + (canvas ? canvas.width * canvas.height * BYTES_PER_PIXEL : 0),
     0,
   );
 }
@@ -42,45 +48,48 @@ export function cacheRoot(
   config: Settings,
 ): () => void {
   releaseRoot(entries, island.key);
-  if (
-    allowed &&
-    config.cache &&
-    island.item.props.cache !== false &&
-    (island.complex || island.item.props.cache === true)
-  ) {
-    const bounds = group.getClientRect({ skipTransform: true });
-    if (
-      bounds.width > 0 &&
-      bounds.height > 0 &&
-      [bounds.x, bounds.y, bounds.width, bounds.height].every(Number.isFinite)
-    ) {
-      actualBounds.set(island.item, {
-        ...bounds,
-        x: bounds.x + island.item.layout.absoluteX,
-        y: bounds.y + island.item.layout.absoluteY,
-      });
-      const ratio = config.cacheRatio;
-      const width = Math.ceil(bounds.width + 4),
-        height = Math.ceil(bounds.height + 4);
-      // Reserve scene + hit + filter surfaces, including future lazy allocations.
-      const reserved =
-        4 * (Math.ceil(width * ratio) * Math.ceil(height * ratio) * 2 + width * height);
-      const used = [...entries.values()].reduce((bytes, entry) => bytes + entry.reserved, 0);
-      if (Number.isFinite(reserved) && reserved <= config.budget - used) {
-        group.cache({
-          x: Math.floor(bounds.x) - 2,
-          y: Math.floor(bounds.y) - 2,
-          width,
-          height,
-          pixelRatio: ratio,
-          hitCanvasPixelRatio: 1,
-        });
-        if (group.isCached()) entries.set(island.key, { group, reserved });
-      }
-    }
-  }
-  return () => {
+  const release = () => {
     group.clearCache();
     if (entries.get(island.key)?.group === group) entries.delete(island.key);
   };
+  const shouldCache =
+    allowed &&
+    config.cache &&
+    island.item.props.cache !== false &&
+    (island.complex || island.item.props.cache === true);
+  if (!shouldCache) return release;
+
+  const bounds = group.getClientRect({ skipTransform: true });
+  if (
+    bounds.width <= 0 ||
+    bounds.height <= 0 ||
+    ![bounds.x, bounds.y, bounds.width, bounds.height].every(Number.isFinite)
+  )
+    return release;
+
+  actualBounds.set(island.item, {
+    ...bounds,
+    x: bounds.x + island.item.layout.absoluteX,
+    y: bounds.y + island.item.layout.absoluteY,
+  });
+  const ratio = config.cacheRatio;
+  const width = Math.ceil(bounds.width + CACHE_PADDING * 2);
+  const height = Math.ceil(bounds.height + CACHE_PADDING * 2);
+  // Reserve scene + filter at the chosen density, plus the 1x hit surface.
+  const reserved =
+    BYTES_PER_PIXEL * (Math.ceil(width * ratio) * Math.ceil(height * ratio) * 2 + width * height);
+  let used = 0;
+  for (const entry of entries.values()) used += entry.reserved;
+  if (!(Number.isFinite(reserved) && reserved <= config.budget - used)) return release;
+
+  group.cache({
+    x: Math.floor(bounds.x) - CACHE_PADDING,
+    y: Math.floor(bounds.y) - CACHE_PADDING,
+    width,
+    height,
+    pixelRatio: ratio,
+    hitCanvasPixelRatio: 1,
+  });
+  if (group.isCached()) entries.set(island.key, { group, reserved });
+  return release;
 }

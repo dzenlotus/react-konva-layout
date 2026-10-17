@@ -7,13 +7,14 @@ interface ObserverCallbacks {
 
 /** Browser signals are translated to dirtiness; observers never perform layout reads. */
 export class MeasurementObservers {
-  private resize: ResizeObserver | null = null;
-  private mutations: MutationObserver | null = null;
-  private styles: MutationObserver | null = null;
+  private resizeObserver: ResizeObserver | null = null;
+  private mutationObserver: MutationObserver | null = null;
+  private stylesheetObserver: MutationObserver | null = null;
   private sizes = new WeakMap<Element, { width: number; height: number }>();
   private observing = false;
   private active = false;
   private debug = false;
+  private lifetime = 0;
 
   constructor(
     private readonly root: HTMLDivElement,
@@ -25,7 +26,7 @@ export class MeasurementObservers {
     this.stop();
     this.active = true;
     this.debug = debug;
-    this.resize = new ResizeObserver((entries) => {
+    this.resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
         if (!entry.target.isConnected || (!entry.contentRect.width && !entry.contentRect.height))
           continue;
@@ -39,21 +40,22 @@ export class MeasurementObservers {
           this.callbacks.schedule((entry.target as HTMLElement).dataset.layoutKey);
       }
     });
-    this.resize.observe(host);
-    this.resize.observe(this.root);
+    this.resizeObserver.observe(host);
+    this.resizeObserver.observe(this.root);
     this.setDebug(debug);
-    this.mutations = new MutationObserver((records) => this.changed(records));
+    this.mutationObserver = new MutationObserver((records) => this.changed(records));
     this.resume();
-    this.styles = new MutationObserver(() => this.callbacks.cssChanged());
-    this.styles.observe(document.head, {
+    this.stylesheetObserver = new MutationObserver(() => this.callbacks.cssChanged());
+    this.stylesheetObserver.observe(document.head, {
       subtree: true,
       childList: true,
       characterData: true,
       attributes: true,
     });
     const fontsWereLoading = document.fonts.status === 'loading';
+    const lifetime = this.lifetime;
     void document.fonts.ready.then(() => {
-      if (this.active && fontsWereLoading) this.fontsChanged();
+      if (this.active && this.lifetime === lifetime && fontsWereLoading) this.fontsChanged();
     });
     document.fonts.addEventListener('loadingdone', this.fontsChanged);
     window.addEventListener('resize', this.globalCssChanged);
@@ -62,12 +64,13 @@ export class MeasurementObservers {
 
   stop(): void {
     this.active = false;
-    this.resize?.disconnect();
-    this.resize = null;
+    this.lifetime += 1;
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = null;
     this.pause();
-    this.mutations = null;
-    this.styles?.disconnect();
-    this.styles = null;
+    this.mutationObserver = null;
+    this.stylesheetObserver?.disconnect();
+    this.stylesheetObserver = null;
     document.fonts.removeEventListener('loadingdone', this.fontsChanged);
     window.removeEventListener('resize', this.globalCssChanged);
     document.removeEventListener('load', this.stylesheetLoaded, true);
@@ -77,27 +80,27 @@ export class MeasurementObservers {
     this.debug = debug;
     for (const record of this.registrations.values()) {
       if (!record.props.layoutRoot) continue;
-      if (debug) this.resize?.observe(record.element);
-      else this.resize?.unobserve(record.element);
+      this.observe(record);
     }
   }
 
   observe(record: Registration): void {
-    if (this.debug && record.props.layoutRoot) this.resize?.observe(record.element);
+    if (this.debug && record.props.layoutRoot) this.resizeObserver?.observe(record.element);
+    else this.resizeObserver?.unobserve(record.element);
   }
 
   remove(record: Registration): void {
-    this.resize?.unobserve(record.element);
+    this.resizeObserver?.unobserve(record.element);
   }
 
   pause = (): void => {
-    this.mutations?.disconnect();
+    this.mutationObserver?.disconnect();
     this.observing = false;
   };
 
   resume = (): void => {
-    if (!this.active || !this.mutations) return;
-    this.mutations.observe(this.root, {
+    if (!this.active || !this.mutationObserver) return;
+    this.mutationObserver.observe(this.root, {
       subtree: true,
       childList: true,
       characterData: true,

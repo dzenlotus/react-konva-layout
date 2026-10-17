@@ -32,10 +32,15 @@ export function readHost(root: Konva.Group, overscan = 0): HostState | null {
     { x: stage.width() + overscan, y: stage.height() + overscan },
     { x: -overscan, y: stage.height() + overscan },
   ].map((point) => transform.point(point));
-  const x = Math.min(...points.map((point) => point.x)),
-    y = Math.min(...points.map((point) => point.y));
-  const trace = a * a + b * b + c * c + d * d,
-    determinant = a * d - b * c;
+  const xs = points.map((point) => point.x);
+  const ys = points.map((point) => point.y);
+  const x = Math.min(...xs);
+  const y = Math.min(...ys);
+  const trace = a * a + b * b + c * c + d * d;
+  const determinant = a * d - b * c;
+  // Largest singular value: safe screen stretch for rotated, skewed and nonuniform hosts.
+  const discriminant = Math.max(0, trace * trace - 4 * determinant * determinant);
+  const scale = Math.sqrt((trace + Math.sqrt(discriminant)) / 2);
   return {
     stage,
     matrix,
@@ -45,12 +50,10 @@ export function readHost(root: Konva.Group, overscan = 0): HostState | null {
     viewport: {
       x,
       y,
-      width: Math.max(...points.map((point) => point.x)) - x,
-      height: Math.max(...points.map((point) => point.y)) - y,
+      width: Math.max(...xs) - x,
+      height: Math.max(...ys) - y,
     },
-    scale: Math.sqrt(
-      (trace + Math.sqrt(Math.max(0, trace * trace - 4 * determinant * determinant))) / 2,
-    ),
+    scale,
   };
 }
 

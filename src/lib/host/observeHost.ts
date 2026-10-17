@@ -2,7 +2,7 @@ import type Konva from 'konva';
 import { readHost } from './coordinates';
 
 let observerId = 0;
-const attributes = [
+const HOST_ATTRIBUTES = [
   'x',
   'y',
   'scaleX',
@@ -22,19 +22,19 @@ const attributes = [
 /** Subscribe to the host's transforms and size; never own or change its camera. */
 export function observeHost(root: Konva.Group, onChange: () => void): () => void {
   const namespace = `layoutHost${++observerId}`;
-  const events = attributes.map((attribute) => `${attribute}Change.${namespace}`).join(' ');
-  let nodes: Konva.Node[] = [],
-    layer: Konva.Layer | null = null,
-    stage: Konva.Stage | null = null;
-  let frame = 0,
-    signature = '',
-    disposed = false;
+  const events = HOST_ATTRIBUTES.map((attribute) => `${attribute}Change.${namespace}`).join(' ');
+  let nodes: Konva.Node[] = [];
+  let layer: Konva.Layer | null = null;
+  let stage: Konva.Stage | null = null;
+  let frame = 0;
+  let signature = '';
+  let disposed = false;
   const resize = new ResizeObserver(() => schedule());
   const changed = () => {
     if (disposed) return;
     const ancestors: Konva.Node[] = [root, ...root.getAncestors()];
-    const nextLayer = root.getLayer(),
-      nextStage = root.getStage();
+    const nextLayer = root.getLayer();
+    const nextStage = root.getStage();
     if (
       ancestors.length !== nodes.length ||
       ancestors.some((node, index) => node !== nodes[index])

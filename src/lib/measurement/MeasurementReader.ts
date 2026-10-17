@@ -122,10 +122,9 @@ export class MeasurementReader {
     return key;
   }
 
-  private descendants(record: Registration): Registration[] {
-    const result = [record];
-    for (const child of this.children.get(record.key) ?? [])
-      result.push(...this.descendants(child));
+  private collectSubtree(record: Registration, result: Registration[] = []): Registration[] {
+    result.push(record);
+    for (const child of this.children.get(record.key) ?? []) this.collectSubtree(child, result);
     return result;
   }
 
@@ -191,7 +190,7 @@ export class MeasurementReader {
     }
     const subtree =
       enabled && record.props.layoutRoot && record.props.layoutTemplate && !skipTemplate
-        ? this.descendants(record)
+        ? this.collectSubtree(record)
         : undefined;
     const key = subtree ? this.templateSignature(subtree, contextKey, geometry) : undefined;
     const cached = key ? cache.getTemplate(key) : undefined;

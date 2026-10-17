@@ -1,6 +1,7 @@
 import { useEffect, type RefObject } from 'react';
 import type Konva from 'konva';
 import type { ViewTransform } from '../lib';
+import { clampZoom, zoomAtPoint } from './camera';
 
 /** Example application camera controls; the library installs no camera handlers. */
 export function useDemoGestures(
@@ -10,8 +11,9 @@ export function useDemoGestures(
   setView: (next: Partial<ViewTransform>) => void,
 ): void {
   useEffect(() => {
-    if (!enabled || !stage.current) return;
-    const container = stage.current.container();
+    const currentStage = stage.current;
+    if (!enabled || !currentStage) return;
+    const container = currentStage.container();
     const oldTouchAction = container.style.touchAction;
     container.style.touchAction = 'none';
     const pointers = new Map<
@@ -25,8 +27,8 @@ export function useDemoGestures(
     const point = (event: { clientX: number; clientY: number }) => {
       const rect = container.getBoundingClientRect();
       return {
-        x: ((event.clientX - rect.left) * stage.current!.width()) / rect.width,
-        y: ((event.clientY - rect.top) * stage.current!.height()) / rect.height,
+        x: ((event.clientX - rect.left) * currentStage.width()) / rect.width,
+        y: ((event.clientY - rect.top) * currentStage.height()) / rect.height,
       };
     };
     const pinch = () => {
@@ -41,18 +43,14 @@ export function useDemoGestures(
         current = view.current;
       const delta =
         event.deltaY *
-        (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? stage.current!.height() : 1);
-      const scale = Math.min(8, Math.max(0.02, current.scale * Math.exp(-delta * 0.0015)));
-      setView({
-        scale,
-        x: position.x - ((position.x - current.x) / current.scale) * scale,
-        y: position.y - ((position.y - current.y) / current.scale) * scale,
-      });
+        (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? currentStage.height() : 1);
+      const scale = clampZoom(current.scale * Math.exp(-delta * 0.0015));
+      setView(zoomAtPoint(current, position, scale));
     };
     const down = (event: PointerEvent) => {
       if (event.button !== 0 && event.button !== 1) return;
       const position = point(event);
-      const background = !stage.current?.getIntersection(position);
+      const background = !currentStage.getIntersection(position);
       const canPan = event.pointerType === 'touch' || event.button === 1 || space || background;
       pointers.set(event.pointerId, {
         ...position,
@@ -74,10 +72,7 @@ export function useDemoGestures(
       if (pointers.size > 1) {
         const next = pinch();
         if (lastPinch && next && lastPinch.distance > 0) {
-          const scale = Math.min(
-            8,
-            Math.max(0.02, (current.scale * next.distance) / lastPinch.distance),
-          );
+          const scale = clampZoom((current.scale * next.distance) / lastPinch.distance);
           setView({
             scale,
             x: next.x - ((lastPinch.x - current.x) / current.scale) * scale,
@@ -98,12 +93,12 @@ export function useDemoGestures(
           // Cancel the original press when it becomes a camera gesture, so custom shapes cannot receive a stray tap.
           const rect = container.getBoundingClientRect();
           pointers.forEach((pointer, pointerId) =>
-            stage.current?.content.dispatchEvent(
+            currentStage.content.dispatchEvent(
               new PointerEvent('pointercancel', {
                 pointerId,
                 pointerType: pointer.pointerType,
-                clientX: rect.left + (pointer.x * rect.width) / stage.current!.width(),
-                clientY: rect.top + (pointer.y * rect.height) / stage.current!.height(),
+                clientX: rect.left + (pointer.x * rect.width) / currentStage.width(),
+                clientY: rect.top + (pointer.y * rect.height) / currentStage.height(),
               }),
             ),
           );
@@ -170,5 +165,5 @@ export function useDemoGestures(
       container.removeEventListener('dblclick', suppressDragClick, true);
       container.removeEventListener('contextmenu', context);
     };
-  }, [enabled, setView, stage]);
+  }, [enabled, setView, stage, view]);
 }

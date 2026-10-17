@@ -1,7 +1,17 @@
 import { memo, useMemo, type ReactNode } from 'react';
 import type { SceneNode } from '../model';
-import { DrawNode, SceneIsland, type IslandProps } from './DrawNode';
+import { DrawNode } from './DrawNode';
+import { SceneIsland, type IslandRenderOptions } from './SceneIsland';
 import type { Island } from './scene';
+
+interface FullSceneProps extends IslandRenderOptions {
+  scene: SceneNode[];
+  allIslands: Island[];
+  islands: Island[];
+  editingKey?: string;
+  lod: boolean;
+  minimal: boolean;
+}
 
 /** Prune invisible islands while retaining the consumer's Flex/Cell group hierarchy. */
 export const FullScene = memo(function FullScene({
@@ -12,14 +22,7 @@ export const FullScene = memo(function FullScene({
   lod,
   minimal,
   ...props
-}: {
-  scene: SceneNode[];
-  allIslands: Island[];
-  islands: Island[];
-  editingKey?: string;
-  lod: boolean;
-  minimal: boolean;
-} & Omit<IslandProps, 'island' | 'lod' | 'minimal' | 'editing' | 'local'>) {
+}: FullSceneProps) {
   const forest = useMemo(() => {
     const boundaries = new Set(
       allIslands.filter((island) => !island.shell).map((island) => island.item.key),
