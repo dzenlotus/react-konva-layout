@@ -4,7 +4,7 @@ import { DesignedStressScene, EXPECTED_PRIMITIVES } from './examples/DesignedStr
 import { useStressBenchmark } from './stress/useStressBenchmark';
 import { StressResults } from './stress/StressResults';
 import type { Mode } from './stress/types';
-import { referenceNodeDetail } from './examples/referenceNodeDetail';
+import { referenceCardDetail } from './examples/referenceCardDetail';
 import './stress.css';
 
 export type { StressStats, StressResult } from './stress/types';
@@ -59,13 +59,13 @@ export default function StressApp() {
         <section className="stress-intro">
           <div>
             <p className="stress-eyebrow">BROWSER LAYOUT → VISIBLE CANVAS → LOCAL EDIT</p>
-            <h1>1 000 нод с новым дизайном.</h1>
+            <h1>1 000 карточек с новым дизайном.</h1>
             <p>
               Колесо — zoom к курсору. Фон — pan. Двойной клик или тап по description —
               редактирование.
             </p>
           </div>
-          <a href="?nodes=1">Свободные ноды / drag →</a>
+          <a href="?scene=1">Свободная сцена / drag →</a>
         </section>
         <div className="stress-controls">
           <div>
@@ -146,7 +146,7 @@ export default function StressApp() {
                   <DesignedStressScene
                     worldWidth={config.worldWidth}
                     previewImage={previewImage}
-                    {...referenceNodeDetail(view.scale)}
+                    {...referenceCardDetail(view.scale)}
                   />
                 </DemoCanvas>
               ) : (
@@ -174,7 +174,7 @@ export default function StressApp() {
         <footer className="stress-footer">
           <span>
             Фиксированная сетка для сравнения замеров. Свободное размещение, порядок и drag — в
-            примере «Свободные ноды».
+            примере «Свободная сцена».
           </span>
           <span>Кеш ≤32 MB · DPR устройства · выборочный Cell LOD задаёт приложение</span>
         </footer>

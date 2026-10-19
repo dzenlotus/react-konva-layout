@@ -1,9 +1,9 @@
 import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Konva from 'konva';
-import type { SceneNode } from '../model';
+import type { SceneElement } from '../model';
 import type { LayoutPlacement, PerformanceOptions, RenderMetrics } from '../types';
 import { observeHost, readHost, type Bounds, type HostState } from '../host';
-import { DrawNode } from './DrawNode';
+import { DrawElement } from './DrawElement';
 import { FullScene } from './FullScene';
 import { resolvePlacements, type PlacedIsland } from './placements';
 import { allocatedCacheBytes, cacheDensity, cacheRoot, type CacheEntry } from './cache';
@@ -17,7 +17,7 @@ import {
 } from './scene';
 
 export interface RendererProps {
-  scene: SceneNode[];
+  scene: SceneElement[];
   root: Konva.Group | null;
   performance?: PerformanceOptions;
   placements?: readonly LayoutPlacement[];
@@ -28,7 +28,7 @@ const VIEWPORT_PADDING = 32;
 
 interface StructureStats {
   root: Konva.Group;
-  scene: SceneNode[];
+  scene: SceneElement[];
   visible: Island[];
   islands: Island[];
   placed: PlacedIsland[];
@@ -83,7 +83,7 @@ function selectIslands(
   islands: Island[],
   host: HostState | null,
   config: Settings,
-  actualBounds: WeakMap<SceneNode, Bounds>,
+  actualBounds: WeakMap<SceneElement, Bounds>,
   placements: Map<string, LayoutPlacement>,
   dragging: Set<string>,
 ): Island[] {
@@ -163,7 +163,7 @@ export default memo(function Renderer({
     metrics: RenderMetrics;
   } | null>(null);
   const entries = useRef(new Map<string, CacheEntry>());
-  const actualBounds = useRef(new WeakMap<SceneNode, Bounds>());
+  const actualBounds = useRef(new WeakMap<SceneElement, Bounds>());
   const [selection, setSelection] = useState<Island[]>([]);
   const selectionRef = useRef(selection);
   configRef.current = config;
@@ -346,7 +346,7 @@ export default memo(function Renderer({
     return (
       <>
         {scene.map((item) => (
-          <DrawNode key={item.key} item={item} compact={false} optimized={false} />
+          <DrawElement key={item.key} item={item} compact={false} optimized={false} />
         ))}
       </>
     );

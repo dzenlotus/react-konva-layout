@@ -11,7 +11,7 @@ export interface StressStats {
   primitives: number;
   groups: number;
   shapes: number;
-  idleHtmlNodes: number;
+  idleHtmlElements: number;
   attachedMeasurementRoots: number;
   viewportWidth: number;
   viewportHeight: number;

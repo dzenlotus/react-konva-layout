@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { DemoCanvas, type DemoCanvasHandle } from './examples/DemoCanvas';
-import type { LayoutNode } from './lib';
+import type { LayoutElement } from './lib';
 import { Glyph } from './playground/Glyph';
 import { Inspector } from './playground/Inspector';
 import { LayoutOutput } from './playground/LayoutOutput';
@@ -12,29 +12,35 @@ import {
   type Scene,
 } from './playground/settings';
 
-function flatten(nodes: LayoutNode[]): LayoutNode[] {
-  return nodes.flatMap((node) => [node, ...flatten(node.children)]);
+function flatten(elements: LayoutElement[]): LayoutElement[] {
+  return elements.flatMap((element) => [element, ...flatten(element.children)]);
 }
 
 export default function App() {
-  const [scene, setScene] = useState<Scene>('node');
+  const [scene, setScene] = useState<Scene>('card');
   const [settings, setSettings] = useState(initialSettings);
-  const [tree, setTree] = useState<LayoutNode[]>([]);
-  const [selected, setSelected] = useState('node');
+  const [tree, setTree] = useState<LayoutElement[]>([]);
+  const [selected, setSelected] = useState('card');
   const layoutRef = useRef<DemoCanvasHandle>(null);
   const changeSettings = useCallback((changes: Partial<PlaygroundSettings>) => {
     setSettings((previous) => ({ ...previous, ...changes }));
   }, []);
   const { width, gap, direction, count, debug } = settings;
-  const nodes = useMemo(() => flatten(tree), [tree]);
-  const current = nodes.find((node) => node.id === selected) ?? tree[0];
+  const elements = useMemo(() => flatten(tree), [tree]);
+  const current = elements.find((element) => element.id === selected) ?? tree[0];
   const flexColumns = Math.max(1, Math.floor((width - 64 + gap) / (144 + gap)));
   const rows = direction === 'column' ? count : Math.ceil(count / flexColumns);
   const height =
-    scene === 'node'
-      ? Math.max(464, Math.ceil(nodes.find((node) => node.id === 'node')?.height ?? 0) + 56)
+    scene === 'card'
+      ? Math.max(
+          464,
+          Math.ceil(elements.find((element) => element.id === 'card')?.height ?? 0) + 56,
+        )
       : scene === 'grid'
-        ? Math.max(464, Math.ceil(nodes.find((node) => node.id === 'grid-root')?.height ?? 0))
+        ? Math.max(
+            464,
+            Math.ceil(elements.find((element) => element.id === 'grid-root')?.height ?? 0),
+          )
         : Math.max(464, rows * (96 + gap) - gap + 64);
   const code = exampleCode(scene, settings, height);
 
@@ -85,7 +91,7 @@ export default function App() {
           <section className="preview-panel" aria-label="Canvas playground">
             <div className="preview-toolbar">
               <div className="scene-tabs" role="tablist" aria-label="Пример раскладки">
-                {(['node', 'flex', 'grid'] as Scene[]).map((s) => (
+                {(['card', 'flex', 'grid'] as Scene[]).map((s) => (
                   <button
                     key={s}
                     role="tab"
@@ -93,10 +99,10 @@ export default function App() {
                     className={scene === s ? 'active' : ''}
                     onClick={() => {
                       setScene(s);
-                      setSelected(s === 'node' ? 'node' : `${s}-root`);
+                      setSelected(s === 'card' ? 'card' : `${s}-root`);
                     }}
                   >
-                    {s === 'node' ? 'Нода' : s === 'flex' ? 'Flex' : 'Grid'}
+                    {s === 'card' ? 'Карточка' : s === 'flex' ? 'Flex' : 'Grid'}
                   </button>
                 ))}
               </div>
@@ -140,7 +146,7 @@ export default function App() {
             <div className="preview-status">
               <span>
                 <span className="status-dot" />
-                {nodes.length} элементов измерено
+                {elements.length} элементов измерено
               </span>
               <span>
                 {width} × {height}
@@ -162,7 +168,7 @@ export default function App() {
           tree={tree}
           current={current}
           code={code}
-          nodeCount={nodes.length}
+          elementCount={elements.length}
           onSelect={setSelected}
         />
         <footer>
@@ -171,13 +177,13 @@ export default function App() {
             <span className="footer-dot">·</span> Рабочий прототип
           </span>
           <a href="?embedded=1">Встраивание в Stage/Layer ↗</a>
-          <a href="?stress=1">Стресс-тест: 1000 нод ↗</a>
+          <a href="?stress=1">Стресс-тест: 1000 карточек ↗</a>
           <a
             href="https://codesandbox.io/p/sandbox/reverent-darwin-sdgd8h?file=/src/App.js"
             target="_blank"
             rel="noreferrer"
           >
-            Структура ноды из примера ↗
+            Структура карточки из примера ↗
           </a>
         </footer>
       </main>

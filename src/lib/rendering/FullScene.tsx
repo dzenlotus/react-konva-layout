@@ -1,13 +1,13 @@
 import { memo, useMemo, type ReactNode } from 'react';
-import type { SceneNode } from '../model';
-import { DrawNode } from './DrawNode';
+import type { SceneElement } from '../model';
+import { DrawElement } from './DrawElement';
 import { SceneIsland, type IslandRenderOptions } from './SceneIsland';
 import { isReplacedCell, type Island } from './scene';
 import { PlacedRoot } from './PlacedRoot';
 import type { PlacedIsland } from './placements';
 
 interface FullSceneProps extends IslandRenderOptions {
-  scene: SceneNode[];
+  scene: SceneElement[];
   allIslands: Island[];
   islands: Island[];
   placed: PlacedIsland[];
@@ -29,7 +29,7 @@ export const FullScene = memo(function FullScene({
     );
     const selected = new Map(islands.map((island) => [island.key, island]));
     const placedKeys = new Set(placed.map(({ island }) => island.key));
-    const visit = (item: SceneNode): ReactNode => {
+    const visit = (item: SceneElement): ReactNode => {
       if (placedKeys.has(item.key)) return null;
       if (boundaries.has(item.key)) {
         const island = selected.get(item.key);
@@ -39,7 +39,7 @@ export const FullScene = memo(function FullScene({
       const shellVisible = selected.has(`${item.key}:shell`);
       if (!children.length && !shellVisible) return null;
       return (
-        <DrawNode
+        <DrawElement
           key={item.key}
           item={item}
           compact={props.config.compact}
@@ -48,7 +48,7 @@ export const FullScene = memo(function FullScene({
           ownVisible={shellVisible}
         >
           {children}
-        </DrawNode>
+        </DrawElement>
       );
     };
     return scene.map(visit);

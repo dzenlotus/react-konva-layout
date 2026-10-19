@@ -7,7 +7,7 @@ export type CameraKind = 'pan' | 'zoom' | 'overview';
 export interface CameraStats {
   measurement: LayoutMetrics | null;
   rendering: RenderMetrics | null;
-  idleHtmlNodes: number;
+  idleHtmlElements: number;
   canvasPixelRatio: number;
   renderedCards: number;
   worldWidth?: number;
@@ -42,7 +42,7 @@ export interface CameraResult {
   layoutPasses: number;
   measurementRevisionChanged: boolean;
   maxCacheBytes: number;
-  maxHtmlNodes: number;
+  maxHtmlElements: number;
   minVisibleRoots: number;
   maxVisibleRoots: number;
   minCanvasPixelRatio: number;
@@ -101,7 +101,7 @@ export async function runCameraBenchmark({
   let renderedFrameCount = 0;
   let previousDrawCount = 0;
   let maxCacheBytes = 0;
-  let maxHtmlNodes = 0;
+  let maxHtmlElements = 0;
   let minVisibleRoots = Infinity;
   let maxVisibleRoots = 0;
   let minCanvasPixelRatio = Infinity;
@@ -127,7 +127,7 @@ export async function runCameraBenchmark({
   };
   const sample = (current: CameraStats) => {
     maxCacheBytes = Math.max(maxCacheBytes, current.rendering?.cacheBytes ?? 0);
-    maxHtmlNodes = Math.max(maxHtmlNodes, current.idleHtmlNodes);
+    maxHtmlElements = Math.max(maxHtmlElements, current.idleHtmlElements);
     const visible = current.rendering?.visibleRoots ?? current.renderedCards;
     minVisibleRoots = Math.min(minVisibleRoots, visible);
     maxVisibleRoots = Math.max(maxVisibleRoots, visible);
@@ -249,7 +249,7 @@ export async function runCameraBenchmark({
         ),
         measurementRevisionChanged,
         maxCacheBytes,
-        maxHtmlNodes,
+        maxHtmlElements,
         minVisibleRoots,
         maxVisibleRoots,
         minCanvasPixelRatio,

@@ -1,4 +1,4 @@
-import type { SceneNode, PrimitiveProps } from '../model';
+import type { SceneElement, PrimitiveProps } from '../model';
 import type { PerformanceOptions } from '../types';
 import type { Bounds } from '../host';
 import { MIN_CACHE_DENSITY } from './cache';
@@ -10,7 +10,7 @@ export interface Events {
 }
 export interface Island {
   key: string;
-  item: SceneNode;
+  item: SceneElement;
   shell: boolean;
   bounds: Bounds;
   ancestors: Events;
@@ -43,9 +43,9 @@ interface SceneInfo {
   count: number;
   lodCells: number;
 }
-const information = new WeakMap<SceneNode, SceneInfo>();
-const descriptorCache = new WeakMap<SceneNode, Island>();
-const shells = new WeakMap<SceneNode, SceneNode>();
+const information = new WeakMap<SceneElement, SceneInfo>();
+const descriptorCache = new WeakMap<SceneElement, Island>();
+const shells = new WeakMap<SceneElement, SceneElement>();
 
 export function settings(options?: PerformanceOptions, automaticRatio = 1): Settings {
   const enabled = options?.enabled !== false;
@@ -77,7 +77,7 @@ export function union(a: Bounds, b: Bounds): Bounds {
 }
 
 /** Layout bounds are read once per immutable revision, never from the Konva tree during pan. */
-function info(item: SceneNode): SceneInfo {
+function info(item: SceneElement): SceneInfo {
   const previous = information.get(item);
   if (previous) return previous;
   const { absoluteX: x, absoluteY: y, width, height } = item.layout;
@@ -98,7 +98,7 @@ function info(item: SceneNode): SceneInfo {
   return result;
 }
 
-export function isReplacedCell(item: SceneNode): boolean {
+export function isReplacedCell(item: SceneElement): boolean {
   return (
     (item.layout.type === 'cell' || item.layout.type === 'cell-text') &&
     item.props.renderWhen === false
@@ -106,7 +106,7 @@ export function isReplacedCell(item: SceneNode): boolean {
 }
 
 /** Scene metadata is memoized per immutable node; camera frames never walk the layout tree. */
-export function countLodCells(item: SceneNode): number {
+export function countLodCells(item: SceneElement): number {
   return info(item).lodCells;
 }
 
@@ -127,7 +127,7 @@ function inheritedEvents(props: PrimitiveProps, ancestors: Events): Events {
   };
 }
 
-function hasVisual(props: PrimitiveProps, item: SceneNode): boolean {
+function hasVisual(props: PrimitiveProps, item: SceneElement): boolean {
   return Boolean(
     item.layout.type === 'cell' ||
     item.layout.type === 'cell-text' ||
@@ -141,9 +141,9 @@ function hasVisual(props: PrimitiveProps, item: SceneNode): boolean {
   );
 }
 
-export function compileIslands(scene: SceneNode[]): Island[] {
+export function compileIslands(scene: SceneElement[]): Island[] {
   const result: Island[] = [];
-  const add = (item: SceneNode, ancestors: Events, listening: boolean, shell = false) => {
+  const add = (item: SceneElement, ancestors: Events, listening: boolean, shell = false) => {
     const cached = descriptorCache.get(item);
     if (
       cached &&
@@ -167,7 +167,7 @@ export function compileIslands(scene: SceneNode[]): Island[] {
     descriptorCache.set(item, island);
     result.push(island);
   };
-  const visit = (item: SceneNode, ancestors: Events, listening: boolean) => {
+  const visit = (item: SceneElement, ancestors: Events, listening: boolean) => {
     const active = listening && item.props.listening !== false;
     if (item.props.layoutRoot || !item.children.some((child) => info(child).roots)) {
       add(item, ancestors, active);

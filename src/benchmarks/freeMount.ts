@@ -1,8 +1,8 @@
 import Konva from 'konva';
-import type { LayoutMetrics, LayoutNode, ViewTransform } from '../lib';
-import type { FreeNodePosition } from '../examples/freeNodesModel';
-import { FREE_NODE_COUNT } from '../examples/freeNodesModel';
-import { referenceNodeDetail } from '../examples/referenceNodeDetail';
+import type { LayoutMetrics, LayoutElement, ViewTransform } from '../lib';
+import type { SceneItemPosition } from '../examples/freeSceneModel';
+import { SCENE_ITEM_COUNT } from '../examples/freeSceneModel';
+import { referenceCardDetail } from '../examples/referenceCardDetail';
 import type { CameraStats } from './camera';
 
 export type SceneArrangement = 'free' | 'grid';
@@ -35,8 +35,8 @@ const rounded = (value: number) => Math.round(value * 100) / 100;
 /** Validate geometry and the application-selected Cell contents after a real draw. */
 function isCompleteDraw(
   layer: Konva.Layer,
-  model: LayoutNode | undefined,
-  positions: readonly FreeNodePosition[],
+  model: LayoutElement | undefined,
+  positions: readonly SceneItemPosition[],
   view: ViewTransform,
 ): boolean {
   const stage = layer.getStage();
@@ -44,7 +44,7 @@ function isCompleteDraw(
     !stage ||
     !layer.listening() ||
     !model ||
-    model.children.length !== FREE_NODE_COUNT ||
+    model.children.length !== SCENE_ITEM_COUNT ||
     stage.width() !== 1400 ||
     stage.height() !== 760 ||
     Math.abs(stage.x() - view.x) > 0.001 ||
@@ -56,10 +56,10 @@ function isCompleteDraw(
   const wrappers = new Map(
     layer
       .find('.layout-root-placement')
-      .map((node) => [node.getAttr('layoutRootId') as string, node]),
+      .map((element) => [element.getAttr('layoutRootId') as string, element]),
   );
-  const geometry = new Map(model.children.map((node) => [node.id, node]));
-  const detail = referenceNodeDetail(view.scale);
+  const geometry = new Map(model.children.map((element) => [element.id, element]));
+  const detail = referenceCardDetail(view.scale);
   let required = 0;
   for (const position of positions) {
     const bounds = geometry.get(position.id);
@@ -142,8 +142,8 @@ export function measureFreeSceneMount({
   view: ViewTransform;
   mount: () => void;
   stats: () => FreeSceneStats;
-  getModel: () => LayoutNode | undefined;
-  getPositions: () => readonly FreeNodePosition[];
+  getModel: () => LayoutElement | undefined;
+  getPositions: () => readonly SceneItemPosition[];
   getMeasurement: () => { at: number; metrics: LayoutMetrics } | null;
 }): Promise<FreeMountResult> {
   if (running.has(stage)) throw new Error('A mount benchmark is already running.');

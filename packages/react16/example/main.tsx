@@ -24,7 +24,7 @@ import './style.css';
 const ThemeContext = createContext('light');
 const CONTEXTS = [ThemeContext];
 const DESCRIPTION =
-  'Размеры определяет браузер. Измените этот текст — пересчитается только эта нода.';
+  'Размеры определяет браузер. Измените этот текст — пересчитается только эта карточка.';
 const PERFORMANCE = { enabled: true, cache: true, cull: true, cacheBudgetMB: 32 };
 const rootElement = document.getElementById('root')!;
 const api = {
@@ -50,14 +50,14 @@ declare global {
         measure: LayoutMetrics | null;
         render: RenderMetrics | null;
         textRef: string | undefined;
-        htmlNodes: number;
+        htmlElements: number;
       };
     };
   }
 }
 window.react16Demo = api as Window['react16Demo'];
 
-const DemoNode = memo(function DemoNode({
+const DemoCard = memo(function DemoCard({
   id,
   text,
   detail,
@@ -75,7 +75,7 @@ const DemoNode = memo(function DemoNode({
     <Flex
       id={id}
       layoutRoot
-      layoutTemplate="react16-node"
+      layoutTemplate="react16-card"
       width={320}
       direction="column"
       padding={18}
@@ -183,7 +183,7 @@ function App() {
   const [theme, setTheme] = useState('light');
   const [texts, setTexts] = useState<Record<string, string>>({});
   const [positions, setPositions] = useState<Record<string, { x: number; y: number }>>({});
-  const [selected, setSelected] = useState('node-0');
+  const [selected, setSelected] = useState('item-0');
   const [detail, setDetail] = useState(true);
   const [mounted, setMounted] = useState(true);
   const [size, setSize] = useState({ width: Math.max(320, innerWidth - 48), height: 650 });
@@ -197,7 +197,7 @@ function App() {
   const zoomLabel = useRef<HTMLOutputElement>(null);
   const metrics = useRef<LayoutMetrics | null>(null);
   const renderMetrics = useRef<RenderMetrics | null>(null);
-  const ids = useMemo(() => Array.from({ length: count }, (_, i) => `node-${i}`), [count]);
+  const ids = useMemo(() => Array.from({ length: count }, (_, i) => `item-${i}`), [count]);
   const setText = (id: string, text: string) => setTexts((current) => ({ ...current, [id]: text }));
   const stopDrag = () => {
     const active = activeDrag.current;
@@ -259,7 +259,7 @@ function App() {
         measure: metrics.current,
         render: renderMetrics.current,
         textRef: textRef.current?.text(),
-        htmlNodes: document.querySelectorAll('.konva-layout-node').length,
+        htmlElements: document.querySelectorAll('.konva-layout-element').length,
       }),
     });
   });
@@ -300,7 +300,7 @@ function App() {
       </header>
       <div className="toolbar">
         <button onClick={() => window.react16Demo.setCount(count === 1 ? 1000 : 1)}>
-          {count === 1 ? '1000 нод' : 'Одна нода'}
+          {count === 1 ? '1000 карточек' : 'Одна карточка'}
         </button>
         <button onClick={() => fit()}>Показать все</button>
         <button
@@ -312,7 +312,7 @@ function App() {
           Сменить тему
         </button>
         <output ref={zoomLabel}>100%</output>
-        <span>Drag ноды · drag фона · колесо для zoom</span>
+        <span>Перемещение карточки · drag фона · колесо для zoom</span>
       </div>
       <div className="canvas">
         <Stage
@@ -358,7 +358,7 @@ function App() {
                   }}
                 >
                   {ids.map((id) => (
-                    <DemoNode
+                    <DemoCard
                       key={id}
                       id={id}
                       text={texts[id] ?? DESCRIPTION}

@@ -3,53 +3,52 @@ import type { Dispatch, SetStateAction } from 'react';
 import { flushSync, unstable_batchedUpdates } from 'react-dom';
 import type Konva from 'konva';
 import { Layer, Rect, Stage } from 'react-konva';
-import { Flex, Layout } from '../lib';
+import { Flex, Layout, usePanZoom, useLayoutDrag } from '../lib';
 import type {
   LayoutHandle,
   LayoutMetrics,
-  LayoutNode,
+  LayoutElement,
   LayoutPlacement,
   RenderMetrics,
   ViewTransform,
 } from '../lib';
-import { DEFAULT_NODE_ACTIONS, ReferenceNode } from './ReferenceNode';
-import type { ReferenceNodeAction } from './ReferenceNode';
+import { DEFAULT_CARD_ACTIONS, ReferenceCard } from './ReferenceCard';
+import type { ReferenceCardAction } from './ReferenceCard';
 import { DESCRIPTION } from './DesignedStressScene';
 import { normalizeView, readSavedView, zoomAtPoint } from './camera';
 import {
-  createFreeNodes,
-  createGridNodes,
-  fitFreeNodes,
-  FREE_NODE_COUNT,
-  FREE_NODE_HEIGHT,
-  FREE_NODE_WIDTH,
+  createSceneItems,
+  createGridItems,
+  fitSceneItems,
+  SCENE_ITEM_COUNT,
+  SCENE_ITEM_HEIGHT,
+  SCENE_ITEM_WIDTH,
   INITIAL_SEED,
   INITIAL_VIEW,
-  scatterFreeNodes,
+  scatterSceneItems,
   shuffled,
-} from './freeNodesModel';
-import type { FreeNodePosition } from './freeNodesModel';
-import { referenceNodeDetail } from './referenceNodeDetail';
-import type { ReferenceNodeDetail } from './referenceNodeDetail';
-import { useDemoGestures } from './useDemoGestures';
+} from './freeSceneModel';
+import type { SceneItemPosition } from './freeSceneModel';
+import { referenceCardDetail } from './referenceCardDetail';
+import type { ReferenceCardDetail } from './referenceCardDetail';
 import { useCameraHitGraph } from './useCameraHitGraph';
 import { measureFreeSceneMount } from '../benchmarks/freeMount';
 import type { FreeMountResult, FreeSceneStats, SceneArrangement } from '../benchmarks/freeMount';
 import { runInteractionBenchmark } from '../benchmarks/freeScene';
 import type { InteractionOptions, InteractionResult } from '../benchmarks/freeScene';
-import './free-nodes.css';
+import './free-scene.css';
 
 type DescriptionSetter = (value: string) => void;
 type RegisterDescription = (id: string, setter: DescriptionSetter | null) => void;
-type NodeActions = {
-  items: readonly ReferenceNodeAction[];
-  set: Dispatch<SetStateAction<readonly ReferenceNodeAction[]>>;
+type CardActions = {
+  items: readonly ReferenceCardAction[];
+  set: Dispatch<SetStateAction<readonly ReferenceCardAction[]>>;
 };
-type RegisterActions = (id: string, actions: NodeActions | null) => void;
+type RegisterActions = (id: string, actions: CardActions | null) => void;
 type PlacementEvent = Konva.KonvaEventObject<Event>;
-type NodeDrag = { group: Konva.Group; parent: Konva.Container };
+type ElementDrag = { group: Konva.Group; parent: Konva.Container };
 
-const INITIAL_NODES = createFreeNodes();
+const INITIAL_ITEMS = createSceneItems();
 const PERFORMANCE = { cacheBudgetMB: 32, overscan: 100 };
 const EXPECTED_PRIMITIVES = 35_001;
 const nextFrame = () => new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
@@ -59,23 +58,26 @@ type BenchmarkInteraction = Pick<
   'kind' | 'view' | 'zoomRange' | 'panAmplitude' | 'durationMs' | 'warmupMs'
 > & { targetId?: string };
 
-function countTree(nodes: readonly LayoutNode[], counts: WeakMap<LayoutNode, number>): number {
+function countTree(
+  elements: readonly LayoutElement[],
+  counts: WeakMap<LayoutElement, number>,
+): number {
   let total = 0;
-  for (const node of nodes) {
-    let count = counts.get(node);
+  for (const element of elements) {
+    let count = counts.get(element);
     if (count === undefined) {
-      count = 1 + countTree(node.children, counts);
-      counts.set(node, count);
+      count = 1 + countTree(element.children, counts);
+      counts.set(element, count);
     }
     total += count;
   }
   return total;
 }
 
-interface FreeNodesApi {
+interface FreeSceneApi {
   stage(): Konva.Stage | null;
   layout(): LayoutHandle | null;
-  nodes(): FreeNodePosition[];
+  elements(): SceneItemPosition[];
   order(): string[];
   selected(): string | null;
   select(id: string | null): void;
@@ -83,8 +85,8 @@ interface FreeNodesApi {
   reorder(ids: readonly string[]): void;
   scatter(): void;
   setDescription(id: string, text: string): void;
-  actions(id: string): ReferenceNodeAction[];
-  setActions(id: string, actions: readonly ReferenceNodeAction[]): void;
+  actions(id: string): ReferenceCardAction[];
+  setActions(id: string, actions: readonly ReferenceCardAction[]): void;
   view(): ViewTransform;
   setView(view: Partial<ViewTransform>): void;
   stats(): FreeSceneStats;
@@ -99,11 +101,11 @@ interface FreeNodesApi {
 
 declare global {
   interface Window {
-    freeNodes?: FreeNodesApi;
+    freeScene?: FreeSceneApi;
   }
 }
 
-const FreeNodeContent = memo(function FreeNodeContent({
+const FreeCardContent = memo(function FreeCardContent({
   id,
   index,
   previewImage,
@@ -118,9 +120,9 @@ const FreeNodeContent = memo(function FreeNodeContent({
   previewImage: HTMLImageElement;
   registerDescription: RegisterDescription;
   registerActions: RegisterActions;
-} & ReferenceNodeDetail) {
+} & ReferenceCardDetail) {
   const [description, setDescription] = useState(DESCRIPTION);
-  const [actions, setActions] = useState(DEFAULT_NODE_ACTIONS);
+  const [actions, setActions] = useState(DEFAULT_CARD_ACTIONS);
   useEffect(() => {
     registerDescription(id, setDescription);
     return () => registerDescription(id, null);
@@ -130,11 +132,11 @@ const FreeNodeContent = memo(function FreeNodeContent({
     return () => registerActions(id, null);
   }, [id, actions, registerActions]);
   return (
-    <ReferenceNode
+    <ReferenceCard
       id={id}
-      width={FREE_NODE_WIDTH}
-      layoutTemplate="free-node-v1"
-      footerLabel={`node_${String(index + 1).padStart(4, '0')}`}
+      width={SCENE_ITEM_WIDTH}
+      layoutTemplate="free-item-v1"
+      footerLabel={`item_${String(index + 1).padStart(4, '0')}`}
       previewImage={previewImage}
       description={description}
       onDescriptionChange={setDescription}
@@ -146,8 +148,8 @@ const FreeNodeContent = memo(function FreeNodeContent({
   );
 });
 
-/** An application-owned graph: data, z-order, native dragging and camera are external to Layout. */
-export default function FreeNodesExample() {
+/** An application-owned scene: data, z-order, native dragging and camera are external to Layout. */
+export default function FreeSceneExample() {
   const stage = useRef<Konva.Stage | null>(null);
   const layout = useRef<LayoutHandle | null>(null);
   const sceneLayer = useRef<Konva.Layer | null>(null);
@@ -155,8 +157,7 @@ export default function FreeNodesExample() {
   const selectionOutline = useRef<Konva.Rect | null>(null);
   const coordinateStatus = useRef<HTMLSpanElement | null>(null);
   const zoomOutput = useRef<HTMLOutputElement | null>(null);
-  const activeDrag = useRef<NodeDrag | null>(null);
-  const applyingCamera = useRef(false);
+  const activeDrag = useRef<ElementDrag | null>(null);
   const container = useRef<HTMLDivElement | null>(null);
   const [benchmarkMode] = useState(() =>
     new URLSearchParams(window.location.search).has('benchmark'),
@@ -169,10 +170,10 @@ export default function FreeNodesExample() {
     generation: 0,
     arrangement: 'free' as SceneArrangement,
   });
-  const [nodes, setNodes] = useState(() => INITIAL_NODES);
+  const [elements, setItems] = useState(() => INITIAL_ITEMS);
   const [order, setOrder] = useState(() =>
     shuffled(
-      INITIAL_NODES.map((node) => node.id),
+      INITIAL_ITEMS.map((element) => element.id),
       INITIAL_SEED,
     ),
   );
@@ -188,38 +189,29 @@ export default function FreeNodesExample() {
       ? readSavedView(window.location.search)
       : INITIAL_VIEW;
   });
-  const [detail, setDetail] = useState(() => referenceNodeDetail(initialView.scale));
+  const [detail, setDetail] = useState(() => referenceCardDetail(initialView.scale));
   const detailRef = useRef(detail);
-  const nodesRef = useRef(nodes);
+  const itemsRef = useRef(elements);
   const orderRef = useRef(order);
   const selectedRef = useRef(selected);
   const viewRef = useRef(initialView);
   const seed = useRef(INITIAL_SEED);
   const descriptions = useRef(new Map<string, DescriptionSetter>());
-  const nodeActions = useRef(new Map<string, NodeActions>());
+  const cardActions = useRef(new Map<string, CardActions>());
   const actionCountDelta = useRef(0);
   const nextActionId = useRef(0);
   const measurementRef = useRef<LayoutMetrics | null>(null);
   const measurementAt = useRef<{ at: number; metrics: LayoutMetrics } | null>(null);
   const renderingRef = useRef<RenderMetrics | null>(null);
   const primitiveCount = useRef(0);
-  const primitiveCounts = useRef(new WeakMap<LayoutNode, number>());
+  const primitiveCounts = useRef(new WeakMap<LayoutElement, number>());
   const imageReady = useRef<Promise<HTMLImageElement> | null>(null);
   const mountBusy = useRef(false);
   const arrangementRef = useRef(mountConfig.arrangement);
   arrangementRef.current = mountConfig.arrangement;
-  nodesRef.current = nodes;
+  itemsRef.current = elements;
   orderRef.current = order;
   selectedRef.current = selected;
-
-  useLayoutEffect(() => {
-    const current = stage.current;
-    if (!current) return;
-    // Initialize before the image/content mounts; subsequent camera updates are native.
-    current.position(initialView);
-    current.scale({ x: initialView.scale, y: initialView.scale });
-    current.batchDraw();
-  }, [initialView]);
 
   const stopActiveDrag = useCallback(() => activeDrag.current?.group.stopDrag(), []);
 
@@ -227,12 +219,12 @@ export default function FreeNodesExample() {
     const current = stage.current;
     if (!current) return;
     const events =
-      'xChange.freeNodeDrag yChange.freeNodeDrag scaleXChange.freeNodeDrag scaleYChange.freeNodeDrag widthChange.freeNodeDrag heightChange.freeNodeDrag';
+      'xChange.freeElementDrag yChange.freeElementDrag scaleXChange.freeElementDrag scaleYChange.freeElementDrag widthChange.freeElementDrag heightChange.freeElementDrag';
     // A camera/viewport transition ends the gesture before culling can reorder
     // React-owned siblings around the temporarily reparented native Group.
     current.on(events, stopActiveDrag);
     return () => {
-      current.off('.freeNodeDrag');
+      current.off('.freeElementDrag');
     };
   }, [stopActiveDrag]);
 
@@ -268,7 +260,7 @@ export default function FreeNodesExample() {
     viewRef.current = current;
     if (zoomOutput.current)
       zoomOutput.current.textContent = String(Math.round(current.scale * 100));
-    const nextDetail = referenceNodeDetail(current.scale);
+    const nextDetail = referenceCardDetail(current.scale);
     const previous = detailRef.current;
     if (
       previous.showPreview !== nextDetail.showPreview ||
@@ -280,48 +272,17 @@ export default function FreeNodesExample() {
     }
   }, []);
 
-  useEffect(() => {
-    const current = stage.current;
-    if (!current) return;
-    const syncCamera = () => {
-      if (!applyingCamera.current) recordCamera({ ...current.position(), scale: current.scaleX() });
-    };
-    const events =
-      'xChange.freeNodeView yChange.freeNodeView scaleXChange.freeNodeView scaleYChange.freeNodeView';
-    current.on(events, syncCamera);
-    return () => {
-      current.off('.freeNodeView');
-    };
-  }, [recordCamera]);
-
+  const camera = usePanZoom({ target: stage, initialView, onChange: recordCamera });
+  useLayoutDrag({ camera });
   const setCamera = useCallback(
     (next: Partial<ViewTransform>) => {
       stopActiveDrag();
-      const current = normalizeView({ ...viewRef.current, ...next });
-      const native = stage.current;
-      if (
-        native &&
-        (native.x() !== current.x ||
-          native.y() !== current.y ||
-          native.scaleX() !== current.scale ||
-          native.scaleY() !== current.scale)
-      ) {
-        cameraChanged();
-        applyingCamera.current = true;
-        try {
-          native.position(current);
-          native.scale({ x: current.scale, y: current.scale });
-          native.batchDraw();
-        } finally {
-          applyingCamera.current = false;
-        }
-      }
-      // Native camera updates stay off the React render path between Cell LOD changes.
-      recordCamera(current);
+      cameraChanged();
+      camera.setView(next);
+      recordCamera(camera.getView());
     },
-    [stopActiveDrag, cameraChanged, recordCamera],
+    [stopActiveDrag, cameraChanged, recordCamera, camera],
   );
-  useDemoGestures(stage, true, viewRef, setCamera);
 
   useEffect(() => {
     if (benchmarkMode) return;
@@ -337,7 +298,7 @@ export default function FreeNodesExample() {
   useEffect(() => {
     let active = true;
     const image = new Image();
-    image.src = `${import.meta.env.BASE_URL}node-preview.jpg`;
+    image.src = `${import.meta.env.BASE_URL}card-preview.jpg`;
     const ready = Promise.all([image.decode(), document.fonts.ready]).then(() => image);
     imageReady.current = ready;
     ready.then(
@@ -353,7 +314,7 @@ export default function FreeNodesExample() {
     };
   }, []);
 
-  const onLayout = useCallback((tree: LayoutNode[]) => {
+  const onLayout = useCallback((tree: LayoutElement[]) => {
     primitiveCount.current = countTree(tree, primitiveCounts.current);
   }, []);
   const onMeasure = useCallback((next: LayoutMetrics) => {
@@ -370,7 +331,7 @@ export default function FreeNodesExample() {
     const current = stage.current;
     const model = layout.current?.getLayout('free-world');
     const cards = model?.children.length ?? 0;
-    const positions = nodesRef.current;
+    const positions = itemsRef.current;
     let minX = Infinity,
       minY = Infinity,
       maxX = -Infinity,
@@ -378,10 +339,10 @@ export default function FreeNodesExample() {
     for (const position of positions) {
       minX = Math.min(minX, position.x);
       minY = Math.min(minY, position.y);
-      maxX = Math.max(maxX, position.x + FREE_NODE_WIDTH);
-      maxY = Math.max(maxY, position.y + FREE_NODE_HEIGHT);
+      maxX = Math.max(maxX, position.x + SCENE_ITEM_WIDTH);
+      maxY = Math.max(maxY, position.y + SCENE_ITEM_HEIGHT);
     }
-    const idleHtmlNodes = container.current?.querySelectorAll('[data-layout-key]').length ?? 0;
+    const idleHtmlElements = container.current?.querySelectorAll('[data-layout-key]').length ?? 0;
     const attachedMeasurementRoots =
       container.current?.querySelectorAll('.konva-layout-measure').length ?? 0;
     const renderedCards = renderingRef.current?.visibleRoots ?? 0;
@@ -393,7 +354,7 @@ export default function FreeNodesExample() {
       renderedCards,
       measurement: measurementRef.current,
       rendering: renderingRef.current,
-      idleHtmlNodes,
+      idleHtmlElements,
       attachedMeasurementRoots,
       viewportWidth: current?.width() ?? 0,
       viewportHeight: current?.height() ?? 0,
@@ -403,10 +364,10 @@ export default function FreeNodesExample() {
       worldWidth: maxX - minX,
       worldHeight: maxY - minY,
       complete:
-        cards === FREE_NODE_COUNT &&
+        cards === SCENE_ITEM_COUNT &&
         primitiveCount.current === EXPECTED_PRIMITIVES + actionCountDelta.current &&
         renderedCards > 0 &&
-        idleHtmlNodes === 0 &&
+        idleHtmlElements === 0 &&
         attachedMeasurementRoots === 0,
     };
   }, []);
@@ -420,7 +381,7 @@ export default function FreeNodesExample() {
       view?: ViewTransform;
     }): Promise<FreeMountResult> => {
       if (!benchmarkMode)
-        throw new Error('Open ?nodes=1&benchmark=1 for the fixed 1400×760 benchmark viewport.');
+        throw new Error('Open ?scene=1&benchmark=1 for the fixed 1400×760 benchmark viewport.');
       if (mountBusy.current) throw new Error('A mount benchmark is already running.');
       if (arrangement !== 'free' && arrangement !== 'grid')
         throw new Error('Unknown scene arrangement.');
@@ -433,15 +394,15 @@ export default function FreeNodesExample() {
         flushSync(() => setMountConfig((previous) => ({ ...previous, mounted: false })));
         await nextFrame();
         await nextFrame();
-        const nextNodes = arrangement === 'grid' ? createGridNodes() : createFreeNodes();
+        const nextItems = arrangement === 'grid' ? createGridItems() : createSceneItems();
         const camera = normalizeView(requestedView ?? { x: 0, y: 0, scale: 1 });
         flushSync(() => {
-          setNodes(nextNodes);
+          setItems(nextItems);
           setOrder(
             arrangement === 'grid'
-              ? nextNodes.map((node) => node.id)
+              ? nextItems.map((element) => element.id)
               : shuffled(
-                  nextNodes.map((node) => node.id),
+                  nextItems.map((element) => element.id),
                   INITIAL_SEED,
                 ),
           );
@@ -460,7 +421,7 @@ export default function FreeNodesExample() {
           view: camera,
           stats,
           getModel: () => layout.current?.getLayout('free-world'),
-          getPositions: () => nodesRef.current,
+          getPositions: () => itemsRef.current,
           getMeasurement: () => measurementAt.current,
           mount: () =>
             flushSync(() =>
@@ -483,15 +444,16 @@ export default function FreeNodesExample() {
       const current = stage.current;
       if (mountBusy.current || !current || !stats().complete)
         throw new Error('Mount a complete scene before benchmarking interaction.');
-      const { targetId = 'free-node-0000', ...interaction } = options;
+      const { targetId = 'free-item-0000', ...interaction } = options;
       return runInteractionBenchmark({
         ...interaction,
         stage: current,
         setView: setCamera,
         stats,
         getTarget: () =>
-          (current.find((node: Konva.Node) => node.getAttr('layoutRootId') === targetId)[0] as
-            Konva.Group | undefined) ?? null,
+          (current.find(
+            (element: Konva.Node) => element.getAttr('layoutRootId') === targetId,
+          )[0] as Konva.Group | undefined) ?? null,
       });
     },
     [setCamera, stats],
@@ -503,18 +465,18 @@ export default function FreeNodesExample() {
   }, []);
 
   const registerActions = useCallback<RegisterActions>((id, actions) => {
-    const previous = nodeActions.current.get(id);
+    const previous = cardActions.current.get(id);
     actionCountDelta.current +=
-      (actions?.items.length ?? DEFAULT_NODE_ACTIONS.length) -
-      (previous?.items.length ?? DEFAULT_NODE_ACTIONS.length);
-    if (actions) nodeActions.current.set(id, actions);
-    else nodeActions.current.delete(id);
+      (actions?.items.length ?? DEFAULT_CARD_ACTIONS.length) -
+      (previous?.items.length ?? DEFAULT_CARD_ACTIONS.length);
+    if (actions) cardActions.current.set(id, actions);
+    else cardActions.current.delete(id);
   }, []);
 
   const setActions = useCallback(
-    (id: string, actions: readonly ReferenceNodeAction[]) => {
-      const current = nodeActions.current.get(id);
-      if (!current) throw new Error(`Node content is not ready: ${id}`);
+    (id: string, actions: readonly ReferenceCardAction[]) => {
+      const current = cardActions.current.get(id);
+      if (!current) throw new Error(`Element content is not ready: ${id}`);
       if (
         actions.some(
           (action) => !action.id || (action.kind !== 'run' && action.kind !== 'settings'),
@@ -531,7 +493,7 @@ export default function FreeNodesExample() {
   const changeSelectedActions = useCallback(
     (operation: 'add' | 'remove' | 'reverse') => {
       const id = selectedRef.current;
-      const current = id ? nodeActions.current.get(id) : undefined;
+      const current = id ? cardActions.current.get(id) : undefined;
       if (!current) return;
       stopActiveDrag();
       let actionId = '';
@@ -551,14 +513,15 @@ export default function FreeNodesExample() {
 
   const select = useCallback(
     (id: string | null, group?: Konva.Group) => {
-      if (id && !nodesRef.current.some((node) => node.id === id))
-        throw new Error(`Unknown node: ${id}`);
+      if (id && !itemsRef.current.some((element) => element.id === id))
+        throw new Error(`Unknown element: ${id}`);
       if (activeDrag.current && activeDrag.current.group.getAttr('layoutRootId') !== id)
         stopActiveDrag();
       setSelected(id);
       if (!id) return;
       const target =
-        group ?? stage.current?.find((node: Konva.Node) => node.getAttr('layoutRootId') === id)[0];
+        group ??
+        stage.current?.find((element: Konva.Node) => element.getAttr('layoutRootId') === id)[0];
       target?.moveToTop();
       setOrder((previous) =>
         previous.at(-1) === id ? previous : [...previous.filter((value) => value !== id), id],
@@ -569,12 +532,13 @@ export default function FreeNodesExample() {
 
   const move = useCallback(
     (id: string, position: { x: number; y: number }) => {
-      if (!nodesRef.current.some((node) => node.id === id)) throw new Error(`Unknown node: ${id}`);
+      if (!itemsRef.current.some((element) => element.id === id))
+        throw new Error(`Unknown element: ${id}`);
       if (!Number.isFinite(position.x) || !Number.isFinite(position.y))
-        throw new Error('Node coordinates must be finite.');
+        throw new Error('Element coordinates must be finite.');
       stopActiveDrag();
-      setNodes((previous) =>
-        previous.map((node) => (node.id === id ? { ...node, ...position } : node)),
+      setItems((previous) =>
+        previous.map((element) => (element.id === id ? { ...element, ...position } : element)),
       );
     },
     [stopActiveDrag],
@@ -582,13 +546,13 @@ export default function FreeNodesExample() {
 
   const reorder = useCallback(
     (ids: readonly string[]) => {
-      const known = new Set(nodesRef.current.map((node) => node.id));
+      const known = new Set(itemsRef.current.map((element) => element.id));
       if (
         ids.length !== known.size ||
         new Set(ids).size !== known.size ||
         ids.some((id) => !known.has(id))
       ) {
-        throw new Error('Order must contain every node ID exactly once.');
+        throw new Error('Order must contain every element ID exactly once.');
       }
       stopActiveDrag();
       setOrder([...ids]);
@@ -599,7 +563,7 @@ export default function FreeNodesExample() {
   const scatter = useCallback(() => {
     stopActiveDrag();
     seed.current++;
-    setNodes((previous) => scatterFreeNodes(previous, seed.current));
+    setItems((previous) => scatterSceneItems(previous, seed.current));
     setSelected(null);
     setCamera(INITIAL_VIEW);
   }, [setCamera, stopActiveDrag]);
@@ -607,10 +571,10 @@ export default function FreeNodesExample() {
   const reset = useCallback(() => {
     stopActiveDrag();
     seed.current = INITIAL_SEED;
-    setNodes(createFreeNodes());
+    setItems(createSceneItems());
     setOrder(
       shuffled(
-        INITIAL_NODES.map((node) => node.id),
+        INITIAL_ITEMS.map((element) => element.id),
         INITIAL_SEED,
       ),
     );
@@ -669,11 +633,14 @@ export default function FreeNodesExample() {
     [move],
   );
 
-  const nodeById = useMemo(() => new Map(nodes.map((node) => [node.id, node])), [nodes]);
+  const itemById = useMemo(
+    () => new Map(elements.map((element) => [element.id, element])),
+    [elements],
+  );
   const placements = useMemo<LayoutPlacement[]>(
     () =>
       order.map((id) => ({
-        ...nodeById.get(id)!,
+        ...itemById.get(id)!,
         draggable: true,
         onClick: onSelect,
         onTap: onSelect,
@@ -681,18 +648,18 @@ export default function FreeNodesExample() {
         onDragMove,
         onDragEnd,
       })),
-    [nodeById, order, onSelect, onDragStart, onDragMove, onDragEnd],
+    [itemById, order, onSelect, onDragStart, onDragMove, onDragEnd],
   );
   const { showPreview, showDescription, showActions } = detail;
   // Coordinates, selection and z-order never enter the HTML measurement tree.
   const content = useMemo(
     () =>
       previewImage ? (
-        <Flex id="free-world" width={FREE_NODE_WIDTH} height={FREE_NODE_HEIGHT}>
-          {INITIAL_NODES.map((node, index) => (
-            <FreeNodeContent
-              key={node.id}
-              id={node.id}
+        <Flex id="free-world" width={SCENE_ITEM_WIDTH} height={SCENE_ITEM_HEIGHT}>
+          {INITIAL_ITEMS.map((element, index) => (
+            <FreeCardContent
+              key={element.id}
+              id={element.id}
               index={index}
               previewImage={previewImage}
               registerDescription={registerDescription}
@@ -708,10 +675,10 @@ export default function FreeNodesExample() {
   );
 
   useEffect(() => {
-    const api: FreeNodesApi = {
+    const api: FreeSceneApi = {
       stage: () => stage.current,
       layout: () => layout.current,
-      nodes: () => nodesRef.current.map((node) => ({ ...node })),
+      elements: () => itemsRef.current.map((element) => ({ ...element })),
       order: () => [...orderRef.current],
       selected: () => selectedRef.current,
       select,
@@ -720,13 +687,13 @@ export default function FreeNodesExample() {
       scatter,
       setDescription: (id, text) => {
         const setter = descriptions.current.get(id);
-        if (!setter) throw new Error(`Node content is not ready: ${id}`);
+        if (!setter) throw new Error(`Element content is not ready: ${id}`);
         stopActiveDrag();
         setter(text);
       },
       actions: (id) => {
-        const actions = nodeActions.current.get(id);
-        if (!actions) throw new Error(`Node content is not ready: ${id}`);
+        const actions = cardActions.current.get(id);
+        if (!actions) throw new Error(`Element content is not ready: ${id}`);
         return actions.items.map((action) => ({ ...action }));
       },
       setActions,
@@ -735,9 +702,9 @@ export default function FreeNodesExample() {
       stats,
       benchmark: { mount: benchmarkMount, interact: benchmarkInteract },
     };
-    window.freeNodes = api;
+    window.freeScene = api;
     return () => {
-      if (window.freeNodes === api) delete window.freeNodes;
+      if (window.freeScene === api) delete window.freeScene;
     };
   }, [
     select,
@@ -752,40 +719,41 @@ export default function FreeNodesExample() {
     stopActiveDrag,
   ]);
 
-  const selectedNode = selected
+  const selectedItem = selected
     ? activeDrag.current?.group.getAttr('layoutRootId') === selected
       ? { id: selected, ...activeDrag.current.group.position() }
-      : nodeById.get(selected)
+      : itemById.get(selected)
     : undefined;
   const selectedBounds = selected ? layout.current?.getLayout(selected) : undefined;
-  const selectedActions = selected ? nodeActions.current.get(selected)?.items : undefined;
+  const selectedActions = selected ? cardActions.current.get(selected)?.items : undefined;
 
   return (
-    <main className="free-nodes-example">
+    <main className="free-scene-example">
       <nav>
-        <a href="?embedded=1">Одна нода</a>
+        <a href="?camera=1">Камера сцены</a>
+        <a href="?embedded=1">Одна карточка</a>
         <a href="?stress=1">Стресс-тест</a>
         <a href="?playground=1">Playground</a>
         <a href="https://github.com/dzenlotus/react-konva-layout">GitHub ↗</a>
       </nav>
-      <div className="free-nodes-heading">
+      <div className="free-scene-heading">
         <div>
-          <p className="free-nodes-eyebrow">REACT KONVA / APPLICATION-OWNED GRAPH</p>
-          <h1>1000 нод. Свободные позиции.</h1>
+          <p className="free-scene-eyebrow">REACT KONVA / APPLICATION-OWNED SCENE</p>
+          <h1>1000 карточек. Свободные позиции.</h1>
         </div>
         <p>
-          Перетаскивайте ноды. Клик поднимает ноду наверх. Колесо — zoom, фон — pan. Двойной клик по
-          описанию — редактирование.
+          Перетаскивайте карточки. Клик поднимает карточку наверх. Колесо — zoom, фон — pan. Двойной
+          клик по описанию — редактирование.
         </p>
       </div>
-      <div className="free-nodes-controls">
+      <div className="free-scene-controls">
         <button onClick={scatter}>Перемешать позиции</button>
         <button onClick={() => reorder(shuffled(orderRef.current, ++seed.current))}>
           Перемешать порядок
         </button>
         <button
           onClick={() =>
-            setCamera(fitFreeNodes(nodes, viewport, (id) => layout.current?.getLayout(id)))
+            setCamera(fitSceneItems(elements, viewport, (id) => layout.current?.getLayout(id)))
           }
         >
           Показать все
@@ -800,25 +768,25 @@ export default function FreeNodesExample() {
           100%
         </button>
         <button onClick={reset}>Сброс</button>
-        <span className="free-nodes-actions-label">
-          Действия{selectedActions ? `: ${selectedActions.length}` : ' выбранной ноды'}
+        <span className="free-scene-actions-label">
+          Действия{selectedActions ? `: ${selectedActions.length}` : ' выбранной карточки'}
         </span>
         <button
-          data-testid="free-node-action-add"
+          data-testid="free-item-action-add"
           disabled={!selectedActions || selectedActions.length >= 12}
           onClick={() => changeSelectedActions('add')}
         >
           + Действие
         </button>
         <button
-          data-testid="free-node-action-remove"
+          data-testid="free-item-action-remove"
           disabled={!selectedActions?.length}
           onClick={() => changeSelectedActions('remove')}
         >
           − Действие
         </button>
         <button
-          data-testid="free-node-action-reverse"
+          data-testid="free-item-action-reverse"
           disabled={!selectedActions || selectedActions.length < 2}
           onClick={() => changeSelectedActions('reverse')}
         >
@@ -827,7 +795,7 @@ export default function FreeNodesExample() {
       </div>
       <div
         ref={container}
-        className="free-nodes-stage"
+        className="free-scene-stage"
         style={
           benchmarkMode ? { width: 1400, height: 760, minHeight: 760, flexShrink: 0 } : undefined
         }
@@ -843,13 +811,13 @@ export default function FreeNodesExample() {
             if (event.target === stage.current) select(null);
           }}
         >
-          <Layer ref={sceneLayer} name="free-node-scene">
+          <Layer ref={sceneLayer} name="free-item-scene">
             {content && mountConfig.mounted && (
               <Layout
                 key={mountConfig.generation}
                 ref={layout}
-                width={FREE_NODE_WIDTH}
-                height={FREE_NODE_HEIGHT}
+                width={SCENE_ITEM_WIDTH}
+                height={SCENE_ITEM_HEIGHT}
                 placements={placements}
                 onLayout={onLayout}
                 onMeasure={onMeasure}
@@ -860,13 +828,13 @@ export default function FreeNodesExample() {
               </Layout>
             )}
           </Layer>
-          <Layer ref={dragLayer} name="free-node-interaction">
-            {selectedNode && selectedBounds && (
+          <Layer ref={dragLayer} name="free-item-interaction">
+            {selectedItem && selectedBounds && (
               <Rect
                 ref={selectionOutline}
-                name="selected-node-outline"
-                x={selectedNode.x - 4}
-                y={selectedNode.y - 4}
+                name="selected-element-outline"
+                x={selectedItem.x - 4}
+                y={selectedItem.y - 4}
                 width={selectedBounds.width + 8}
                 height={selectedBounds.height + 8}
                 stroke="#789b58"
@@ -879,24 +847,24 @@ export default function FreeNodesExample() {
           </Layer>
         </Stage>
       </div>
-      <div className="free-nodes-status" aria-live="polite">
+      <div className="free-scene-status" aria-live="polite">
         <span ref={coordinateStatus}>
-          {selectedNode
-            ? `${selectedNode.id} · x ${Math.round(selectedNode.x)}, y ${Math.round(selectedNode.y)}`
-            : 'Выберите ноду, чтобы изменить её позицию и порядок'}
+          {selectedItem
+            ? `${selectedItem.id} · x ${Math.round(selectedItem.x)}, y ${Math.round(selectedItem.y)}`
+            : 'Выберите карточку, чтобы изменить её позицию и порядок'}
         </span>
         <span>
-          {FREE_NODE_COUNT} нод · на экране {renderStats?.visibleRoots ?? 0} · zoom{' '}
+          {SCENE_ITEM_COUNT} карточек · на экране {renderStats?.visibleRoots ?? 0} · zoom{' '}
           <output ref={zoomOutput}>{Math.round(viewRef.current.scale * 100)}</output>% · layout{' '}
-          {metrics?.scope ?? '…'} / {metrics?.measuredNodes ?? 0} измерений
+          {metrics?.scope ?? '…'} / {metrics?.measuredElements ?? 0} измерений
         </span>
       </div>
-      {imageError && <p role="alert">Не удалось загрузить превью нод.</p>}
-      <p className="free-nodes-caption">
-        Координаты и порядок хранятся в state приложения. Все ноды используют один Layout: drag не
-        запускает HTML-измерение. Добавляйте и переставляйте действия выбранной ноды: сначала
-        пересчитывается их блок, при изменении его высоты — родительская нода. LOD меняет отдельные
-        ячейки, сохраняя их размеры.
+      {imageError && <p role="alert">Не удалось загрузить превью карточек.</p>}
+      <p className="free-scene-caption">
+        Координаты и порядок хранятся в state приложения. Все карточки используют один Layout: drag
+        не запускает HTML-измерение. Добавляйте и переставляйте действия выбранной карточки: сначала
+        пересчитывается их блок, при изменении его высоты — родительская карточка. LOD меняет
+        отдельные ячейки, сохраняя их размеры.
       </p>
     </main>
   );

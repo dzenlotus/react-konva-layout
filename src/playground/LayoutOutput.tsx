@@ -1,38 +1,38 @@
 import { useEffect, useRef, useState } from 'react';
-import type { LayoutNode } from '../lib';
+import type { LayoutElement } from '../lib';
 import { Glyph } from './Glyph';
 
 function TreeRows({
-  nodes,
+  elements,
   selected,
   onSelect,
   depth = 0,
 }: {
-  nodes: LayoutNode[];
+  elements: LayoutElement[];
   selected: string;
   onSelect: (id: string) => void;
   depth?: number;
 }) {
   return (
     <>
-      {nodes.map((node) => (
-        <div key={node.id}>
+      {elements.map((element) => (
+        <div key={element.id}>
           <button
-            className={`tree-row ${selected === node.id ? 'selected' : ''}`}
+            className={`tree-row ${selected === element.id ? 'selected' : ''}`}
             style={{ paddingLeft: 14 + depth * 15 }}
-            onClick={() => onSelect(node.id)}
+            onClick={() => onSelect(element.id)}
           >
-            <span className="tree-branch">{node.children.length ? '⌄' : '·'}</span>
-            <span className={`type-icon type-${node.type}`}>
-              {node.type.slice(0, 1).toUpperCase()}
+            <span className="tree-branch">{element.children.length ? '⌄' : '·'}</span>
+            <span className={`type-icon type-${element.type}`}>
+              {element.type.slice(0, 1).toUpperCase()}
             </span>
-            <span>{node.id}</span>
+            <span>{element.id}</span>
             <span className="tree-size">
-              {Math.round(node.width)} × {Math.round(node.height)}
+              {Math.round(element.width)} × {Math.round(element.height)}
             </span>
           </button>
           <TreeRows
-            nodes={node.children}
+            elements={element.children}
             selected={selected}
             onSelect={onSelect}
             depth={depth + 1}
@@ -47,13 +47,13 @@ export function LayoutOutput({
   tree,
   current,
   code,
-  nodeCount,
+  elementCount,
   onSelect,
 }: {
-  tree: LayoutNode[];
-  current?: LayoutNode;
+  tree: LayoutElement[];
+  current?: LayoutElement;
   code: string;
-  nodeCount: number;
+  elementCount: number;
   onSelect: (id: string) => void;
 }) {
   const [tab, setTab] = useState<'tree' | 'jsx'>('tree');
@@ -78,7 +78,7 @@ export function LayoutOutput({
           <div className="output-tabs">
             <button className={tab === 'tree' ? 'active' : ''} onClick={() => setTab('tree')}>
               <Glyph name="layout" size={14} />
-              Layout tree <span>{nodeCount}</span>
+              Layout tree <span>{elementCount}</span>
             </button>
             <button className={tab === 'jsx' ? 'active' : ''} onClick={() => setTab('jsx')}>
               <Glyph name="code" size={16} />
@@ -92,7 +92,7 @@ export function LayoutOutput({
         </div>
         {tab === 'tree' ? (
           <div className="tree-scroll">
-            <TreeRows nodes={tree} selected={current?.id ?? ''} onSelect={onSelect} />
+            <TreeRows elements={tree} selected={current?.id ?? ''} onSelect={onSelect} />
           </div>
         ) : (
           <pre className="code-output">
@@ -100,7 +100,7 @@ export function LayoutOutput({
           </pre>
         )}
       </div>
-      <div className="node-details">
+      <div className="element-details">
         <span className="eyebrow">MEASURED BOUNDS</span>
         <h3>{current?.id ?? 'Измеряем…'}</h3>
         <div className="bounds-grid">

@@ -1,7 +1,7 @@
 import Konva from 'konva';
-import type { LayoutNode, ViewTransform } from '../lib';
+import type { LayoutElement, ViewTransform } from '../lib';
 import { COUNT, COLUMNS, GAP } from '../examples/DesignedStressScene';
-import { referenceNodeDetail } from '../examples/referenceNodeDetail';
+import { referenceCardDetail } from '../examples/referenceCardDetail';
 import type { Mode, PendingMeasurement } from './types';
 
 export function findCanvasText(target: Konva.Node | undefined): Konva.Text | undefined {
@@ -21,7 +21,7 @@ export function isCompletedDraw({
 }: {
   layer: Konva.Layer;
   holder: HTMLDivElement;
-  model: LayoutNode;
+  model: LayoutElement;
   camera: ViewTransform;
   config: { width: number; worldWidth: number; mode: Mode };
   job: PendingMeasurement;
@@ -53,23 +53,23 @@ export function isCompletedDraw({
   const roots = new Map(
     layer
       .find('Group')
-      .filter((node) => /^stress-node-\d+-card$/.test(node.id()))
-      .map((node) => [node.id(), node]),
+      .filter((element) => /^stress-item-\d+-card$/.test(element.id()))
+      .map((element) => [element.id(), element]),
   );
   const required =
     config.mode === 'baseline'
       ? model.children
-      : model.children.filter((node) => {
-          const x = node.absoluteX * camera.scale + camera.x;
-          const y = node.absoluteY * camera.scale + camera.y;
+      : model.children.filter((element) => {
+          const x = element.absoluteX * camera.scale + camera.x;
+          const y = element.absoluteY * camera.scale + camera.y;
           return (
             x < stage.width() &&
-            x + node.width * camera.scale > 0 &&
+            x + element.width * camera.scale > 0 &&
             y < stage.height() &&
-            y + node.height * camera.scale > 0
+            y + element.height * camera.scale > 0
           );
         });
-  const detail = referenceNodeDetail(camera.scale);
+  const detail = referenceCardDetail(camera.scale);
   const editingCells = new Set(
     Array.from(
       holder.querySelectorAll<HTMLTextAreaElement>(
@@ -81,11 +81,11 @@ export function isCompletedDraw({
   const requiredRatio = layer.getCanvas().getPixelRatio() * camera.scale;
   if (
     !required.length ||
-    required.some((node) => {
-      const drawn = roots.get(node.id);
+    required.some((element) => {
+      const drawn = roots.get(element.id);
       if (!drawn) return true;
       if (!(drawn instanceof Konva.Container)) return true;
-      const preview = drawn.findOne(`#${node.id}-preview`);
+      const preview = drawn.findOne(`#${element.id}-preview`);
       const photo = preview instanceof Konva.Container ? preview.findOne('Image') : undefined;
       const image = photo instanceof Konva.Image ? photo.image() : undefined;
       if (detail.showPreview) {
@@ -96,38 +96,38 @@ export function isCompletedDraw({
         !(preview.findOne('.preview-placeholder') instanceof Konva.Rect)
       )
         return true;
-      const descriptionId = `${node.id}-description-text`;
+      const descriptionId = `${element.id}-description-text`;
       const description = findCanvasText(drawn.findOne(`#${descriptionId}`));
       const showDescription = detail.showDescription || editingCells.has(descriptionId);
       if (showDescription !== Boolean(description)) return true;
-      const actions = drawn.findOne(`#${node.id}-actions`);
+      const actions = drawn.findOne(`#${element.id}-actions`);
       if (
         !(actions instanceof Konva.Container) ||
-        detail.showActions !== Boolean(actions.findOne(`#${node.id}-run`))
+        detail.showActions !== Boolean(actions.findOne(`#${element.id}-run`))
       )
         return true;
-      if (!findCanvasText(drawn.findOne(`#${node.id}-title`))) return true;
+      if (!findCanvasText(drawn.findOne(`#${element.id}-title`))) return true;
       for (const side of ['input', 'output'])
         for (let index = 0; index < 3; index++)
-          if (!drawn.findOne(`#${node.id}-${side}-${index}`)) return true;
+          if (!drawn.findOne(`#${element.id}-${side}-${index}`)) return true;
       const cache = drawn._getCanvasCache();
       if (drawn.isCached() && (!cache || cache.scene.getPixelRatio() + 0.001 < requiredRatio))
         return true;
       const position = drawn.getAbsolutePosition();
       return (
-        Math.abs(drawn.width() - node.width) > 0.1 ||
-        Math.abs(drawn.height() - node.height) > 0.1 ||
-        Math.abs(position.x - (node.absoluteX * camera.scale + camera.x)) > 0.1 ||
-        Math.abs(position.y - (node.absoluteY * camera.scale + camera.y)) > 0.1
+        Math.abs(drawn.width() - element.width) > 0.1 ||
+        Math.abs(drawn.height() - element.height) > 0.1 ||
+        Math.abs(position.x - (element.absoluteX * camera.scale + camera.x)) > 0.1 ||
+        Math.abs(position.y - (element.absoluteY * camera.scale + camera.y)) > 0.1
       );
     })
   )
     return false;
 
   const expectedWidth = (config.worldWidth - 40 - (COLUMNS - 1) * GAP) / COLUMNS;
-  if (model.children.some((node) => Math.abs(node.width - expectedWidth) > 0.1)) return false;
+  if (model.children.some((element) => Math.abs(element.width - expectedWidth) > 0.1)) return false;
   if (job.expectedText !== undefined) {
-    const text = findCanvasText(layer.findOne('#stress-node-0000-card-description-text'));
+    const text = findCanvasText(layer.findOne('#stress-item-0000-card-description-text'));
     if (text?.text() !== job.expectedText) return false;
   }
   return true;

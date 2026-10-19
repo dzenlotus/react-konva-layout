@@ -1,19 +1,19 @@
-export const FREE_NODE_COUNT = 1000;
-export const FREE_NODE_WIDTH = 360;
-export const FREE_NODE_HEIGHT = 430;
+export const SCENE_ITEM_COUNT = 1000;
+export const SCENE_ITEM_WIDTH = 360;
+export const SCENE_ITEM_HEIGHT = 430;
 export const INITIAL_SEED = 23;
 export const INITIAL_VIEW = { x: 36, y: 28, scale: 0.68 };
 
-export interface FreeNodePosition {
+export interface SceneItemPosition {
   id: string;
   x: number;
   y: number;
 }
 
 /** Identical card IDs and contents, with the historical stress scene's grid positions. */
-export function createGridNodes(): FreeNodePosition[] {
-  return Array.from({ length: FREE_NODE_COUNT }, (_, index) => ({
-    id: `free-node-${String(index).padStart(4, '0')}`,
+export function createGridItems(): SceneItemPosition[] {
+  return Array.from({ length: SCENE_ITEM_COUNT }, (_, index) => ({
+    id: `free-item-${String(index).padStart(4, '0')}`,
     x: 20 + (index % 25) * 384,
     y: 20 + Math.floor(index / 25) * 454,
   }));
@@ -38,7 +38,7 @@ export function shuffled<T>(items: readonly T[], seed: number): T[] {
 }
 
 /** World coordinates are application data, separate from each card's local layout. */
-export function createFreeNodes(seed = INITIAL_SEED): FreeNodePosition[] {
+export function createSceneItems(seed = INITIAL_SEED): SceneItemPosition[] {
   const random = randomFromSeed(seed);
   const foreground = [
     { x: 80, y: 90 },
@@ -50,41 +50,41 @@ export function createFreeNodes(seed = INITIAL_SEED): FreeNodePosition[] {
     { x: -325, y: 330 },
     { x: 1250, y: 30 },
   ];
-  return Array.from({ length: FREE_NODE_COUNT }, (_, index) => {
+  return Array.from({ length: SCENE_ITEM_COUNT }, (_, index) => {
     const initial = foreground[index];
     const position = initial ?? {
       x: 1900 + ((index - foreground.length) % 25) * 445 + (random() - 0.5) * 300,
       y: -1400 + Math.floor((index - foreground.length) / 25) * 550 + (random() - 0.5) * 360,
     };
-    return { id: `free-node-${String(index).padStart(4, '0')}`, ...position };
+    return { id: `free-item-${String(index).padStart(4, '0')}`, ...position };
   });
 }
 
-export function scatterFreeNodes(
-  nodes: readonly FreeNodePosition[],
+export function scatterSceneItems(
+  elements: readonly SceneItemPosition[],
   seed: number,
-): FreeNodePosition[] {
-  const positions = shuffled(createFreeNodes(seed), seed + 1);
-  return nodes.map((node, index) => ({
-    id: node.id,
+): SceneItemPosition[] {
+  const positions = shuffled(createSceneItems(seed), seed + 1);
+  return elements.map((element, index) => ({
+    id: element.id,
     x: positions[index].x,
     y: positions[index].y,
   }));
 }
 
-export function fitFreeNodes(
-  nodes: readonly FreeNodePosition[],
+export function fitSceneItems(
+  elements: readonly SceneItemPosition[],
   viewport: { width: number; height: number },
   getSize: (id: string) => { width: number; height: number } | undefined = () => undefined,
 ) {
   const padding = 40;
-  const minX = Math.min(...nodes.map((node) => node.x));
-  const minY = Math.min(...nodes.map((node) => node.y));
-  const extents = nodes.map((node) => {
-    const size = getSize(node.id);
+  const minX = Math.min(...elements.map((element) => element.x));
+  const minY = Math.min(...elements.map((element) => element.y));
+  const extents = elements.map((element) => {
+    const size = getSize(element.id);
     return {
-      x: node.x + (size?.width ?? FREE_NODE_WIDTH),
-      y: node.y + (size?.height ?? FREE_NODE_HEIGHT),
+      x: element.x + (size?.width ?? SCENE_ITEM_WIDTH),
+      y: element.y + (size?.height ?? SCENE_ITEM_HEIGHT),
     };
   });
   const maxX = Math.max(...extents.map((point) => point.x));

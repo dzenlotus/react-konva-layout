@@ -1,11 +1,11 @@
-import type { EngineSnapshot, Geometry, Registration, SceneNode, TextStyle } from '../model';
-import type { LayoutMetrics, LayoutNode } from '../types';
+import type { EngineSnapshot, Geometry, Registration, SceneElement, TextStyle } from '../model';
+import type { LayoutMetrics, LayoutElement } from '../types';
 import { geometryKeys, sameArray, sameTextStyle, sameVisualProps } from './comparison';
 
 /** Reconciles measured values without replacing unchanged layout or scene references. */
 export class SceneStore {
-  readonly byKey = new Map<string, SceneNode>();
-  readonly byId = new Map<string, LayoutNode>();
+  readonly byKey = new Map<string, SceneElement>();
+  readonly byId = new Map<string, LayoutElement>();
   snapshot: EngineSnapshot = { scene: [], tree: [], metrics: null };
   private revision = 0;
 
@@ -13,8 +13,8 @@ export class SceneStore {
     record: Registration,
     geometry: Geometry,
     textStyle: TextStyle | undefined,
-    children: SceneNode[],
-  ): SceneNode {
+    children: SceneElement[],
+  ): SceneElement {
     const previous = this.byKey.get(record.key);
     const visualPropsUnchanged = previous && sameVisualProps(previous.props, record.props);
     const textStyleUnchanged = previous && sameTextStyle(previous.textStyle, textStyle);
@@ -26,7 +26,7 @@ export class SceneStore {
       previous.layout.testId === record.props['data-testid'] &&
       geometryKeys.every((key) => previous.layout[key] === geometry[key]) &&
       sameArray(previous.layout.children, childLayouts);
-    const layout: LayoutNode = sameLayout
+    const layout: LayoutElement = sameLayout
       ? previous.layout
       : {
           ...geometry,
@@ -43,7 +43,7 @@ export class SceneStore {
       sameArray(previous.children, children)
     )
       return previous;
-    const item: SceneNode = {
+    const item: SceneElement = {
       key: record.key,
       layout,
       props: visualPropsUnchanged ? previous.props : record.props,
@@ -58,10 +58,10 @@ export class SceneStore {
   }
 
   replaceSubtrees(
-    scene: SceneNode[],
-    replacements: Map<string, SceneNode>,
+    scene: SceneElement[],
+    replacements: Map<string, SceneElement>,
     registrations: Map<string, Registration>,
-  ): SceneNode[] {
+  ): SceneElement[] {
     if (replacements.size === 0) return scene;
     const affected = new Set<string>();
     for (const key of replacements.keys()) {
@@ -71,7 +71,7 @@ export class SceneStore {
         parent = registrations.get(parent)?.parent;
       }
     }
-    const patch = (previous: SceneNode): SceneNode => {
+    const patch = (previous: SceneElement): SceneElement => {
       const base = replacements.get(previous.key) ?? previous;
       if (!affected.has(previous.key)) return base;
       const record = registrations.get(previous.key);
@@ -83,7 +83,7 @@ export class SceneStore {
   }
 
   publish(
-    scene: SceneNode[],
+    scene: SceneElement[],
     measured: Omit<LayoutMetrics, 'revision'>,
   ): EngineSnapshot & { metrics: LayoutMetrics } {
     const previous = this.snapshot;

@@ -1,4 +1,4 @@
-import type { Geometry, MeasurementResult, Registration, SceneNode, TextStyle } from '../model';
+import type { Geometry, MeasurementResult, Registration, SceneElement, TextStyle } from '../model';
 import { CssPolicy } from './CssPolicy';
 import { MeasurementCache, styleSignature, token } from './MeasurementCache';
 import { SceneStore } from './SceneStore';
@@ -23,7 +23,7 @@ export class MeasurementReader {
   private readonly styles = new Map<string, TextStyle | undefined>();
   private readonly contextKeys = new Map<string, number>();
   private readonly origin: DOMRect;
-  private nodes = 0;
+  private elements = 0;
   private hits = 0;
   private misses = 0;
 
@@ -47,7 +47,7 @@ export class MeasurementReader {
 
   read(): MeasurementResult {
     for (const record of this.children.get(null) ?? []) this.walk(record);
-    const built = new Map<string, SceneNode>();
+    const built = new Map<string, SceneElement>();
     for (let index = this.ordered.length - 1; index >= 0; index -= 1) {
       const record = this.ordered[index];
       built.set(
@@ -62,7 +62,7 @@ export class MeasurementReader {
     }
     return {
       roots: (this.children.get(null) ?? []).map((record) => built.get(record.key)!),
-      nodes: this.nodes,
+      elements: this.elements,
       hits: this.hits,
       misses: this.misses,
     };
@@ -73,7 +73,7 @@ export class MeasurementReader {
     const previous = boundary ? store.byKey.get(boundary.key) : undefined;
     const rect =
       record.element === container ? this.origin : record.element.getBoundingClientRect();
-    this.nodes += 1;
+    this.elements += 1;
     const parent = record.parent ? this.geometries.get(record.parent) : undefined;
     const absoluteX = (rect.left - this.origin.left) / scale.x + (previous?.layout.absoluteX ?? 0);
     const absoluteY = (rect.top - this.origin.top) / scale.y + (previous?.layout.absoluteY ?? 0);

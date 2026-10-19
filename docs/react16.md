@@ -102,10 +102,10 @@ import { CellText, Flex, Layout } from '@dzenlotus/react-konva-layout';
 const ThemeContext = createContext('#273640');
 const CONTEXTS = [ThemeContext];
 
-function NodeContent({ description }: { description: string }) {
+function CardContent({ description }: { description: string }) {
   const color = useContext(ThemeContext);
   return (
-    <Flex id="node-1" layoutRoot width={320} direction="column" padding={16} gap={12}>
+    <Flex id="element-1" layoutRoot width={320} direction="column" padding={16} gap={12}>
       <CellText text="Image transform" fontSize={20} fontStyle="bold" color={color}>
         {(props) => <Text {...props} />}
       </CellText>
@@ -117,7 +117,7 @@ function NodeContent({ description }: { description: string }) {
 }
 
 export function CanvasExample() {
-  const [description, setDescription] = useState('Описание ноды');
+  const [description, setDescription] = useState('Описание карточки');
   return (
     <>
       <textarea value={description} onChange={(event) => setDescription(event.target.value)} />
@@ -125,7 +125,7 @@ export function CanvasExample() {
         <ThemeContext.Provider value="#273640">
           <Layer>
             <Layout width={320} height={500} contexts={CONTEXTS}>
-              <NodeContent description={description} />
+              <CardContent description={description} />
             </Layout>
           </Layer>
         </ThemeContext.Provider>
@@ -139,7 +139,9 @@ Bridge использует явные React Consumers и Providers: он под
 
 Изменение `text`, стилей или ограничений размера автоматически пересчитывает ближайшую независимую `layoutRoot`. Отдельного `editable` нет: input, store, события и сохранение реализует приложение. Для внешних изменений без обновления props доступны `LayoutHandle.invalidate(id)` и `remeasure(id)`. Подробнее: [обновление содержимого](content-updates.md).
 
-`Layout.placements` сохраняет независимые позиции и native drag нод. Внешние pan/zoom обновляют culling и плотность кешей без HTML-релейаута. `Cell.renderWhen` и `fallback` управляют только выбранным содержимым; логические размеры сохраняются и при восстановлении камеры на 3–5%. Подробнее: [размещение нод](node-positioning.md) и [выборочный LOD](cell-lod.md).
+`Layout.placements` сохраняет независимые позиции и native drag карточек. Внешние pan/zoom обновляют culling и плотность кешей без HTML-релейаута. `Cell.renderWhen` и `fallback` управляют только выбранным содержимым; логические размеры сохраняются и при восстановлении камеры на 3–5%. Подробнее: [размещение карточек](element-positioning.md) и [выборочный LOD](cell-lod.md).
+
+Текущие исходники также экспортируют `usePanZoom` и `useLayoutDrag` для камеры существующего `Stage/Layer/Group`: [контроллер, ограничения и пример подключения](camera-controls.md). Они используют общий API в React 16 и React 19. Архив релиза `0.6.2-react16.1`, указанный выше, выпущен до добавления этих hooks; для них соберите текущую React 16 версию из репозитория через `npm run pack:react16`. Настройки override и aliases остаются теми же.
 
 ## Разработка этой сборки
 
@@ -151,29 +153,29 @@ npm run build:react16
 npm run dev:react16
 ```
 
-`npm run build:react16-demo` собирает пример, `npm run pack:react16` создаёт устанавливаемый архив. Пример находится в [`packages/react16/example`](../packages/react16/example); `?count=1000` включает тысячу нод. Это отдельный React 16 fixture. Результаты FPS современной React 19 сцены не являются замерами этой сборки.
+`npm run build:react16-demo` собирает пример, `npm run pack:react16` создаёт устанавливаемый архив. Пример находится в [`packages/react16/example`](../packages/react16/example); `?count=1000` включает тысячу карточек. Это отдельный React 16 fixture. Результаты FPS современной React 19 сцены не являются замерами этой сборки.
 
-Для сравнения производительности используется другой entrypoint: [`packages/react16/stress`](../packages/react16/stress) импортирует ту же свободную сцену с 35 элементами на ноду, что и React 19:
+Для сравнения производительности используется другой entrypoint: [`packages/react16/stress`](../packages/react16/stress) импортирует ту же свободную сцену с 35 элементами на карточку, что и React 19:
 
 ```sh
 npm run build:react16-stress
 npx vite preview --config vite.react16-stress.config.ts --host 127.0.0.1 --port 4184
 ```
 
-Откройте `http://127.0.0.1:4184/?nodes=1&benchmark=1`. Это production-сборка с общим API `window.freeNodes.benchmark`, фиксированным Stage 1400 × 760 и приложенческим редактором текста. Native drag-обработчики примера явно группируют связанные изменения state через `unstable_batchedUpdates` в обоих стеках. [Протокол, 90 прогонов и сравнение](react16-vs-react19-stress.md).
+Откройте `http://127.0.0.1:4184/?scene=1&benchmark=1`. Это production-сборка с общим API `window.freeScene.benchmark`, фиксированным Stage 1400 × 760 и приложенческим редактором текста. Native drag-обработчики примера явно группируют связанные изменения state через `unstable_batchedUpdates` в обоих стеках. [Протокол, 90 прогонов и сравнение](react16-vs-react19-stress.md).
 
 ## Проверка совместимости
 
 Для React/ReactDOM 16.14.0 подтверждены чистый `npm install`, `npm ls` и повторный `npm ci` с корневым override выше, без peer-флагов. Результаты проверки этой связки записываются отдельно: [react16-16.14-verification.json](react16-16.14-verification.json).
 
-В браузере с React 16.14.0 проверены одна и 1000 нод без ошибок и предупреждений. При первом измерении тысячи нод выполнено 1016 чтений геометрии: 999 попаданий в шаблон и одно вычисление; все 1000 корней получили кеши. Zoom с 5% до 3% сохранил ревизию и ссылки модели, без чтений геометрии и подключения HTML. Локальная правка ноды потребовала 17 чтений, обновила Text ref и сохранила модель, native группы и кеши остальных 999 нод.
+В браузере с React 16.14.0 проверены одна и 1000 карточек без ошибок и предупреждений. При первом измерении тысячи карточек выполнено 1016 чтений геометрии: 999 попаданий в шаблон и одно вычисление; все 1000 корней получили кеши. Zoom с 5% до 3% сохранил ревизию и ссылки модели, без чтений геометрии и подключения HTML. Локальная правка карточки потребовала 17 чтений, обновила Text ref и сохранила модель, native группы и кеши остальных 999 карточек.
 
 Native drag дал один `dragstart` и один `dragend`, сохранил геометрию и кеш, вернул группу в исходного React-родителя. Во время движения основной Layer не перерисовывался, interaction Layer выполнил восемь draw; оба слоя использовали DPR 2. Обновление контекста изменило размер заголовка с 18 до 20 с сохранением registry IDs и ref. После unmount измерительного HTML, измерительных корней и native размещений осталось ноль; remount восстановил сцену и ref. Эти проверки описывают корректность и изоляцию отрисовки, без замера FPS.
 
 Свежий архив `0.6.2-react16.1` также установлен в отдельный consumer с React/ReactDOM 16.14.0 и указанным корневым override: `npm install`, `npm ci` и `npm ls` прошли без ошибок. TypeScript 4.9.5 прошёл в strict-режиме с `skipLibCheck: false`, `@types/react@16.14.70` и `@types/react-dom@16.9.25`. [Скриншот React 16.14.0](screenshots/react16-16.14-example.png).
 
-Предыдущая сборка `0.6.2-react16.0` отдельно проверялась с runtime React/ReactDOM 16.13.1: TypeScript 4.9.5 в strict-режиме с `skipLibCheck: false`, `@types/react@16.14.70`, `@types/react-dom@16.9.25`, одна и 1000 нод, локальный relayout, zoom 3%, native drag с сохранением кеша, контексты, refs и unmount/remount. Это исторические результаты другой runtime-связки: [react16-verification.json](react16-verification.json). Они сохранены без изменений и не подменяют новую проверку 16.14.0.
+Предыдущая сборка `0.6.2-react16.0` отдельно проверялась с runtime React/ReactDOM 16.13.1: TypeScript 4.9.5 в strict-режиме с `skipLibCheck: false`, `@types/react@16.14.70`, `@types/react-dom@16.9.25`, одна и 1000 карточек, локальный relayout, zoom 3%, native drag с сохранением кеша, контексты, refs и unmount/remount. Это исторические результаты другой runtime-связки: [react16-verification.json](react16-verification.json). Они сохранены без изменений и не подменяют новую проверку 16.14.0.
 
-Эти проверки совместимости не измеряют FPS. Нода простого React 16 примера содержит 17 измеряемых элементов и отличается от общей стресс-ноды с 35 элементами. Свежие парные замеры общей сцены представлены в [отдельном отчёте](react16-vs-react19-stress.md).
+Эти проверки совместимости не измеряют FPS. Карточка простого React 16 примера содержит 17 измеряемых элементов и отличается от общей стресс-карточки с 35 элементами. Свежие парные замеры общей сцены представлены в [отдельном отчёте](react16-vs-react19-stress.md).
 
 Ограничение Konva 8: у `Text` нет современного свойства `direction`. Эквивалентность RTL-поведения с Konva 10 не гарантируется.

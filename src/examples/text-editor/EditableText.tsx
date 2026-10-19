@@ -24,8 +24,8 @@ export function EditableText({ cellId, bounds, onChange, onEditingChange }: Edit
     // A newly loaded webfont can change line measurement without changing the
     // fontFamily string. CellText rerenders us after its browser measurement.
     text.current?.fire('fontFamilyChange');
-    const node = layout.getLayout(cellId);
-    if (node) editor.current?.update(node, bounds);
+    const element = layout.getLayout(cellId);
+    if (element) editor.current?.update(element, bounds);
     else editor.current?.();
   });
   useLayoutEffect(
@@ -37,17 +37,17 @@ export function EditableText({ cellId, bounds, onChange, onEditingChange }: Edit
 
   const begin = () => {
     const target = text.current;
-    const node = layout.getLayout(cellId);
-    if (!target?.getStage() || !node || editor.current) return;
+    const element = layout.getLayout(cellId);
+    if (!target?.getStage() || !element || editor.current) return;
     callbacks.current.onEditingChange(true);
     // Remove stale bitmaps synchronously before hiding the native Text. The
-    // application also disables its node cache for the duration of this edit.
+    // application also disables its element cache for the duration of this edit.
     target.getAncestors().forEach((ancestor) => {
       if (ancestor.isCached()) ancestor.clearCache();
     });
     editor.current = openTextEditor({
       target,
-      node,
+      element,
       bounds,
       onCommit: (value) => callbacks.current.onChange(value),
       onClose: () => {

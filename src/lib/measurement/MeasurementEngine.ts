@@ -1,5 +1,10 @@
-import type { EngineSnapshot, LayoutRegistry, Registration, SceneNode } from '../model';
-import type { LayoutContextValue, LayoutMetrics, LayoutNode, PerformanceOptions } from '../types';
+import type { EngineSnapshot, LayoutRegistry, Registration, SceneElement } from '../model';
+import type {
+  LayoutContextValue,
+  LayoutMetrics,
+  LayoutElement,
+  PerformanceOptions,
+} from '../types';
 import { CssPolicy } from './CssPolicy';
 import { MeasurementCache } from './MeasurementCache';
 import { MeasurementObservers } from './MeasurementObservers';
@@ -12,21 +17,21 @@ interface EngineConfiguration {
   height: number;
   debug?: boolean;
   performance?: PerformanceOptions;
-  onLayout?: (tree: LayoutNode[]) => void;
+  onLayout?: (tree: LayoutElement[]) => void;
   onMeasure?: (metrics: LayoutMetrics) => void;
 }
 
 interface MeasurementUpdate {
-  scene: SceneNode[];
+  scene: SceneElement[];
   metrics: Omit<LayoutMetrics, 'durationMs' | 'revision'>;
 }
 
 export const measurementCss = `
 .konva-layout-text:empty::before { content: "\\200b"; }
-.konva-layout-measure[data-debug="true"] .konva-layout-node {
+.konva-layout-measure[data-debug="true"] .konva-layout-element {
   outline: 1px solid #00dbed; outline-offset: -1px; -webkit-text-fill-color: transparent;
 }
-.konva-layout-measure[data-debug="true"] .konva-layout-node::after {
+.konva-layout-measure[data-debug="true"] .konva-layout-element::after {
   content: attr(data-layout-label); position: absolute; top: 2px; left: 3px;
   padding: 2px 4px; color: #00343b; -webkit-text-fill-color: #00343b;
   background: #78f2ff; font: 9px/1.2 monospace; white-space: nowrap; z-index: 1;
@@ -154,7 +159,7 @@ export class MeasurementEngine {
   };
 
   getSnapshot = (): EngineSnapshot => this.store.snapshot;
-  getLayout = (id: string): LayoutNode | undefined => this.store.byId.get(id);
+  getLayout = (id: string): LayoutElement | undefined => this.store.byId.get(id);
   getMetrics = (): LayoutMetrics | null => this.store.snapshot.metrics;
 
   beginRender(): void {
@@ -295,7 +300,7 @@ export class MeasurementEngine {
     let scene = this.store.snapshot.scene;
     const metrics: MeasurementUpdate['metrics'] = {
       scope: 'visual',
-      measuredNodes: 0,
+      measuredElements: 0,
       measuredRoots: [],
       templateHits: 0,
       templateMisses: 0,
@@ -303,7 +308,7 @@ export class MeasurementEngine {
     const debug = Boolean(this.configuration.debug);
     if (!needsFullPass && dirtyRoots.length) {
       metrics.scope = 'local';
-      const replacements = new Map<string, SceneNode>();
+      const replacements = new Map<string, SceneElement>();
       let pending = this.independentRoots(dirtyRoots);
       while (pending.length) {
         const key = pending.shift()!;
@@ -314,7 +319,7 @@ export class MeasurementEngine {
         }
         const result = this.pass.local(record, host, debug, true);
         if (result) {
-          metrics.measuredNodes += result.nodes;
+          metrics.measuredElements += result.elements;
           metrics.templateHits += result.hits;
           metrics.templateMisses += result.misses;
           metrics.measuredRoots.push(record.props.id ?? key);
@@ -341,7 +346,7 @@ export class MeasurementEngine {
       const result = this.pass.full(host, debug, this.configuration.performance?.enabled !== false);
       metrics.scope = 'full';
       scene = result.roots;
-      metrics.measuredNodes += result.nodes;
+      metrics.measuredElements += result.elements;
       metrics.templateHits += result.hits;
       metrics.templateMisses += result.misses;
       metrics.measuredRoots = [
@@ -360,8 +365,8 @@ export class MeasurementEngine {
     return false;
   }
 
-  private updateVisuals(scene: SceneNode[], keys: string[]): SceneNode[] {
-    const replacements = new Map<string, SceneNode>();
+  private updateVisuals(scene: SceneElement[], keys: string[]): SceneElement[] {
+    const replacements = new Map<string, SceneElement>();
     for (const key of keys) {
       const record = this.registrations.get(key);
       const previous = this.store.byKey.get(key);

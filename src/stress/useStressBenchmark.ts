@@ -3,7 +3,7 @@ import { flushSync } from 'react-dom';
 import Konva from 'konva';
 import type { DemoCanvasHandle } from '../examples/DemoCanvas';
 import { clampZoom, normalizeView, readSavedView, zoomAtPoint } from '../examples/camera';
-import type { LayoutNode, LayoutMetrics, RenderMetrics, ViewTransform } from '../lib';
+import type { LayoutElement, LayoutMetrics, RenderMetrics, ViewTransform } from '../lib';
 import {
   COUNT,
   WORLD_WIDTH,
@@ -23,9 +23,9 @@ import { findCanvasText, isCompletedDraw } from './completedDraw';
 const rounded = (value: number) => Math.round(value * 100) / 100;
 const errorMessage = (reason: unknown) =>
   reason instanceof Error ? reason.message : String(reason);
-function countTree(nodes: LayoutNode[]): number {
+function countTree(elements: LayoutElement[]): number {
   let count = 0;
-  for (const node of nodes) count += 1 + countTree(node.children);
+  for (const element of elements) count += 1 + countTree(element.children);
   return count;
 }
 
@@ -56,7 +56,7 @@ export function useStressBenchmark() {
           }
         };
         image.onerror = () => reject(new Error('Не удалось загрузить фотографию превью.'));
-        image.src = `${import.meta.env.BASE_URL}node-preview.jpg`;
+        image.src = `${import.meta.env.BASE_URL}card-preview.jpg`;
       });
     }
     return imagePromise.current;
@@ -98,9 +98,11 @@ export function useStressBenchmark() {
       groups = current?.find('Group') ?? [];
     const model = layout.current?.getLayout('stress-world');
     const cards = model?.children.length ?? 0;
-    const renderedCards = groups.filter((node) => /^stress-node-\d+-card$/.test(node.id())).length;
+    const renderedCards = groups.filter((element) =>
+      /^stress-item-\d+-card$/.test(element.id()),
+    ).length;
     const shapes = current?.find('Shape').length ?? 0;
-    const idleHtmlNodes = holder.current?.querySelectorAll('[data-layout-key]').length ?? 0;
+    const idleHtmlElements = holder.current?.querySelectorAll('[data-layout-key]').length ?? 0;
     const attachedMeasurementRoots =
       holder.current?.querySelectorAll('.konva-layout-measure').length ?? 0;
     return {
@@ -110,7 +112,7 @@ export function useStressBenchmark() {
       primitives: primitiveCount.current,
       groups: groups.length,
       shapes,
-      idleHtmlNodes,
+      idleHtmlElements,
       attachedMeasurementRoots,
       viewportWidth: configRef.current.width,
       viewportHeight: 760,
@@ -125,7 +127,7 @@ export function useStressBenchmark() {
         cards === COUNT &&
         primitiveCount.current === EXPECTED_PRIMITIVES &&
         renderedCards > 0 &&
-        idleHtmlNodes === 0 &&
+        idleHtmlElements === 0 &&
         attachedMeasurementRoots === 0,
     };
   }, [stage]);
@@ -168,7 +170,7 @@ export function useStressBenchmark() {
     job.resolve(result);
   }, [fail, stats]);
 
-  const onLayout = useCallback((tree: LayoutNode[]) => {
+  const onLayout = useCallback((tree: LayoutElement[]) => {
     const at = performance.now();
     if (!primitiveCount.current) primitiveCount.current = countTree(tree);
     const job = pending.current;
@@ -180,7 +182,7 @@ export function useStressBenchmark() {
       setLastMeasure(metrics);
       const job = pending.current;
       if (!job) return;
-      if (metrics.measuredNodes) job.layoutPasses++;
+      if (metrics.measuredElements) job.layoutPasses++;
       if (metrics.scope !== 'visual') job.measurement = metrics;
       if (job.operation !== 'view' && metrics.scope !== 'visual')
         job.layoutAt ??= performance.now();
@@ -318,7 +320,7 @@ export function useStressBenchmark() {
         layout.current?.setView({ x: 0, y: 0, scale: 1 });
         await nextFrame();
         await nextFrame();
-        const target = stage()?.findOne('#stress-node-0000-card-description-text');
+        const target = stage()?.findOne('#stress-item-0000-card-description-text');
         const canvasText = findCanvasText(target);
         if (!canvasText) throw new Error('Description не найден.');
         canvasText.fire('dblclick', { evt: new MouseEvent('dblclick', { bubbles: true }) }, true);
@@ -356,7 +358,7 @@ export function useStressBenchmark() {
     (): CameraStats => ({
       measurement: layout.current?.getMetrics() ?? null,
       rendering: renderStats.current,
-      idleHtmlNodes: holder.current?.querySelectorAll('[data-layout-key]').length ?? 0,
+      idleHtmlElements: holder.current?.querySelectorAll('[data-layout-key]').length ?? 0,
       canvasPixelRatio: stage()?.getLayers()[0]?.getCanvas().getPixelRatio() ?? 1,
       renderedCards: renderStats.current?.visibleRoots ?? 0,
       worldWidth: configRef.current.worldWidth,

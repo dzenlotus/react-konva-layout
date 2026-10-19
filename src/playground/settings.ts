@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 
-export type Scene = 'node' | 'flex' | 'grid';
+export type Scene = 'card' | 'flex' | 'grid';
 export interface PlaygroundSettings {
   width: number;
   gap: number;
@@ -36,7 +36,7 @@ export function initialSettings(): PlaygroundSettings {
 
 export function exampleCode(scene: Scene, settings: PlaygroundSettings, height: number): string {
   const { width, gap, maxWidth, direction, align, justify, columns, debug } = settings;
-  return scene === 'node'
+  return scene === 'card'
     ? `<Stage width={${width}} height={${height}}>
 <Layer>
 <Layout width={${width}} height={${height}} debug={${debug}}>

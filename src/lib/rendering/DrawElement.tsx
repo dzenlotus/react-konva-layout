@@ -1,14 +1,14 @@
 import { memo, useLayoutEffect, useRef, type ReactNode } from 'react';
 import type Konva from 'konva';
 import { Group, Rect, Shape, Text } from 'react-konva';
-import type { SceneNode } from '../model';
+import type { SceneElement } from '../model';
 import type { LayoutPlacement } from '../types';
 import { textAttributes } from './text';
 import { dispatchEvents, emptyEvents, hasEvents, isReplacedCell, type Events } from './scene';
 import { useCustomContent } from './customContent';
 
 interface DrawProps {
-  item: SceneNode;
+  item: SceneElement;
   compact: boolean;
   optimized: boolean;
   x?: number;
@@ -32,7 +32,7 @@ const drawPlacementHit: NonNullable<Konva.ShapeConfig['hitFunc']> = (context, sh
   context.fillStrokeShape(shape);
 };
 
-export const DrawNode = memo(function DrawNode({
+export const DrawElement = memo(function DrawElement({
   item,
   compact,
   optimized,
@@ -131,7 +131,7 @@ export const DrawNode = memo(function DrawNode({
       {!replaced &&
         (children ??
           item.children.map((child) => (
-            <DrawNode
+            <DrawElement
               key={child.key}
               item={child}
               compact={compact}

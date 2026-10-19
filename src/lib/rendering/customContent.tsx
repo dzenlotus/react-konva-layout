@@ -12,7 +12,7 @@ import {
 import { getElementRef } from '@layout/runtime';
 import type Konva from 'konva';
 import { Text } from 'react-konva';
-import type { SceneNode } from '../model';
+import type { SceneElement } from '../model';
 import { textAttributes } from './text';
 import { isReplacedCell } from './scene';
 
@@ -70,7 +70,7 @@ function decorateCustomContent(content: ReactNode, interactive = false): ReactNo
 }
 
 interface CustomContentOptions {
-  item: SceneNode;
+  item: SceneElement;
   textRef: MutableRefObject<Konva.Text | null>;
   optimized: boolean;
   bubbling: boolean;

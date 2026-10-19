@@ -1,13 +1,13 @@
 import type Konva from 'konva';
-import type { CellTextRenderProps, LayoutNode } from '../../lib';
+import type { CellTextRenderProps, LayoutElement } from '../../lib';
 
 /** CellText's measured content bounds expose its CSS padding without internal library types. */
-function contentPadding(node: LayoutNode, bounds: CellTextRenderProps) {
+function contentPadding(element: LayoutElement, bounds: CellTextRenderProps) {
   return {
     left: bounds.x,
     top: bounds.y,
-    right: Math.max(0, node.width - bounds.x - bounds.width),
-    bottom: Math.max(0, node.height - bounds.y - bounds.height),
+    right: Math.max(0, element.width - bounds.x - bounds.width),
+    bottom: Math.max(0, element.height - bounds.y - bounds.height),
   };
 }
 
@@ -55,11 +55,11 @@ export function createEditorElements(document: Document, value: string) {
 export function resizeEditor(
   textarea: HTMLTextAreaElement,
   target: Konva.Text,
-  node: LayoutNode,
+  element: LayoutElement,
   bounds: CellTextRenderProps,
 ): void {
-  const padding = contentPadding(node, bounds);
-  const minimum = Math.max(1, node.height, target.height() + padding.top + padding.bottom);
+  const padding = contentPadding(element, bounds);
+  const minimum = Math.max(1, element.height, target.height() + padding.top + padding.bottom);
   textarea.style.height = '0px';
   textarea.style.height = `${Math.max(minimum, textarea.scrollHeight)}px`;
 }
@@ -70,7 +70,7 @@ export function syncEditorStyles(
   target: Konva.Text,
   stage: Konva.Stage,
   view: Window,
-  node: LayoutNode,
+  element: LayoutElement,
   bounds: CellTextRenderProps,
 ): void {
   const css = view.getComputedStyle(stage.content);
@@ -82,7 +82,7 @@ export function syncEditorStyles(
     top: paddingTop,
     right: paddingRight,
     bottom: paddingBottom,
-  } = contentPadding(node, bounds);
+  } = contentPadding(element, bounds);
   const nativePadding = target.padding();
   const fontStyle = target.fontStyle();
   const fill = target.fill();

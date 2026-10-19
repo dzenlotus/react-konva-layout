@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type Konva from 'konva';
 import { Group, Layer, Rect, Shape, Stage } from 'react-konva';
+import { usePanZoom, useLayoutDrag } from '../lib';
 import type { LayoutHandle, LayoutMetrics, ViewTransform } from '../lib';
-import { ReferenceNode } from './ReferenceNode';
-import { useDemoGestures } from './useDemoGestures';
+import { ReferenceCard } from './ReferenceCard';
 import { readSavedView, zoomAtPoint } from './camera';
-import { referenceNodeDetail } from './referenceNodeDetail';
+import { referenceCardDetail } from './referenceCardDetail';
 import './embedded.css';
 
 const CANVAS_WIDTH = 960;
@@ -41,16 +41,16 @@ export default function EmbeddedExample() {
   const [action, setAction] = useState<'run' | 'settings' | null>(null);
   const [selectedPort, setSelectedPort] = useState('');
   const [view, setView] = useState<ViewTransform>(() => readSavedView(window.location.search));
-  const viewRef = useRef(view);
-  const setCamera = useCallback((next: Partial<ViewTransform>) => {
-    const current = { ...viewRef.current, ...next };
-    viewRef.current = current;
-    stage.current?.position(current);
-    stage.current?.scale({ x: current.scale, y: current.scale });
-    stage.current?.batchDraw();
-    setView(current);
-  }, []);
-  useDemoGestures(stage, true, viewRef, setCamera);
+  const camera = usePanZoom({ target: stage, initialView: view, onChange: setView });
+  useLayoutDrag({ camera });
+  const viewRef = camera.view;
+  const setCamera = useCallback(
+    (next: Partial<ViewTransform>) => {
+      camera.setView(next);
+      setView(camera.getView());
+    },
+    [camera],
+  );
 
   useEffect(() => {
     let active = true;
@@ -61,7 +61,7 @@ export default function EmbeddedExample() {
     image.onerror = () => {
       if (active) setPreviewError(true);
     };
-    image.src = `${import.meta.env.BASE_URL}node-preview.jpg`;
+    image.src = `${import.meta.env.BASE_URL}card-preview.jpg`;
     return () => {
       active = false;
       image.onload = null;
@@ -89,20 +89,21 @@ export default function EmbeddedExample() {
     const scale = previous.scale === 1 ? 0.8 : 1;
     setCamera(zoomAtPoint(previous, { x: CANVAS_WIDTH / 2, y: CANVAS_HEIGHT / 2 }, scale));
   };
-  const nodeBounds = layout.current?.getLayout('reference-node');
+  const cardBounds = layout.current?.getLayout('reference-card');
 
   return (
     <main className="embedded-example">
       <nav>
+        <a href="?camera=1">Камера сцены</a>
         <a href="?playground=1">Playground</a>
-        <a href="?nodes=1">Свободные ноды / drag</a>
-        <a href="?stress=1">1000 нод</a>
+        <a href="?scene=1">Свободная сцена / drag</a>
+        <a href="?stress=1">1000 карточек</a>
         <a href="https://github.com/dzenlotus/react-konva-layout">GitHub ↗</a>
       </nav>
       <p className="embedded-eyebrow">REACT KONVA / FLEX LAYOUT</p>
-      <h1>Нода обработки изображения.</h1>
+      <h1>Карточка обработки изображения.</h1>
       <p>Двойной клик по описанию — редактирование. Колесо — zoom, перетаскивание фона — pan.</p>
-      <p>Клик по ноде — выделение, перетаскивание ноды — изменение её позиции в графе.</p>
+      <p>Клик по карточке — выделение, перетаскивание карточки — изменение её позиции в сцене.</p>
       <div className="embedded-controls">
         <button aria-pressed={debug} onClick={() => setDebug((value) => !value)}>
           HTML overlay
@@ -113,7 +114,7 @@ export default function EmbeddedExample() {
           Ширина{' '}
           <input
             type="range"
-            aria-label="Ширина ноды"
+            aria-label="Ширина карточки"
             min={280}
             max={440}
             step={10}
@@ -128,10 +129,6 @@ export default function EmbeddedExample() {
           ref={stage}
           width={CANVAS_WIDTH}
           height={CANVAS_HEIGHT}
-          x={view.x}
-          y={view.y}
-          scaleX={view.scale}
-          scaleY={view.scale}
           onClick={(event) => {
             if (event.target === stage.current) setSelected(false);
           }}
@@ -172,11 +169,11 @@ export default function EmbeddedExample() {
               onDragEnd={(event) => setPosition(event.target.position())}
             >
               <Rect
-                width={nodeBounds?.width ?? width}
-                height={nodeBounds?.height ?? 0}
+                width={cardBounds?.width ?? width}
+                height={cardBounds?.height ?? 0}
                 fill="transparent"
               />
-              <ReferenceNode
+              <ReferenceCard
                 ref={layout}
                 width={width}
                 debug={debug}
@@ -186,14 +183,14 @@ export default function EmbeddedExample() {
                 onMeasure={setMetrics}
                 onAction={setAction}
                 onPortSelect={selectPort}
-                {...referenceNodeDetail(view.scale)}
+                {...referenceCardDetail(view.scale)}
               />
-              {selected && nodeBounds && (
+              {selected && cardBounds && (
                 <Rect
                   x={-4}
                   y={-4}
-                  width={nodeBounds.width + 8}
-                  height={nodeBounds.height + 8}
+                  width={cardBounds.width + 8}
+                  height={cardBounds.height + 8}
                   stroke="#789b58"
                   strokeWidth={1.5}
                   strokeScaleEnabled={false}
@@ -207,7 +204,7 @@ export default function EmbeddedExample() {
       </div>
       <div className="embedded-status">
         <p className="embedded-metrics">
-          Layout: {metrics?.scope ?? '—'} · {metrics?.measuredNodes ?? 0} элементов ·{' '}
+          Layout: {metrics?.scope ?? '—'} · {metrics?.measuredElements ?? 0} элементов ·{' '}
           {metrics?.durationMs.toFixed(1) ?? '—'} ms
         </p>
         <span aria-live="polite">

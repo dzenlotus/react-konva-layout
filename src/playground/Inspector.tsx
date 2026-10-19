@@ -75,12 +75,12 @@ export function Inspector({
             </output>
           </div>
         </div>
-        {scene === 'node' ? (
+        {scene === 'card' ? (
           <div className="field-spacer">
-            <Label tag="maxWidth">Максимальная ширина ноды</Label>
+            <Label tag="maxWidth">Максимальная ширина карточки</Label>
             <div className="inline-range">
               <input
-                aria-label="Максимальная ширина ноды"
+                aria-label="Максимальная ширина карточки"
                 type="range"
                 min="220"
                 max="460"
@@ -149,7 +149,7 @@ export function Inspector({
             </div>
           </div>
         ) : null}
-        {scene !== 'node' ? (
+        {scene !== 'card' ? (
           <div className="field-spacer">
             <Label tag="children">Элементы</Label>
             <div className="stepper">

@@ -3,17 +3,17 @@ import type Konva from 'konva';
 import { Circle, Image as CanvasImage, Line, Rect, Text } from 'react-konva';
 import { Cell, CellText, Flex } from '../lib';
 import type { CellBounds, LayoutHandle, LayoutMetrics } from '../lib';
-import type { ReferenceNodeDetail } from './referenceNodeDetail';
+import type { ReferenceCardDetail } from './referenceCardDetail';
 import { EditableText } from './text-editor/EditableText';
 
 const FONT = 'Helvetica Neue, Arial, sans-serif';
 
-export interface ReferenceNodeAction {
+export interface ReferenceCardAction {
   id: string;
   kind: 'run' | 'settings';
 }
 
-export const DEFAULT_NODE_ACTIONS: readonly ReferenceNodeAction[] = [
+export const DEFAULT_CARD_ACTIONS: readonly ReferenceCardAction[] = [
   { id: 'run', kind: 'run' },
   { id: 'settings', kind: 'settings' },
 ];
@@ -110,7 +110,7 @@ function PreviewPlaceholder(bounds: CellBounds) {
   );
 }
 
-export interface ReferenceNodeProps extends Partial<ReferenceNodeDetail> {
+export interface ReferenceCardProps extends Partial<ReferenceCardDetail> {
   id?: string;
   width?: number;
   x?: number;
@@ -124,21 +124,21 @@ export interface ReferenceNodeProps extends Partial<ReferenceNodeDetail> {
   description: string;
   onDescriptionChange(value: string): void;
   onMeasure?(metrics: LayoutMetrics): void;
-  actions?: readonly ReferenceNodeAction[];
+  actions?: readonly ReferenceCardAction[];
   onAction?(action: 'run' | 'settings'): void;
   onPortSelect?(side: 'input' | 'output', index: number): void;
 }
 
-/** A designed node using the CodeSandbox hierarchy and measured Flex/Cell/CellText. */
-export const ReferenceNode = memo(
-  forwardRef<LayoutHandle, ReferenceNodeProps>(function ReferenceNode(
+/** A designed card using the CodeSandbox hierarchy and measured Flex/Cell/CellText. */
+export const ReferenceCard = memo(
+  forwardRef<LayoutHandle, ReferenceCardProps>(function ReferenceCard(
     {
-      id = 'reference-node',
+      id = 'reference-card',
       width = 360,
       x = 0,
       y = 0,
       layoutTemplate,
-      footerLabel = 'node_01',
+      footerLabel = 'item_01',
       debug = false,
       title = 'Image transform',
       subtitle = 'Нормализация входящего изображения',
@@ -146,7 +146,7 @@ export const ReferenceNode = memo(
       description,
       onDescriptionChange,
       onMeasure,
-      actions = DEFAULT_NODE_ACTIONS,
+      actions = DEFAULT_CARD_ACTIONS,
       onAction,
       onPortSelect,
       showPreview = true,

@@ -63,7 +63,7 @@ function ImagePreview({ width, height }: { width: number; height: number }) {
   );
 }
 
-const NodeExample = memo(function NodeExample({
+const CardExample = memo(function CardExample({
   gap,
   maxWidth,
   onSelect,
@@ -87,8 +87,8 @@ const NodeExample = memo(function NodeExample({
       justifyContent="center"
     >
       <Col
-        id="node"
-        data-testid="node"
+        id="card"
+        data-testid="card"
         layoutRoot
         cache={editing ? false : undefined}
         width="100%"
@@ -101,7 +101,7 @@ const NodeExample = memo(function NodeExample({
         cornerRadius={16}
       >
         <Row id="main" width="100%" gap={8} alignItems="center">
-          <Col id="content" data-testid="node-content" width="100%" gap={gap}>
+          <Col id="content" data-testid="element-content" width="100%" gap={gap}>
             <Row id="label-row" alignItems="center" gap={7}>
               <Box
                 id="status-dot"
@@ -121,7 +121,7 @@ const NodeExample = memo(function NodeExample({
             <Col id="heading" gap={6}>
               <LayoutText
                 id="title"
-                data-testid="node-title"
+                data-testid="element-title"
                 text="Image transform"
                 fontSize={24}
                 fontFamily={font}
@@ -136,7 +136,13 @@ const NodeExample = memo(function NodeExample({
                 color="#848a7e"
               />
             </Col>
-            <Row id="figure" data-testid="node-figure" width="100%" gap={gap} alignItems="center">
+            <Row
+              id="figure"
+              data-testid="element-figure"
+              width="100%"
+              gap={gap}
+              alignItems="center"
+            >
               <Col id="inPorts" data-testid="input-ports" gap={12}>
                 {[0, 1, 2].map((i) => (
                   <Port key={i} index={i} side="in" />
@@ -144,7 +150,7 @@ const NodeExample = memo(function NodeExample({
               </Col>
               <Box
                 id="image"
-                data-testid="node-image"
+                data-testid="element-image"
                 flexGrow={1}
                 minWidth={0}
                 height={116}
@@ -159,7 +165,7 @@ const NodeExample = memo(function NodeExample({
             </Row>
             <CellText
               id="description"
-              data-testid="node-description"
+              data-testid="element-description"
               text={description}
               width="100%"
               fontSize={12}
@@ -193,7 +199,7 @@ const NodeExample = memo(function NodeExample({
             <Box
               key={action}
               id={action}
-              data-testid={`node-${action}`}
+              data-testid={`element-${action}`}
               width={30}
               height={30}
               fill={i === 0 ? '#d1e5ba' : '#e1e6da'}
@@ -218,8 +224,8 @@ const NodeExample = memo(function NodeExample({
           ))}
           <Box id="action-spacer" flexGrow={1} />
           <LayoutText
-            id="node-id"
-            text="node_01"
+            id="element-id"
+            text="item_01"
             fontSize={10}
             fontFamily="monospace"
             color="#969e8d"
@@ -284,7 +290,7 @@ export function PlaygroundScene({
   onSelect: (id: string) => void;
 }) {
   const { gap, maxWidth, direction, align, justify, count, columns } = settings;
-  if (scene === 'node') return <NodeExample gap={gap} maxWidth={maxWidth} onSelect={onSelect} />;
+  if (scene === 'card') return <CardExample gap={gap} maxWidth={maxWidth} onSelect={onSelect} />;
   else if (scene === 'flex')
     return (
       <Flex

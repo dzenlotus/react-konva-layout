@@ -2,12 +2,12 @@ import type { CSSProperties, ReactNode, Context } from 'react';
 import type Konva from 'konva';
 import type { KonvaNodeEvents } from 'react-konva';
 
-export type LayoutNodeType =
+export type LayoutElementType =
   'flex' | 'row' | 'col' | 'grid' | 'box' | 'text' | 'cell' | 'cell-text';
 
-export interface LayoutNode {
+export interface LayoutElement {
   id: string;
-  type: LayoutNodeType;
+  type: LayoutElementType;
   x: number;
   y: number;
   width: number;
@@ -15,7 +15,7 @@ export interface LayoutNode {
   absoluteX: number;
   absoluteY: number;
   testId?: string;
-  children: LayoutNode[];
+  children: LayoutElement[];
 }
 
 export interface ViewTransform {
@@ -37,7 +37,7 @@ export interface PerformanceOptions {
 
 export interface LayoutMetrics {
   scope: 'full' | 'local' | 'visual';
-  measuredNodes: number;
+  measuredElements: number;
   measuredRoots: string[];
   durationMs: number;
   templateHits: number;
@@ -157,7 +157,7 @@ export interface CellTextProps extends Omit<LayoutTextProps, 'children'> {
 
 export interface LayoutContextValue {
   invalidate(id?: string): void;
-  getLayout(id: string): LayoutNode | undefined;
+  getLayout(id: string): LayoutElement | undefined;
   getMetrics(): LayoutMetrics | null;
 }
 
@@ -186,7 +186,7 @@ export interface LayoutComponentProps {
   /** React 16: contexts to forward from the Konva tree into the detached measurement tree. */
   contexts?: readonly Context<any>[];
   children: ReactNode;
-  onLayout?: (tree: LayoutNode[]) => void;
+  onLayout?: (tree: LayoutElement[]) => void;
   onMeasure?: (metrics: LayoutMetrics) => void;
   onRenderStats?: (metrics: RenderMetrics) => void;
 }

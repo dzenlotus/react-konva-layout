@@ -1,7 +1,7 @@
 import { memo, useCallback, useLayoutEffect, useRef } from 'react';
 import type Konva from 'konva';
 import type { LayoutPlacement } from '../types';
-import { DrawNode } from './DrawNode';
+import { DrawElement } from './DrawElement';
 import { emptyEvents, hasEvents, type Island, type Settings } from './scene';
 
 export interface IslandRenderOptions {
@@ -36,7 +36,7 @@ export const SceneIsland = memo(function SceneIsland({
     group.current = node;
   }, []);
   return (
-    <DrawNode
+    <DrawElement
       item={item}
       compact={config.compact}
       optimized={config.enabled}

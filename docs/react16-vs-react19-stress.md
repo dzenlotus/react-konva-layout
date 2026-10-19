@@ -95,7 +95,7 @@
 
 ## Наблюдение по коду
 
-Drop обновляет nodes/order и создаёт 1000 новых объектов placements. Это вызывает повторные render корней и обновление native event handlers; существующие native группы и кеши сохраняются. Путь подтверждён в [FreeNodesExample](../src/examples/FreeNodesExample.tsx), [PlacedRoot](../src/lib/rendering/PlacedRoot.tsx) и [SceneIsland](../src/lib/rendering/SceneIsland.tsx). Без количественного профиля нельзя назвать его доказанной причиной пауз около 4.4 с. Konva 8 рисует hit cache при Node.cache(), Konva 10 подготавливает эту часть отложенно: это качественное различие работы версий, не измеренная доля задержки.
+Drop обновляет nodes/order и создаёт 1000 новых объектов placements. Это вызывает повторные render корней и обновление native event handlers; существующие native группы и кеши сохраняются. Путь подтверждён в [FreeNodesExample](../src/examples/FreeSceneExample.tsx), [PlacedRoot](../src/lib/rendering/PlacedRoot.tsx) и [SceneIsland](../src/lib/rendering/SceneIsland.tsx). Без количественного профиля нельзя назвать его доказанной причиной пауз около 4.4 с. Konva 8 рисует hit cache при Node.cache(), Konva 10 подготавливает эту часть отложенно: это качественное различие работы версий, не измеренная доля задержки.
 
 ## Исходные данные
 

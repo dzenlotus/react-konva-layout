@@ -1,5 +1,5 @@
 import type Konva from 'konva';
-import type { SceneNode } from '../model';
+import type { SceneElement } from '../model';
 import type { Bounds } from '../host';
 import type { Island, Settings } from './scene';
 
@@ -46,7 +46,7 @@ export function releaseRoot(entries: Map<string, CacheEntry>, key: string) {
 /** Only visible, revised roots or density changes inspect bounds; pan reuses recorded bounds. */
 export function cacheRoot(
   entries: Map<string, CacheEntry>,
-  actualBounds: WeakMap<SceneNode, Bounds>,
+  actualBounds: WeakMap<SceneElement, Bounds>,
   island: Island,
   group: Konva.Group,
   allowed: boolean,

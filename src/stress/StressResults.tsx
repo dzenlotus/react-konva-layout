@@ -33,7 +33,7 @@ export function StressResults({
               ' групп · ' +
               last.shapes +
               ' фигур · HTML ' +
-              last.idleHtmlNodes
+              last.idleHtmlElements
             : 'Таймер заканчивается после полного Layer.draw + следующий RAF'}
         </span>
       </div>
@@ -61,8 +61,9 @@ export function StressResults({
         </div>
       </div>
       <p className="stress-definitions">
-        Последний layout: {lastMeasure?.scope ?? '—'} · прочитано {lastMeasure?.measuredNodes ?? 0}{' '}
-        элементов · корни: {lastMeasure?.measuredRoots.join(', ') || '—'} · template hits{' '}
+        Последний layout: {lastMeasure?.scope ?? '—'} · прочитано{' '}
+        {lastMeasure?.measuredElements ?? 0} элементов · корни:{' '}
+        {lastMeasure?.measuredRoots.join(', ') || '—'} · template hits{' '}
         {lastMeasure?.templateHits ?? 0}.{' '}
         {lastMeasure ? Math.round(lastMeasure.durationMs * 100) / 100 + ' ms' : ''}
         <br />
@@ -106,7 +107,7 @@ export function StressResults({
                   <td>{result.p95Ms.toFixed(1)} ms</td>
                   <td>{result.overBudgetPercent.toFixed(1)}%</td>
                   <td>
-                    {result.maxHtmlNodes} / {result.layoutPasses}
+                    {result.maxHtmlElements} / {result.layoutPasses}
                   </td>
                   <td>{(result.maxCacheBytes / 1024 / 1024).toFixed(1)}</td>
                 </tr>
@@ -141,11 +142,11 @@ export function StressResults({
                   <td>{result.totalToCanvasFrameMs} ms</td>
                   <td>
                     {result.measurement
-                      ? result.measurement.measuredNodes + ' / ' + result.measurement.scope
+                      ? result.measurement.measuredElements + ' / ' + result.measurement.scope
                       : '0 / camera'}
                   </td>
                   <td>
-                    {result.groups + result.shapes} · HTML {result.idleHtmlNodes}
+                    {result.groups + result.shapes} · HTML {result.idleHtmlElements}
                   </td>
                 </tr>
               ))}

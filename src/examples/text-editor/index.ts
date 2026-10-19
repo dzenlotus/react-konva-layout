@@ -1,17 +1,17 @@
 import type Konva from 'konva';
-import type { CellTextRenderProps, LayoutNode } from '../../lib';
+import type { CellTextRenderProps, LayoutElement } from '../../lib';
 import { createEditorElements, resizeEditor, syncEditorStyles } from './dom';
 
 export interface TextEditorHandle {
   /** Cancel this edit session and release its DOM and listeners. */
   (): void;
   /** Refresh measured geometry and CSS without replacing the native draft. */
-  update(node: LayoutNode, bounds: CellTextRenderProps): void;
+  update(element: LayoutElement, bounds: CellTextRenderProps): void;
 }
 
 export interface OpenTextEditorOptions {
   target: Konva.Text;
-  node: LayoutNode;
+  element: LayoutElement;
   bounds: CellTextRenderProps;
   onCommit(value: string): void;
   onClose(saved: boolean): void;
@@ -66,7 +66,7 @@ let nextEditorId = 0;
 /** The Stage owns the viewport and camera; this editor only follows its Text. */
 export function openTextEditor({
   target,
-  node: initialNode,
+  element: initialNode,
   bounds: initialBounds,
   onCommit,
   onClose,
@@ -92,7 +92,7 @@ export function openTextEditor({
     .map((attribute) => `${attribute}Change.${namespace}`)
     .join(' ');
   const destroyEvent = `destroy.${namespace}`;
-  let node = initialNode;
+  let element = initialNode;
   let bounds = initialBounds;
   let observedNodes: Konva.Node[] = [];
   let finished = false;
@@ -122,7 +122,7 @@ export function openTextEditor({
       item.on(destroyEvent, cancelDestroyed);
     });
   };
-  const fitHeight = () => resizeEditor(textarea, target, node, bounds);
+  const fitHeight = () => resizeEditor(textarea, target, element, bounds);
   const update = () => {
     if (finished) return;
     if (target.getStage() !== stage) {
@@ -130,7 +130,7 @@ export function openTextEditor({
       return;
     }
     bindNodes();
-    syncEditorStyles(textarea, target, stage, view, node, bounds);
+    syncEditorStyles(textarea, target, stage, view, element, bounds);
     fitHeight();
   };
   function scheduleUpdate() {
@@ -213,8 +213,8 @@ export function openTextEditor({
   });
 
   return Object.assign(() => finish(false), {
-    update(nextNode: LayoutNode, nextBounds: CellTextRenderProps) {
-      node = nextNode;
+    update(nextNode: LayoutElement, nextBounds: CellTextRenderProps) {
+      element = nextNode;
       textarea.dataset.layoutCellId = nextNode.id;
       bounds = nextBounds;
       update();

@@ -1,0 +1,610 @@
+{
+  "baseCommit": "ecafc422249da62a8de8e03fd29ade0442662d20",
+  "testedAt": "2026-10-19T13:52:13.798Z",
+  "kind": "Functional native browser verification, no FPS or unit tests.",
+  "viewport": {
+    "width": 1600,
+    "height": 1000,
+    "devicePixelRatio": 2,
+    "hasTouch": true
+  },
+  "runtimes": [
+    {
+      "runtime": "react19",
+      "checks": [
+        {
+          "name": "cursor anchor including 0.5%",
+          "passed": true,
+          "data": [
+            {
+              "scale": 0.005,
+              "error": 0
+            },
+            {
+              "scale": 0.03,
+              "error": 2.5724394843074972e-12
+            },
+            {
+              "scale": 1.5,
+              "error": 0
+            }
+          ]
+        },
+        {
+          "name": "zoom-aware clamp and centering",
+          "passed": true,
+          "data": {
+            "edge": {
+              "x": -76,
+              "y": -274,
+              "scale": 1
+            },
+            "small": {
+              "x": 250,
+              "y": 187.5,
+              "scale": 0.25
+            }
+          }
+        },
+        {
+          "name": "axis only restricts panning",
+          "passed": true,
+          "data": {
+            "pan": {
+              "x": -20,
+              "y": -70,
+              "scale": 1
+            },
+            "zoom": {
+              "x": -180,
+              "y": -205,
+              "scale": 1.5
+            }
+          }
+        },
+        {
+          "name": "scaled rotated skewed parent",
+          "passed": true,
+          "data": {
+            "anchorError": 8.038873388460929e-14,
+            "panError": 1.4210854715202004e-14
+          }
+        },
+        {
+          "name": "native changes resize zero viewport",
+          "passed": true,
+          "data": {
+            "external": {
+              "x": -76,
+              "y": -274,
+              "scale": 1
+            },
+            "resized": {
+              "x": -76,
+              "y": -74,
+              "scale": 1
+            },
+            "zero": {
+              "x": -2.28,
+              "y": -2.2199999999999998,
+              "scale": 0.03
+            }
+          }
+        },
+        {
+          "name": "native mouse pan no click render relayout",
+          "passed": true,
+          "data": {
+            "before": {
+              "view": {
+                "x": 0,
+                "y": 0,
+                "scale": 1
+              },
+              "renders": 14,
+              "revision": 5,
+              "clicks": 0,
+              "html": 0
+            },
+            "after": {
+              "view": {
+                "x": 80,
+                "y": 40,
+                "scale": 1
+              },
+              "renders": 14,
+              "revision": 5,
+              "clicks": 0,
+              "html": 0
+            }
+          }
+        },
+        {
+          "name": "ordinary click remains",
+          "passed": true,
+          "data": {
+            "view": {
+              "x": 80,
+              "y": 40,
+              "scale": 1
+            },
+            "renders": 14,
+            "revision": 5,
+            "clicks": 1,
+            "html": 0
+          }
+        },
+        {
+          "name": "native wheel keeps anchor no render relayout",
+          "passed": true,
+          "data": {
+            "before": {
+              "view": {
+                "x": 0,
+                "y": 0,
+                "scale": 1
+              },
+              "renders": 14,
+              "revision": 5,
+              "clicks": 1,
+              "html": 0
+            },
+            "after": {
+              "view": {
+                "x": -28.25228511156314,
+                "y": -23.543570926302607,
+                "scale": 1.0941742837052104
+              },
+              "renders": 14,
+              "revision": 5,
+              "clicks": 1,
+              "html": 0
+            },
+            "anchor": {
+              "x": 300,
+              "y": 249.99999999999997
+            }
+          }
+        },
+        {
+          "name": "native pinch capture then one finger pan",
+          "passed": true,
+          "data": {
+            "pinch": {
+              "x": -72.79999999999998,
+              "y": -107,
+              "scale": 1.5999999999999999
+            },
+            "continuedBefore": {
+              "x": -72.79999999999998,
+              "y": -107,
+              "scale": 1.5999999999999999
+            },
+            "continuedAfter": {
+              "x": -52.79999999999998,
+              "y": -92,
+              "scale": 1.5999999999999999
+            },
+            "before": {
+              "view": {
+                "x": 0,
+                "y": 0,
+                "scale": 1
+              },
+              "renders": 14,
+              "revision": 5,
+              "clicks": 1,
+              "html": 0
+            },
+            "after": {
+              "view": {
+                "x": -52.79999999999998,
+                "y": -92,
+                "scale": 1.5999999999999999
+              },
+              "renders": 14,
+              "revision": 5,
+              "clicks": 1,
+              "html": 0
+            }
+          }
+        },
+        {
+          "name": "disable during held pan no ghost click",
+          "passed": true,
+          "data": {
+            "before": {
+              "view": {
+                "x": 0,
+                "y": 0,
+                "scale": 1
+              },
+              "renders": 14,
+              "revision": 5,
+              "clicks": 1,
+              "html": 0
+            },
+            "after": {
+              "view": {
+                "x": 35,
+                "y": 15,
+                "scale": 1
+              },
+              "renders": 15,
+              "revision": 5,
+              "clicks": 1,
+              "html": 0
+            },
+            "touchAction": ""
+          }
+        },
+        {
+          "name": "disabled controls allow click",
+          "passed": true,
+          "data": {
+            "view": {
+              "x": 35,
+              "y": 15,
+              "scale": 1
+            },
+            "renders": 15,
+            "revision": 5,
+            "clicks": 2,
+            "html": 0
+          }
+        },
+        {
+          "name": "blur cancels camera pan no click",
+          "passed": true,
+          "data": {
+            "after": {
+              "view": {
+                "x": 35,
+                "y": 15,
+                "scale": 1
+              },
+              "renders": 16,
+              "revision": 5,
+              "clicks": 2,
+              "html": 0
+            },
+            "stopped": {
+              "view": {
+                "x": 35,
+                "y": 15,
+                "scale": 1
+              },
+              "renders": 16,
+              "revision": 5,
+              "clicks": 2,
+              "html": 0
+            }
+          }
+        },
+        {
+          "name": "option rerender preserves view and reset restores initial position",
+          "passed": true,
+          "data": {
+            "preserved": {
+              "x": 123,
+              "y": 77,
+              "scale": 1.7
+            },
+            "reset": {
+              "x": 0,
+              "y": 0,
+              "scale": 0.75
+            }
+          }
+        },
+        {
+          "name": "no browser exceptions",
+          "passed": true,
+          "data": []
+        }
+      ]
+    },
+    {
+      "runtime": "react16",
+      "checks": [
+        {
+          "name": "cursor anchor including 0.5%",
+          "passed": true,
+          "data": [
+            {
+              "scale": 0.005,
+              "error": 0
+            },
+            {
+              "scale": 0.03,
+              "error": 2.5724394843074972e-12
+            },
+            {
+              "scale": 1.5,
+              "error": 0
+            }
+          ]
+        },
+        {
+          "name": "zoom-aware clamp and centering",
+          "passed": true,
+          "data": {
+            "edge": {
+              "x": -76,
+              "y": -274,
+              "scale": 1
+            },
+            "small": {
+              "x": 250,
+              "y": 187.5,
+              "scale": 0.25
+            }
+          }
+        },
+        {
+          "name": "axis only restricts panning",
+          "passed": true,
+          "data": {
+            "pan": {
+              "x": -20,
+              "y": -70,
+              "scale": 1
+            },
+            "zoom": {
+              "x": -180,
+              "y": -205,
+              "scale": 1.5
+            }
+          }
+        },
+        {
+          "name": "scaled rotated skewed parent",
+          "passed": true,
+          "data": {
+            "anchorError": 8.038873388460929e-14,
+            "panError": 1.4210854715202004e-14
+          }
+        },
+        {
+          "name": "native changes resize zero viewport",
+          "passed": true,
+          "data": {
+            "external": {
+              "x": -76,
+              "y": -274,
+              "scale": 1
+            },
+            "resized": {
+              "x": -76,
+              "y": -74,
+              "scale": 1
+            },
+            "zero": {
+              "x": -2.28,
+              "y": -2.2199999999999998,
+              "scale": 0.03
+            }
+          }
+        },
+        {
+          "name": "native mouse pan no click render relayout",
+          "passed": true,
+          "data": {
+            "before": {
+              "view": {
+                "x": 0,
+                "y": 0,
+                "scale": 1
+              },
+              "renders": 17,
+              "revision": 5,
+              "clicks": 0,
+              "html": 0
+            },
+            "after": {
+              "view": {
+                "x": 80,
+                "y": 40,
+                "scale": 1
+              },
+              "renders": 17,
+              "revision": 5,
+              "clicks": 0,
+              "html": 0
+            }
+          }
+        },
+        {
+          "name": "ordinary click remains",
+          "passed": true,
+          "data": {
+            "view": {
+              "x": 80,
+              "y": 40,
+              "scale": 1
+            },
+            "renders": 17,
+            "revision": 5,
+            "clicks": 1,
+            "html": 0
+          }
+        },
+        {
+          "name": "native wheel keeps anchor no render relayout",
+          "passed": true,
+          "data": {
+            "before": {
+              "view": {
+                "x": 0,
+                "y": 0,
+                "scale": 1
+              },
+              "renders": 17,
+              "revision": 5,
+              "clicks": 1,
+              "html": 0
+            },
+            "after": {
+              "view": {
+                "x": -28.25228511156314,
+                "y": -23.543570926302607,
+                "scale": 1.0941742837052104
+              },
+              "renders": 17,
+              "revision": 5,
+              "clicks": 1,
+              "html": 0
+            },
+            "anchor": {
+              "x": 300,
+              "y": 249.99999999999997
+            }
+          }
+        },
+        {
+          "name": "native pinch capture then one finger pan",
+          "passed": true,
+          "data": {
+            "pinch": {
+              "x": -72.79999999999998,
+              "y": -107,
+              "scale": 1.5999999999999999
+            },
+            "continuedBefore": {
+              "x": -72.79999999999998,
+              "y": -107,
+              "scale": 1.5999999999999999
+            },
+            "continuedAfter": {
+              "x": -52.79999999999998,
+              "y": -92,
+              "scale": 1.5999999999999999
+            },
+            "before": {
+              "view": {
+                "x": 0,
+                "y": 0,
+                "scale": 1
+              },
+              "renders": 17,
+              "revision": 5,
+              "clicks": 1,
+              "html": 0
+            },
+            "after": {
+              "view": {
+                "x": -52.79999999999998,
+                "y": -92,
+                "scale": 1.5999999999999999
+              },
+              "renders": 17,
+              "revision": 5,
+              "clicks": 1,
+              "html": 0
+            }
+          }
+        },
+        {
+          "name": "disable during held pan no ghost click",
+          "passed": true,
+          "data": {
+            "before": {
+              "view": {
+                "x": 0,
+                "y": 0,
+                "scale": 1
+              },
+              "renders": 17,
+              "revision": 5,
+              "clicks": 1,
+              "html": 0
+            },
+            "after": {
+              "view": {
+                "x": 35,
+                "y": 15,
+                "scale": 1
+              },
+              "renders": 18,
+              "revision": 5,
+              "clicks": 1,
+              "html": 0
+            },
+            "touchAction": ""
+          }
+        },
+        {
+          "name": "disabled controls allow click",
+          "passed": true,
+          "data": {
+            "view": {
+              "x": 35,
+              "y": 15,
+              "scale": 1
+            },
+            "renders": 18,
+            "revision": 5,
+            "clicks": 2,
+            "html": 0
+          }
+        },
+        {
+          "name": "blur cancels camera pan no click",
+          "passed": true,
+          "data": {
+            "after": {
+              "view": {
+                "x": 35,
+                "y": 15,
+                "scale": 1
+              },
+              "renders": 20,
+              "revision": 5,
+              "clicks": 2,
+              "html": 0
+            },
+            "stopped": {
+              "view": {
+                "x": 35,
+                "y": 15,
+                "scale": 1
+              },
+              "renders": 20,
+              "revision": 5,
+              "clicks": 2,
+              "html": 0
+            }
+          }
+        },
+        {
+          "name": "option rerender preserves view and reset restores initial position",
+          "passed": true,
+          "data": {
+            "preserved": {
+              "x": 123,
+              "y": 77,
+              "scale": 1.7
+            },
+            "reset": {
+              "x": 0,
+              "y": 0,
+              "scale": 0.75
+            }
+          }
+        },
+        {
+          "name": "no browser exceptions",
+          "passed": true,
+          "data": []
+        }
+      ]
+    }
+  ],
+  "sourceFilesSha256": {
+    "src/lib/camera/controller.ts": "6e22165ab721f70c91c67568007a7a74ad41df124b320d796a6272b931a5fcf9",
+    "src/lib/camera/gestures.ts": "620ebf89769f3d444bd5f70adb2b983d572a7c22703ebe8ba7bfb2d7e85e657d",
+    "src/lib/camera/index.ts": "8a4d1dceed3d01193e01bc33cb1c80e13cdfe8dfdf365fe2a3592132424b2d96",
+    "src/lib/camera/types.ts": "3029effeba7b295474a351d4fa5b9eaf3719fccba176c62aa997fbddd658a9fe",
+    "src/examples/CameraExample.tsx": "0316e304ec7dfceee4f0a7dd4018d3ff0fb17d9c7f1008b5a037d5bd88c2ddd7"
+  }
+}

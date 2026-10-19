@@ -78,7 +78,7 @@ Pan ×6 в новой серии показывает более высокую 
 
 ## Сопоставимость сцены и качество
 
-Между `17121a4` и `72dfda83` не изменились [ReferenceNode](../src/examples/ReferenceNode.tsx), [DesignedStressScene](../src/examples/DesignedStressScene.tsx), общий [JPEG](../public/node-preview.jpg) и [код траектории и измерения FPS](../src/benchmarks/camera.ts): их Git blobs идентичны. Сохранены параметры Optimized: culling, overscan 100, автоматическая плотность кешей, бюджет 32 MiB и порог LOD 0,3.
+Между `17121a4` и `72dfda83` не изменились [ReferenceNode](../src/examples/ReferenceCard.tsx), [DesignedStressScene](../src/examples/DesignedStressScene.tsx), общий [JPEG](../public/card-preview.jpg) и [код траектории и измерения FPS](../src/benchmarks/camera.ts): их Git blobs идентичны. Сохранены параметры Optimized: culling, overscan 100, автоматическая плотность кешей, бюджет 32 MiB и порог LOD 0,3.
 
 Контроллер стресс-сцены вынесен из `StressApp` в [useStressBenchmark](../src/stress/useStressBenchmark.ts); проверки завершённого draw — в [completedDraw](../src/stress/completedDraw.ts). Начало и конец таймеров, подготовка изображения/шрифтов, траектории и проверки геометрии, фотографии и плотности кеша сохранены. Математика камеры вынесена в общий helper с теми же ограничениями масштаба. Рефакторинг библиотечного измерения и рендеринга при этом входит в измеряемое изменение.
 

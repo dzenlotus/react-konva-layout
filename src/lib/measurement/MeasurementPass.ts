@@ -1,4 +1,4 @@
-import type { BoundaryContext, MeasurementResult, Registration, SceneNode } from '../model';
+import type { BoundaryContext, MeasurementResult, Registration, SceneElement } from '../model';
 import { CssPolicy } from './CssPolicy';
 import { MeasurementCache } from './MeasurementCache';
 import { MeasurementReader } from './MeasurementReader';
@@ -128,7 +128,7 @@ export class MeasurementPass {
   private isolate(
     record: Registration,
     host: HTMLElement,
-    previous: SceneNode,
+    previous: SceneElement,
     context: BoundaryContext,
   ): () => void {
     const container = this.root.cloneNode(false) as HTMLDivElement;

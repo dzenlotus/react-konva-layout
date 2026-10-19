@@ -1,50 +1,50 @@
-.free-nodes-example {
+.free-scene-example {
   max-width: 1440px;
   margin: 0 auto;
   padding: 24px 32px;
   color: #26331e;
 }
-.free-nodes-example nav {
+.free-scene-example nav {
   display: flex;
   gap: 24px;
   font-size: 12px;
 }
-.free-nodes-example a {
+.free-scene-example a {
   color: #728166;
 }
-.free-nodes-heading {
+.free-scene-heading {
   display: flex;
   align-items: end;
   justify-content: space-between;
   gap: 20px;
   margin: 24px 0 18px;
 }
-.free-nodes-eyebrow {
+.free-scene-eyebrow {
   margin: 0 0 8px;
   color: #7c8e6c;
   font: 10px monospace;
   letter-spacing: 2px;
 }
-.free-nodes-example h1 {
+.free-scene-example h1 {
   margin: 0;
   font-size: 30px;
   font-weight: 600;
   letter-spacing: -0.9px;
 }
-.free-nodes-heading > p {
+.free-scene-heading > p {
   max-width: 420px;
   margin: 0;
   color: #7a8471;
   font-size: 12px;
   line-height: 1.6;
 }
-.free-nodes-controls {
+.free-scene-controls {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   margin-bottom: 14px;
 }
-.free-nodes-controls button {
+.free-scene-controls button {
   padding: 9px 12px;
   border: 1px solid #cbd4c1;
   border-radius: 6px;
@@ -54,20 +54,20 @@
   font: inherit;
   font-size: 12px;
 }
-.free-nodes-controls button:hover {
+.free-scene-controls button:hover {
   background: #edf2e7;
 }
-.free-nodes-controls button:disabled {
+.free-scene-controls button:disabled {
   opacity: 0.45;
   cursor: default;
 }
-.free-nodes-actions-label {
+.free-scene-actions-label {
   align-self: center;
   margin-left: 12px;
   color: #7a8471;
   font-size: 12px;
 }
-.free-nodes-stage {
+.free-scene-stage {
   width: 100%;
   height: min(680px, calc(100vh - 275px));
   min-height: 420px;
@@ -78,7 +78,7 @@
   background-image: radial-gradient(#d8e0d0 0.8px, transparent 0.8px);
   background-size: 24px 24px;
 }
-.free-nodes-status {
+.free-scene-status {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -89,26 +89,26 @@
   font: 11px monospace;
   line-height: 1.6;
 }
-.free-nodes-caption {
+.free-scene-caption {
   margin-bottom: 0;
   color: #7a8471;
   font-size: 12px;
   line-height: 1.6;
 }
 @media (max-width: 800px) {
-  .free-nodes-example {
+  .free-scene-example {
     padding: 20px;
   }
-  .free-nodes-heading {
+  .free-scene-heading {
     display: block;
   }
-  .free-nodes-heading > p {
+  .free-scene-heading > p {
     margin-top: 10px;
   }
-  .free-nodes-example h1 {
+  .free-scene-example h1 {
     font-size: 26px;
   }
-  .free-nodes-stage {
+  .free-scene-stage {
     height: 560px;
   }
 }

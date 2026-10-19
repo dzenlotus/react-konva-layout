@@ -144,8 +144,8 @@ export async function runInteractionBenchmark({
   const countAttachments = (records: MutationRecord[]) => {
     if (!recordingDom) return;
     for (const record of records)
-      for (const node of record.addedNodes)
-        if (node instanceof Element && node.classList.contains('konva-layout-measure'))
+      for (const element of record.addedNodes)
+        if (element instanceof Element && element.classList.contains('konva-layout-measure'))
           measurementRootAttachments++;
   };
   const observer = new MutationObserver(countAttachments);
@@ -157,7 +157,7 @@ export async function runInteractionBenchmark({
   let previousDrawCount = 0;
   let startStats: CameraStats;
   let maxCacheBytes = 0;
-  let maxHtmlNodes = 0;
+  let maxHtmlElements = 0;
   let minVisibleRoots = Infinity;
   let maxVisibleRoots = 0;
   let minCanvasPixelRatio = Infinity;
@@ -188,7 +188,7 @@ export async function runInteractionBenchmark({
   };
   const sample = (current: CameraStats) => {
     maxCacheBytes = Math.max(maxCacheBytes, current.rendering?.cacheBytes ?? 0);
-    maxHtmlNodes = Math.max(maxHtmlNodes, current.idleHtmlNodes);
+    maxHtmlElements = Math.max(maxHtmlElements, current.idleHtmlElements);
     const visible = current.rendering?.visibleRoots ?? current.renderedCards;
     minVisibleRoots = Math.min(minVisibleRoots, visible);
     maxVisibleRoots = Math.max(maxVisibleRoots, visible);
@@ -450,7 +450,7 @@ export async function runInteractionBenchmark({
         ),
         measurementRevisionChanged,
         maxCacheBytes,
-        maxHtmlNodes,
+        maxHtmlElements,
         minVisibleRoots,
         maxVisibleRoots,
         minCanvasPixelRatio,

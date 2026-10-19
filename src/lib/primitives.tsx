@@ -8,12 +8,12 @@ import type {
   CellProps,
   CellTextProps,
   FlexProps,
-  LayoutNodeType,
+  LayoutElementType,
   LayoutProps,
   LayoutTextProps,
 } from './types';
 
-function primitiveStyle(type: LayoutNodeType, props: PrimitiveProps): CSSProperties {
+function primitiveStyle(type: LayoutElementType, props: PrimitiveProps): CSSProperties {
   const style: CSSProperties = { boxSizing: 'border-box', position: 'relative' };
   if (type === 'flex' || type === 'row' || type === 'col') {
     style.display = 'flex';
@@ -41,7 +41,7 @@ function primitiveStyle(type: LayoutNodeType, props: PrimitiveProps): CSSPropert
   return { ...style, ...props.style, pointerEvents: 'none' };
 }
 
-function Primitive({ type, props }: { type: LayoutNodeType; props: PrimitiveProps }) {
+function Primitive({ type, props }: { type: LayoutElementType; props: PrimitiveProps }) {
   const registry = useContext(RegistryContext);
   const parent = useContext(ParentContext);
   const key = useMeasurementId();
@@ -60,7 +60,7 @@ function Primitive({ type, props }: { type: LayoutNodeType; props: PrimitiveProp
         id={props.id}
         data-testid={props['data-testid']}
         className={
-          type === 'cell-text' ? 'konva-layout-node konva-layout-text' : 'konva-layout-node'
+          type === 'cell-text' ? 'konva-layout-element konva-layout-text' : 'konva-layout-element'
         }
         data-layout-key={key}
         data-layout-root={props.layoutRoot ? 'true' : undefined}

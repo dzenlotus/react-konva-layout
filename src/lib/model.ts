@@ -5,8 +5,8 @@ import type {
   CellTextRenderProps,
   FlexProps,
   LayoutMetrics,
-  LayoutNode,
-  LayoutNodeType,
+  LayoutElement,
+  LayoutElementType,
   LayoutTextProps,
 } from './types';
 
@@ -43,12 +43,12 @@ export type PrimitiveProps = Omit<BoxProps, 'render'> &
     renderTextFallback?: (props: CellTextRenderProps) => ReactNode;
   };
 
-export interface SceneNode {
+export interface SceneElement {
   key: string;
-  layout: LayoutNode;
+  layout: LayoutElement;
   props: PrimitiveProps;
   textStyle?: TextStyle;
-  children: SceneNode[];
+  children: SceneElement[];
   revision: number;
 }
 
@@ -56,7 +56,7 @@ export interface Registration {
   key: string;
   parent: string | null;
   element: HTMLDivElement;
-  type: LayoutNodeType;
+  type: LayoutElementType;
   props: PrimitiveProps;
   signature?: { inner?: number; outer?: number };
   domFingerprint?: number;
@@ -70,12 +70,15 @@ export interface LayoutRegistry {
 }
 
 export interface EngineSnapshot {
-  scene: SceneNode[];
-  tree: LayoutNode[];
+  scene: SceneElement[];
+  tree: LayoutElement[];
   metrics: LayoutMetrics | null;
 }
 
-export type Geometry = Pick<LayoutNode, 'x' | 'y' | 'width' | 'height' | 'absoluteX' | 'absoluteY'>;
+export type Geometry = Pick<
+  LayoutElement,
+  'x' | 'y' | 'width' | 'height' | 'absoluteX' | 'absoluteY'
+>;
 
 export interface BoundaryStyle {
   inherited: Array<[string, string]>;
@@ -90,8 +93,8 @@ export interface BoundaryContext extends BoundaryStyle {
 }
 
 export interface MeasurementResult {
-  roots: SceneNode[];
-  nodes: number;
+  roots: SceneElement[];
+  elements: number;
   hits: number;
   misses: number;
 }

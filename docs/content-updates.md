@@ -10,10 +10,10 @@
 import { Text } from 'react-konva';
 import { CellText, Flex } from '@dzenlotus/react-konva-layout';
 
-function GraphNode({ description }: { description: string }) {
+function Card({ description }: { description: string }) {
   return (
     <Flex
-      id="node-1"
+      id="element-1"
       layoutRoot
       width={320}
       direction="column"
@@ -21,7 +21,7 @@ function GraphNode({ description }: { description: string }) {
       style={{ position: 'absolute', left: 40, top: 60 }}
     >
       <CellText
-        id="node-1-description"
+        id="element-1-description"
         text={description}
         width="100%"
         fontFamily="Arial"
@@ -44,24 +44,30 @@ function GraphNode({ description }: { description: string }) {
 
 ## Локальное измерение
 
-`layoutRoot` помечает границу локального измерения: целую ноду или вложенный блок внутри неё. Обновление содержимого измеряет ближайшую такую границу целиком, поскольку её дочерние элементы могут зависеть друг от друга. Несколько запросов до следующего RAF объединяются; вложенные запросы не измеряют одну ветвь повторно.
+`layoutRoot` помечает границу локального измерения: целую карточку или вложенный блок внутри неё. Обновление содержимого измеряет ближайшую такую границу целиком, поскольку её дочерние элементы могут зависеть друг от друга. Несколько запросов до следующего RAF объединяются; вложенные запросы не измеряют одну ветвь повторно.
 
-В примере выше нода имеет явную ширину и абсолютные `left/top`, поэтому новая высота не сдвигает соседние ноды. Геометрия неизменённых соседей сохраняет ссылки, что позволяет сохранить их Konva-группы и растровые кеши.
+В примере выше карточка имеет явную ширину и абсолютные `left/top`, поэтому новая высота не сдвигает соседние карточки. Геометрия неизменённых соседей сохраняет ссылки, что позволяет сохранить их Konva-группы и растровые кеши.
 
 Локальное измерение используется, когда оно безопасно. Изменение ограничений самой `layoutRoot`, отсутствие определённой ширины, трансформирующие CSS-правила или зависимость от соседних CSS-селекторов могут потребовать более широкого измерения. Если блок находится в обычном потоке и изменил размер, запрос поднимается к ближайшей родительской границе, чтобы её соседи получили правильные координаты; без подходящей границы выполняется полный проход. Обычный внешний pan/zoom HTML-измерение не запускает.
 
-## Динамический список внутри ноды
+## Динамический список внутри карточки
 
-Например, у ноды меняется количество кнопок в `actions`. Пометьте весь этот блок вложенной `layoutRoot`, задайте его ширину и сохраняйте стабильные `key` и `id` элементов:
+Например, у карточки меняется количество кнопок в `actions`. Пометьте весь этот блок вложенной `layoutRoot`, задайте его ширину и сохраняйте стабильные `key` и `id` элементов:
 
 ```tsx
 import { Rect } from 'react-konva';
 import { Cell, Flex } from '@dzenlotus/react-konva-layout';
 
-function Actions({ nodeId, actions }: { nodeId: string; actions: readonly { id: string }[] }) {
+function Actions({
+  elementId,
+  actions,
+}: {
+  elementId: string;
+  actions: readonly { id: string }[];
+}) {
   return (
     <Cell
-      id={`${nodeId}-actions`}
+      id={`${elementId}-actions`}
       layoutRoot
       width="100%"
       minWidth={0}
@@ -70,7 +76,7 @@ function Actions({ nodeId, actions }: { nodeId: string; actions: readonly { id: 
     >
       <Flex width="100%" minHeight={44} padding={5} gap={7} flexWrap="wrap">
         {actions.map((action) => (
-          <Cell key={action.id} id={`${nodeId}-action-${action.id}`} width={34} height={34}>
+          <Cell key={action.id} id={`${elementId}-action-${action.id}`} width={34} height={34}>
             {(bounds) => <Rect {...bounds} fill="#d6e8c1" cornerRadius={5} />}
           </Cell>
         ))}
@@ -80,23 +86,23 @@ function Actions({ nodeId, actions }: { nodeId: string; actions: readonly { id: 
 }
 ```
 
-Этот компонент размещается внутри ноды с собственной `layoutRoot` и определённой шириной, например `width={360}`. Обновляйте массив `actions` через обычные props: добавление, удаление и перестановка автоматически запускают пересчёт. Вызывать `invalidate` после `setState` не требуется.
+Этот компонент размещается внутри карточки с собственной `layoutRoot` и определённой шириной, например `width={360}`. Обновляйте массив `actions` через обычные props: добавление, удаление и перестановка автоматически запускают пересчёт. Вызывать `invalidate` после `setState` не требуется.
 
-Пока внешние размеры блока не изменились, измеряется только его поддерево. Остальные части ноды сохраняют прежнюю геометрию. Если кнопки переносятся на новую строку и высота растёт, пересчитывается родительская нода: её фон и следующие элементы должны учитывать новый размер. Другие независимо размещённые ноды сохраняют геометрию и кеши. Если ограничить блок фиксированной высотой, приложение само отвечает за переполнение его содержимого.
+Пока внешние размеры блока не изменились, измеряется только его поддерево. Остальные части карточки сохраняют прежнюю геометрию. Если кнопки переносятся на новую строку и высота растёт, пересчитывается родительская карточка: её фон и следующие элементы должны учитывать новый размер. Другие независимо размещённые карточки сохраняют геометрию и кеши. Если ограничить блок фиксированной высотой, приложение само отвечает за переполнение его содержимого.
 
-В [свободной сцене](../src/examples/FreeNodesExample.tsx) выберите ноду и используйте кнопки «+ Действие», «− Действие» и «Развернуть действия». То же обновление доступно из консоли:
+В [свободной сцене](../src/examples/FreeSceneExample.tsx) выберите карточку и используйте кнопки «+ Действие», «− Действие» и «Развернуть действия». То же обновление доступно из консоли:
 
 ```js
-const id = 'free-node-0000';
-const actions = window.freeNodes.actions(id);
-window.freeNodes.setActions(id, [...actions, { id: 'extra-action', kind: 'run' }]);
+const id = 'free-item-0000';
+const actions = window.freeScene.actions(id);
+window.freeScene.setActions(id, [...actions, { id: 'extra-action', kind: 'run' }]);
 await new Promise((resolve) => requestAnimationFrame(resolve));
-window.freeNodes.setActions(id, [...window.freeNodes.actions(id)].reverse());
+window.freeScene.setActions(id, [...window.freeScene.actions(id)].reverse());
 ```
 
 Этот API принадлежит демо-приложению. В своём проекте храните список в своём state; библиотека отслеживает структуру `Flex`/`Cell`. При активном LOD скрытый блок тоже пересчитывается, а показ его canvas-содержимого продолжает определяться `renderWhen`.
 
-В production-сборках React 19 и React 16.14.0 проверена сцена из 1000 нод при DPR 2 и zoom 3%. На ноде из шаблонного кеша добавление третьей кнопки измерило 8 элементов только блока actions; перестановка трёх кнопок — те же 8. Перенос восьми кнопок на две строки измерил блок и родительскую ноду, увеличив высоту actions с 44 до 85 px. Геометрия, native группы и растровые кеши остальных 999 нод сохранили ссылки; позиции, порядок сцены и камера не изменились. После каждого обновления измерительного HTML в документе осталось 0 узлов. Это функциональные проверки, без повторного сравнения FPS: [исходные результаты](dynamic-actions-verification.json), [снимок с восемью кнопками](screenshots/dynamic-actions.png).
+В production-сборках React 19 и React 16.14.0 проверена сцена из 1000 карточек при DPR 2 и zoom 3%. На карточке из шаблонного кеша добавление третьей кнопки измерило 8 элементов только блока actions; перестановка трёх кнопок — те же 8. Перенос восьми кнопок на две строки измерил блок и родительскую карточку, увеличив высоту actions с 44 до 85 px. Геометрия, native группы и растровые кеши остальных 999 карточек сохранили ссылки; позиции, порядок сцены и камера не изменились. После каждого обновления измерительного HTML в документе осталось 0 узлов. Это функциональные проверки, без повторного сравнения FPS: [исходные результаты](dynamic-actions-verification.json), [снимок с восемью кнопками](screenshots/dynamic-actions.png).
 
 ## Явный запрос пересчёта
 
@@ -109,14 +115,14 @@ import { Layout, type LayoutHandle } from '@dzenlotus/react-konva-layout';
 const layoutRef = useRef<LayoutHandle>(null);
 
 <Layout ref={layoutRef} width={4000} height={3000}>
-  <GraphNode description={description} />
+  <Card description={description} />
 </Layout>;
 
 // Запланировать локальное измерение с доступными кешами геометрии.
-layoutRef.current?.invalidate('node-1-description');
+layoutRef.current?.invalidate('element-1-description');
 
 // Прочитать заново, сбросив кеши шаблонов и вычисленных стилей.
-layoutRef.current?.remeasure('node-1-description');
+layoutRef.current?.remeasure('element-1-description');
 
 // Перечитать всё дерево, например после внешней смены CSS-контекста.
 layoutRef.current?.remeasure();
@@ -133,7 +139,7 @@ import { useLayout } from '@dzenlotus/react-konva-layout';
 
 const { invalidate, getLayout, getMetrics } = useLayout();
 
-invalidate('node-1-description');
+invalidate('element-1-description');
 ```
 
 `useLayout()` предоставляет `invalidate`, `getLayout`, `getMetrics`; принудительный `remeasure` доступен через корневой ref. Методы пересчёта возвращают `void` и планируют работу на RAF после React commit. Немедленный `getLayout(id)` может вернуть предыдущие границы. Актуальные результаты доступны в `onLayout` и `onMeasure` после прохода; `getMetrics()?.scope` показывает `local`, `full` или `visual`.
@@ -142,7 +148,7 @@ invalidate('node-1-description');
 
 Чтобы открыть свой редактор по двойному клику, передайте обработчик своему Konva `Text` либо обычный `onDblClick`/`onDblTap` ячейки. Библиотека только передаёт события; сама она не открывает редактор и не меняет текст. После сохранения собственного поля обновите `text` у `CellText` — пересчёт выполнится автоматически.
 
-Пример textarea, позиционируемого поверх canvas, находится в [`src/examples/text-editor/EditableText.tsx`](../src/examples/text-editor/EditableText.tsx). Он принадлежит демо-приложению и не включён в библиотечный entry point. `ReferenceNode` передаёт в него свойства render-функции и собственный `onDescriptionChange`; редактор сохраняет значение через этот callback, а `CellText` автоматически измеряет обновлённый `text`.
+Пример textarea, позиционируемого поверх canvas, находится в [`src/examples/text-editor/EditableText.tsx`](../src/examples/text-editor/EditableText.tsx). Он принадлежит демо-приложению и не включён в библиотечный entry point. `ReferenceCard` передаёт в него свойства render-функции и собственный `onDescriptionChange`; редактор сохраняет значение через этот callback, а `CellText` автоматически измеряет обновлённый `text`.
 
 ## Изменение детализации
 
