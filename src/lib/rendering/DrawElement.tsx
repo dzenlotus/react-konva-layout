@@ -124,6 +124,7 @@ export const DrawElement = memo(function DrawElement({
           x={contentX + textStyle.paddingLeft}
           y={contentY + textStyle.paddingTop}
           width={Math.max(0, width - textStyle.paddingLeft - textStyle.paddingRight)}
+          height={Math.max(0, height - textStyle.paddingTop - textStyle.paddingBottom)}
           listening={active && (props.listening ?? !optimized)}
         />
       )}

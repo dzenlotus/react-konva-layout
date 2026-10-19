@@ -1,0 +1,34 @@
+.typography-example {
+  font-synthesis: weight style small-caps;
+}
+.typography-comparison {
+  display: grid;
+  grid-template-columns: repeat(2, 400px);
+  gap: 32px;
+  overflow: auto;
+}
+.typography-comparison h2 {
+  margin: 0 0 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.typography-rows {
+  width: 400px;
+}
+.typography-row {
+  height: 112px;
+}
+.typography-label {
+  height: 16px;
+  margin-bottom: 8px;
+  font:
+    11px Arial,
+    sans-serif;
+  color: #78826d;
+}
+.typography-reference {
+  background: #fff;
+}
+.typography-note {
+  font-size: 12px;
+}

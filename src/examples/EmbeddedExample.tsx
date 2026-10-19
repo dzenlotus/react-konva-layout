@@ -94,6 +94,7 @@ export default function EmbeddedExample() {
   return (
     <main className="embedded-example">
       <nav>
+        <a href="?text=1">Текст</a>
         <a href="?camera=1">Камера сцены</a>
         <a href="?playground=1">Playground</a>
         <a href="?scene=1">Свободная сцена / drag</a>

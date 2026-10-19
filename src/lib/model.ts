@@ -18,6 +18,10 @@ export interface TextStyle {
   lineHeight: number;
   color: string;
   align: string;
+  verticalAlign: 'top' | 'middle' | 'bottom';
+  textDecoration: string;
+  underlineOffset?: number;
+  ellipsis: boolean;
   paddingLeft: number;
   paddingTop: number;
   paddingRight: number;
@@ -33,8 +37,9 @@ export interface TextStyle {
 }
 
 export type PrimitiveProps = Omit<BoxProps, 'render'> &
-  FlexProps &
-  Partial<LayoutTextProps> & {
+  Omit<FlexProps, 'direction'> &
+  Partial<Omit<LayoutTextProps, 'direction'>> & {
+    direction?: FlexProps['direction'] | LayoutTextProps['direction'];
     render?: (bounds: CellBounds) => ReactNode;
     renderText?: (props: CellTextRenderProps) => ReactNode;
     renderWhen?: boolean;

@@ -127,11 +127,22 @@ export interface LayoutTextProps extends LayoutProps {
   text: string;
   fontSize?: number;
   fontFamily?: string;
+  /** Konva syntax, for example `italic 600`; fontWeight may also be set separately. */
   fontStyle?: string;
+  fontWeight?: CSSProperties['fontWeight'];
+  fontVariant?: 'normal' | 'small-caps';
   lineHeight?: number;
+  letterSpacing?: number;
   color?: string;
   align?: 'left' | 'center' | 'right' | 'justify';
+  verticalAlign?: 'top' | 'middle' | 'bottom';
+  textDecoration?: string;
+  /** Requires a Konva version that supports Text.underlineOffset. */
+  underlineOffset?: number;
   wrap?: 'word' | 'char' | 'none';
+  ellipsis?: boolean;
+  /** RTL drawing requires a Konva version with Text.direction support. */
+  direction?: 'ltr' | 'rtl' | 'inherit';
 }
 
 export interface CellTextRenderProps extends CellBounds {
@@ -142,10 +153,16 @@ export interface CellTextRenderProps extends CellBounds {
   lineHeight: number;
   fill: string;
   align: 'left' | 'center' | 'right' | 'justify';
+  verticalAlign: 'top' | 'middle' | 'bottom';
+  textDecoration: string;
+  underlineOffset?: number;
   wrap: 'word' | 'char' | 'none';
+  ellipsis: boolean;
+  /** Cell padding is already included in x/y and removed from width/height. */
+  padding: 0;
   direction?: string;
-  fontVariant?: string;
-  letterSpacing?: number;
+  fontVariant: string;
+  letterSpacing: number;
 }
 
 export interface CellTextProps extends Omit<LayoutTextProps, 'children'> {

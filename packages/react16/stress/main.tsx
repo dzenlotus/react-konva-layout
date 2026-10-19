@@ -1,12 +1,15 @@
 import ReactDOM from 'react-dom';
 import FreeSceneExample from '../../../src/examples/FreeSceneExample';
 import CameraExample from '../../../src/examples/CameraExample';
+import TextExample from '../../../src/examples/TextExample';
 import '../../../src/styles.css';
 
 const container = document.getElementById('root');
 if (!container) throw new Error('Demo root element is missing.');
 
-const Demo = new URLSearchParams(window.location.search).has('camera')
-  ? CameraExample
-  : FreeSceneExample;
+const Demo = new URLSearchParams(window.location.search).has('text')
+  ? TextExample
+  : new URLSearchParams(window.location.search).has('camera')
+    ? CameraExample
+    : FreeSceneExample;
 ReactDOM.render(<Demo />, container);

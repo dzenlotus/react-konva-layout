@@ -2,7 +2,9 @@ import type { Geometry, MeasurementResult, Registration, SceneElement, TextStyle
 import { CssPolicy } from './CssPolicy';
 import { MeasurementCache, styleSignature, token } from './MeasurementCache';
 import { SceneStore } from './SceneStore';
-import { typographyKeys } from './comparison';
+import { layoutKeys, typographyKeys } from './comparison';
+
+const contextProperties = [...layoutKeys, ...typographyKeys];
 
 interface ReadOptions {
   container: HTMLElement;
@@ -111,7 +113,7 @@ export class MeasurementReader {
     const { cache } = this.options;
     const parent = record.parent ? (this.contextKeys.get(record.parent) ?? 0) : 0;
     let typography = '';
-    for (const name of typographyKeys) {
+    for (const name of contextProperties) {
       if (record.props[name] !== undefined) typography += `${name}=${token(record.props[name])}`;
     }
     const own = cache.intern(

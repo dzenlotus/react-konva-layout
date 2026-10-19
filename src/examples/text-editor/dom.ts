@@ -85,21 +85,30 @@ export function syncEditorStyles(
   } = contentPadding(element, bounds);
   const nativePadding = target.padding();
   const fontStyle = target.fontStyle();
+  const cssFontStyle =
+    /\b(?:italic|oblique)(?:\s+-?(?:\d+(?:\.\d+)?|\.\d+)deg)?\b/.exec(fontStyle)?.[0] ?? 'normal';
+  const fontWeight =
+    /(?:^|\s)(bold|bolder|lighter|\d+(?:\.\d+)?)(?=\s|$)/.exec(
+      fontStyle.replace(cssFontStyle, ''),
+    )?.[1] ?? 'normal';
   const fill = target.fill();
   const wrap = target.wrap();
   const direction = target.getAttr('direction') as string | undefined;
+  const underlineOffset = target.getAttr('underlineOffset') as number | undefined;
 
   Object.assign(textarea.style, {
     transform: `matrix(${a * scaleX}, ${b * scaleY}, ${c * scaleX}, ${d * scaleY}, ${(e - a * paddingLeft - c * paddingTop) * scaleX}, ${(f - b * paddingLeft - d * paddingTop) * scaleY})`,
     width: `${Math.max(1, target.width() + paddingLeft + paddingRight)}px`,
     fontFamily: target.fontFamily(),
     fontSize: `${target.fontSize()}px`,
-    fontStyle: /\b(italic|oblique)\b/.exec(fontStyle)?.[1] ?? 'normal',
-    fontWeight: /\b(bold|bolder|lighter|[1-9]\d{0,2}|1000)\b/.exec(fontStyle)?.[1] ?? 'normal',
+    fontStyle: cssFontStyle,
+    fontWeight,
     fontVariant: target.fontVariant(),
     lineHeight: String(target.lineHeight()),
     letterSpacing: `${target.letterSpacing()}px`,
     wordSpacing: 'normal',
+    textDecoration: target.textDecoration() || 'none',
+    textUnderlineOffset: underlineOffset === undefined ? 'auto' : `${underlineOffset}px`,
     // Konva padding is inside Text bounds; HTML padding surrounds those bounds.
     padding: `${paddingTop + nativePadding}px ${paddingRight + nativePadding}px ${paddingBottom + nativePadding}px ${paddingLeft + nativePadding}px`,
     textAlign: target.align(),

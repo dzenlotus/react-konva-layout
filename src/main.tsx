@@ -7,6 +7,7 @@ const EmbeddedExample = lazy(() => import('./examples/EmbeddedExample'));
 const StressApp = lazy(() => import('./StressApp'));
 const FreeSceneExample = lazy(() => import('./examples/FreeSceneExample'));
 const CameraExample = lazy(() => import('./examples/CameraExample'));
+const TextExample = lazy(() => import('./examples/TextExample'));
 const parameters = new URLSearchParams(window.location.search);
 const embedded =
   parameters.has('embedded') ||
@@ -16,15 +17,17 @@ const embedded =
     !parameters.has('scene'));
 const free = parameters.has('scene') || parameters.has('free');
 const stress = parameters.has('stress');
-const Demo = parameters.has('camera')
-  ? CameraExample
-  : free
-    ? FreeSceneExample
-    : embedded
-      ? EmbeddedExample
-      : stress
-        ? StressApp
-        : App;
+const Demo = parameters.has('text')
+  ? TextExample
+  : parameters.has('camera')
+    ? CameraExample
+    : free
+      ? FreeSceneExample
+      : embedded
+        ? EmbeddedExample
+        : stress
+          ? StressApp
+          : App;
 const loadingText = free
   ? 'Загрузка свободной сцены…'
   : embedded

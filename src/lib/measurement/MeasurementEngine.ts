@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import type { EngineSnapshot, LayoutRegistry, Registration, SceneElement } from '../model';
 import type {
   LayoutContextValue,
@@ -10,7 +11,81 @@ import { MeasurementCache } from './MeasurementCache';
 import { MeasurementObservers } from './MeasurementObservers';
 import { MeasurementPass } from './MeasurementPass';
 import { SceneStore } from './SceneStore';
-import { sameGeometryProps, sameVisualProps } from './comparison';
+import { layoutKeys, sameGeometryProps, sameVisualProps } from './comparison';
+
+const textContentStyles = new Set<keyof CSSProperties>([
+  'font',
+  'fontSize',
+  'fontFamily',
+  'fontStyle',
+  'fontWeight',
+  'fontVariant',
+  'fontSynthesis',
+  'lineHeight',
+  'letterSpacing',
+  'wordSpacing',
+  'color',
+  'direction',
+  'textAlign',
+  'verticalAlign',
+  'textDecoration',
+  'textUnderlineOffset',
+  'textTransform',
+  'textOverflow',
+  'whiteSpace',
+  'wordBreak',
+  'overflowWrap',
+]);
+
+/** A text boundary may measure new contents without discarding its parent constraints. */
+function sameTextBoundaryConstraints(
+  previous: Registration,
+  next: Registration,
+  measuredWidth: number | undefined,
+): boolean {
+  if (
+    (next.type !== 'text' && next.type !== 'cell-text') ||
+    previous.type !== next.type ||
+    previous.element !== next.element ||
+    previous.parent !== next.parent ||
+    previous.props.id !== next.props.id ||
+    previous.props['data-testid'] !== next.props['data-testid'] ||
+    previous.props.layoutRoot !== next.props.layoutRoot ||
+    !layoutKeys.every((key) => previous.props[key] === next.props[key])
+  )
+    return false;
+  const width = next.props.style?.width ?? next.props.width;
+  const widthInPixels =
+    typeof width === 'number'
+      ? width
+      : typeof width === 'string' && /^(?:\d+\.?\d*|\.\d+)px$/i.test(width.trim())
+        ? parseFloat(width)
+        : NaN;
+  // Isolated reads pin the previous width. Intrinsic, relative, or constrained widths
+  // may change with typography and must be resolved in their parent context instead.
+  if (
+    !Number.isFinite(widthInPixels) ||
+    widthInPixels < 0 ||
+    measuredWidth === undefined ||
+    Math.abs(measuredWidth - widthInPixels) > 1 / 64
+  )
+    return false;
+  const previousStyle = previous.props.style;
+  const nextStyle = next.props.style;
+  const keys = new Set([
+    ...Object.keys(previousStyle ?? {}),
+    ...Object.keys(nextStyle ?? {}),
+  ] as Array<keyof CSSProperties>);
+  return [...keys].every((key) => {
+    if (textContentStyles.has(key)) return true;
+    const value = nextStyle?.[key];
+    // Unchanged em-based margins/insets can move a boundary when its font changes.
+    const fontRelative =
+      typeof value === 'string' &&
+      /(?:[\d.]\s*(?:r?em|ex|ch|cap|ic|r?lh)\b|var\(|calc\()/i.test(value);
+    return !fontRelative && previousStyle?.[key] === value;
+  });
+}
 
 interface EngineConfiguration {
   width: number;
@@ -206,8 +281,16 @@ export class MeasurementEngine {
     if (previous && previous.element !== record.element) this.observers.remove(previous);
     this.observers.observe(record);
     if (!sameGeometry) {
-      // A boundary's own constraints depend on its parent layout context.
-      if (previous?.props.layoutRoot) this.schedule(record.parent ?? undefined);
+      // Text content can change locally; a boundary's outer constraints need its parent.
+      if (
+        previous?.props.layoutRoot &&
+        !sameTextBoundaryConstraints(
+          previous,
+          record,
+          this.store.byKey.get(record.key)?.layout.width,
+        )
+      )
+        this.schedule(record.parent ?? undefined);
       else this.schedule(record.key);
     } else if (!sameVisualProps(previous.props, record.props)) {
       this.visualDirty.add(record.key);

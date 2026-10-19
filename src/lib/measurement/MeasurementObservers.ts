@@ -112,17 +112,7 @@ export class MeasurementObservers {
 
   private changed(records: MutationRecord[]): void {
     if (!this.observing) return;
-    if (
-      records.some(
-        (record) =>
-          (record.type === 'attributes' && record.target !== this.root) ||
-          (record.target instanceof Element ? record.target : record.target.parentElement)?.closest(
-            'style',
-          ),
-      )
-    ) {
-      this.callbacks.cssChanged();
-    }
+    let cssChanged = false;
     for (const mutation of records) {
       if (mutation.target === this.root && mutation.type === 'attributes') continue;
       const element =
@@ -130,6 +120,16 @@ export class MeasurementObservers {
       const primitive = element?.closest<HTMLElement>('[data-layout-key]');
       const key = primitive?.dataset.layoutKey;
       const record = key ? this.registrations.get(key) : undefined;
+      // React's layout effect has already registered these inline styles and scheduled
+      // their geometry change. External mutations still invalidate the CSS cascade.
+      if (
+        mutation.type === 'attributes' &&
+        mutation.attributeName === 'style' &&
+        record?.element === element &&
+        record.domStyle === element?.getAttribute('style')
+      )
+        continue;
+      if (mutation.type === 'attributes' || element?.closest('style')) cssChanged = true;
       if (record) {
         record.domFingerprint = undefined;
         if (
@@ -142,6 +142,7 @@ export class MeasurementObservers {
       }
       this.callbacks.schedule(key);
     }
+    if (cssChanged) this.callbacks.cssChanged();
   }
 
   private fontsChanged = (): void => {

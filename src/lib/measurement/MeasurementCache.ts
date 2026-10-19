@@ -30,6 +30,8 @@ const inheritedProperties = [
   'text-rendering',
   'font-feature-settings',
   'font-kerning',
+  'text-decoration-line',
+  'text-underline-offset',
 ];
 const outerPositionKeys = new Set(['left', 'top', 'right', 'bottom', 'inset', 'translate']);
 const geometryPropKeys = [...layoutKeys, ...typographyKeys];
@@ -75,23 +77,52 @@ function storeBounded<Key, Value>(
   if (cache.size > limit) cache.delete(cache.keys().next().value!);
 }
 
-function readTextStyle(element: HTMLElement, fontRevision: number): TextStyle {
-  const css = getComputedStyle(element);
-  const fontSize = parseFloat(css.fontSize) || 16;
+function readTextStyle(record: Registration, fontRevision: number): TextStyle {
+  const css = getComputedStyle(record.element);
+  const measuredFontSize = parseFloat(css.fontSize);
+  const fontSize = Number.isFinite(measuredFontSize) ? measuredFontSize : 16;
+  const lineHeight = parseFloat(css.lineHeight);
+  const underlineOffset = parseFloat(css.textUnderlineOffset);
+  const decoration = css.textDecorationLine
+    .split(/\s+/)
+    .filter((value) => value === 'underline' || value === 'line-through')
+    .join(' ');
   return {
     fontRevision,
     fontSize,
     fontFamily: css.fontFamily,
-    fontStyle: `${css.fontStyle} ${css.fontWeight}`,
-    lineHeight: parseFloat(css.lineHeight) / fontSize || 1.2,
+    fontStyle: `${css.fontStyle.startsWith('oblique') ? 'italic' : css.fontStyle} ${css.fontWeight}`,
+    lineHeight: Number.isFinite(lineHeight) && fontSize > 0 ? lineHeight / fontSize : 1.2,
     color: css.color,
-    align: css.textAlign,
+    align:
+      css.textAlign === 'start'
+        ? css.direction === 'rtl'
+          ? 'right'
+          : 'left'
+        : css.textAlign === 'end'
+          ? css.direction === 'rtl'
+            ? 'left'
+            : 'right'
+          : css.textAlign,
+    verticalAlign:
+      css.justifyContent === 'center'
+        ? 'middle'
+        : css.justifyContent === 'end' || css.justifyContent === 'flex-end'
+          ? 'bottom'
+          : 'top',
+    textDecoration: decoration,
+    underlineOffset: Number.isFinite(underlineOffset)
+      ? css.textUnderlineOffset.endsWith('%')
+        ? (underlineOffset * fontSize) / 100
+        : underlineOffset
+      : undefined,
+    ellipsis: css.textOverflow === 'ellipsis',
     paddingLeft: parseFloat(css.paddingLeft) || 0,
     paddingTop: parseFloat(css.paddingTop) || 0,
     paddingRight: parseFloat(css.paddingRight) || 0,
     paddingBottom: parseFloat(css.paddingBottom) || 0,
     direction: css.direction,
-    fontVariant: css.fontVariant,
+    fontVariant: css.fontVariant === 'small-caps' ? 'small-caps' : 'normal',
     letterSpacing: css.letterSpacing,
     wordSpacing: css.wordSpacing,
     whiteSpace: css.whiteSpace,
@@ -161,7 +192,7 @@ export class MeasurementCache {
     const key = `${this.fontRevision}:${this.cssRevision}:${record.key}:${contextKey}`;
     const previous = enabled ? this.textStyles.get(key) : undefined;
     if (previous) return previous;
-    const value = readTextStyle(record.element, this.fontRevision);
+    const value = readTextStyle(record, this.fontRevision);
     storeBounded(this.textStyles, key, value, TEXT_STYLE_LIMIT);
     return value;
   }
